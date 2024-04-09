@@ -1,0 +1,31 @@
+Microsoft (R) COFF/PE Dumper Version 14.38.33130.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file C:\Users\Dave\Source\Repos\MemoryErrorClean\x64\Build_DLL\MemoryError.dll
+
+File Type: DLL
+
+  Section contains the following exports for MemoryError.dll
+
+    00000000 characteristics
+    FFFFFFFF time date stamp
+        0.00 version
+           1 ordinal base
+           2 number of functions
+           2 number of names
+
+    ordinal hint RVA      name
+
+          1    0 0004DCB0 DoAction_Tile
+          2    1 00354B34 LoopyLoop
+
+  Summary
+
+       13000 .data
+       1A000 .pdata
+       8A000 .rdata
+        2000 .reloc
+       49000 .rsrc
+      2BE000 .text
+       25000 _RDATA
