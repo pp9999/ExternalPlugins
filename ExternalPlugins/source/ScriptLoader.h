@@ -9,6 +9,12 @@ struct ScriptFunction {
 /// <summary>
 /// Main script functions
 /// </summary>
+
+
+
+void Portflaskmaker();
+void HerblawTest();
+void CitadelWoodChopper();
 void TestScript();
 void AutoDivination();
-
+void CitadelWoodChopper();

@@ -170,6 +170,9 @@
     <ClCompile Include="libs\imgui\imgui_draw.cpp" />
     <ClCompile Include="libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="libs\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="scripts\CitadellWoodChopper.cpp" />
+    <ClCompile Include="scripts\PortablesMixer.cpp" />
+    <ClCompile Include="scripts\Portflaskmaker.cpp" />
     <ClCompile Include="source\ScriptLoader.cpp" />
     <ClCompile Include="scripts\TestScript.cpp" />
     <ClCompile Include="scripts\AutoDivination.cpp" />

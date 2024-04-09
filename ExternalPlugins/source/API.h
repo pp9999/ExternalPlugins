@@ -23,11 +23,14 @@ LIBRARY_API bool LoopyLoop;
 //Unloads everything and closes
 LIBRARY_API bool Endall;
 //Text displayed in the ME window
+LIBRARY_API std::string ScripCuRunning0;
 LIBRARY_API std::string ScripCuRunning1;
 LIBRARY_API std::string ScripCuRunning2;
 //LIBRARY_API bool DrawLogs;
 //LIBRARY_API bool DrawTrackedSkills;
 LIBRARY_API bool fake_mouse_do;//generate fake reports
+LIBRARY_API bool OSRS_Injected;//osrs injected
+LIBRARY_API bool RS_Injected;
 
 
 //localPlayer
@@ -47,32 +50,33 @@ void DrawImGui(std::function<void()> function);
 //some general offsets for doaction
 namespace OFF_ACT {
 
-	constexpr int GeneralObject_route00 = -80;//use item/action on object like bladed dive
-	constexpr int GeneralObject_route0 = 0;//General action on some objects, like bank chest
-	constexpr int GeneralObject_route1 = 80;//General action on some objects
-	constexpr int GeneralObject_route2 = 160;//General action on some objects
-	constexpr int GeneralObject_route3 = 240;//General action on some objects
-	constexpr int BladedDiveNPC_route = 1392;//do bladed dive to npc
-	constexpr int InteractNPC_route = 1488;//default interact npc 0x29 
-	constexpr int AttackNPC_route = 1600;//default attack npc
-	constexpr int InteractNPC_route2 = 1696;//second option
-	constexpr int InteractNPC_route3 = 1776;//third option
-	constexpr int InteractNPC_route4 = 1888;//fourth option
-	constexpr int Pickup_route = 2464;//default item pickup
-	constexpr int Walk_route = 2752;//walk to tile 
-	constexpr int Bladed_interface_route = 2832;//special interface route for bladed dive, familiar attack, use in inventory..items that can actualy do something use GeneralInterface_route
-	constexpr int GeneralInterface_Choose_option = 2912;//option in chat box
-	constexpr int GeneralInterface_Choose_jewelry = 2912;//teleport jewelry//chat box?
-	constexpr int Vs_player_attack_route = 3072;//
-	constexpr int GeneralInterface_route = 3808;//General action on lootwindow, also most interfaces
-	constexpr int GeneralInterface_route1 = 3888;//note stuff, use item on empty inv spot, use item on item
-	constexpr int GeneralInterface_route2 = 4528;//take bob/store bob/drop items
-	constexpr int Vs_player_follow_route = 5648;//old
-	constexpr int Vs_player_trade_route = 5728;//old
-	constexpr int Special_walk_route = 3968;//Bladed dive teleport
+	LIBRARY_API int GeneralObject_route00;//use item/action on object like bladed dive
+	LIBRARY_API int GeneralObject_route0;//General action on some objects, like bank chest
+	LIBRARY_API int GeneralObject_route1;//General action on some objects
+	LIBRARY_API int GeneralObject_route2;//General action on some objects
+	LIBRARY_API int GeneralObject_route3;//General action on some objects
+	LIBRARY_API int BladedDiveNPC_route;//do bladed dive to npc
+	LIBRARY_API int InteractNPC_route;//default interact npc 0x29 
+	LIBRARY_API int AttackNPC_route;//default attack npc
+	LIBRARY_API int InteractNPC_route2;//second option
+	LIBRARY_API int InteractNPC_route3;//third option
+	LIBRARY_API int InteractNPC_route4;//fourth option
+	LIBRARY_API int Pickup_route;//default item pickup
+	LIBRARY_API int Walk_route;//walk to tile 
+	LIBRARY_API int Bladed_interface_route;//special interface route for bladed dive, familiar attack, use in inventory..items that can actualy do something use GeneralInterface_route
+	LIBRARY_API int GeneralInterface_Choose_option;//option in chat box
+	LIBRARY_API int GeneralInterface_Choose_jewelry;//teleport jewelry//chat box?
+	LIBRARY_API int Vs_player_attack_route;//
+	LIBRARY_API int GeneralInterface_route;//General action on lootwindow, also most interfaces
+	LIBRARY_API int GeneralInterface_route1;//note stuff, use item on empty inv spot, use item on item
+	LIBRARY_API int GeneralInterface_route2;//take bob/store bob/drop items
+	LIBRARY_API int Vs_player_follow_route;//old
+	LIBRARY_API int Vs_player_trade_route;//old
+	LIBRARY_API int Special_walk_route;//Bladed dive teleport
 
 };
 
+//detour related functions
 namespace DO {
 	//Push action, move to a tile
 	LIBRARY_API bool DoAction_Tile(WPOINT normal_tile);
@@ -116,6 +120,8 @@ namespace DO {
 	LIBRARY_API bool DoAction_VS_Player_Attack(std::vector<std::string> obj, int maxdistance, bool checkcombat, int xstart, int xend, int ystart, int yend);
 	//Push action, do action on player, find by name, trade
 	LIBRARY_API bool DoAction_VS_Player_Trade(std::vector<std::string> obj, int maxdistance);
+	//Push action, do action on player, find by name, examine
+	LIBRARY_API bool DoAction_VS_Player_Examine(std::vector<std::string> S_objects, int maxdistance);
 	//Push action, do action on player, find by name, follow
 	LIBRARY_API bool DoAction_VS_Player_Follow(std::vector<std::string> obj, int maxdistance);
 	//Push action, do action on player, directly sends command to do
@@ -150,6 +156,8 @@ namespace DO {
 	LIBRARY_API bool DoAction_Logout_mini();
 	//Pick from popped up menu to lobby
 	LIBRARY_API bool DoAction_then_lobby();
+	//Push action, sends commands to GE inventory, all safety checked, mostly
+	LIBRARY_API bool DoAction_GE_Inventory(int id, int random, int m_action, int offset);
 	//Push action, send commands to inventory, all safety checked, mostly
 	LIBRARY_API bool DoAction_Inventory(int id, int random, int m_action, int offset);
 	//first to come by, for making noted items mostly
@@ -176,6 +184,8 @@ namespace DO {
 	LIBRARY_API bool DoAction_BD_NPC(int perma_object_id, int maxdistance = 50);
 	//for Dive
 	LIBRARY_API bool DoAction_Dive_Tile(WPOINT normal_tile);
+	//Check directions, give directions, surge
+	LIBRARY_API bool DoAction_Surge_Tile(WPOINT normal_tile, int errorrange);
 	//choose chat box option, Whole words/sentences only
 	LIBRARY_API bool Dialog_Option(std::string text);
 	//Continue dialog
@@ -236,13 +246,14 @@ namespace DO {
 
 };
 
+//Raw functions
 namespace ME {
 
 	//local time
 	LIBRARY_API std::tm* PrintLocalTime(bool print);
 
 	//Read All object to ImVec2 pixels
-	//LIBRARY_API ImVec2 ReadObjectCoordinatesImVec2(uint64_t mem_location);
+	LIBRARY_API ImVec2 ReadObjectCoordinatesImVec2(uint64_t mem_location);
 
 	//Read All object to WPOINT pixels
 	LIBRARY_API WPOINT ReadObjectCoordinatesWPOINT(uint64_t mem_location);
@@ -255,6 +266,12 @@ namespace ME {
 
 	//Calculation between 2 objects
 	LIBRARY_API float Math_DistanceA(AllObject object1, AllObject object2);
+
+	//Calculate future pixels or tiles based on angle
+	LIBRARY_API vector<WPOINT> Math_AnglePixels(WPOINT input, float angle, int steps);
+
+	//check if pixels or tiles have crosssection somewhere
+	LIBRARY_API bool Math_PointsCrossEach(vector <WPOINT> ArrayOfPoints, WPOINT OnePoint, int inrangeof);
 
 	//raw tiles(world pixels) to SCREEN
 	LIBRARY_API FFPOINT Math_W2Sv2(FFPOINT entity);
@@ -297,6 +314,12 @@ namespace ME {
 
 	//read as string, constant size
 	LIBRARY_API std::string ReadChars(uint64_t SummPointer, int readsize = 250);
+
+	//read as std::string, attempt to read short ones
+	std::string ReadCharsLimit(uint64_t SummPointer, int limit);
+
+	//read as pointer, some pointers have specific build on interfaces, lets try that
+	std::string ReadCharsLimitPointer(uint64_t SummPointer, int limit = 255);
 
 	//sorting function
 	LIBRARY_API bool Math_comparebigger(ChOpt SummAddress1, ChOpt SummAddress2);
@@ -389,7 +412,10 @@ namespace ME {
 	LIBRARY_API int GetFloorLv_2();
 
 	//Tile distance from localplayer
-	LIBRARY_API float Dist_TFLP(FFPOINT object);
+	LIBRARY_API float Dist_FLP(FFPOINT tile);
+
+	//Tile distance from localplayer
+	LIBRARY_API float Dist_FLPW(WPOINT tile);
 
 	//
 	LIBRARY_API WPOINT InvFindItem(int item, int action);
@@ -636,10 +662,16 @@ namespace ME {
 	LIBRARY_API std::vector<IInfo> Container_Inventory();
 
 	//Get container vector data
-	LIBRARY_API std::vector<WPOINT> Container_Get_all(int cont_id);
+	LIBRARY_API std::vector<inv_Container_struct> Container_Get_all(int cont_id);
+
+	//Find a item from cont vector
+	LIBRARY_API inv_Container_struct Container_Findfrom(std::vector<inv_Container_struct> dat, int item_id);
 
 	//Get container single target
-	LIBRARY_API WPOINT Container_Get_s(int cont_id, int item_id);
+	LIBRARY_API inv_Container_struct Container_Get_s(int cont_id, int item_id);
+
+	//Check if container is there
+	LIBRARY_API bool Container_Get_Check(int cont_id);
 
 	//
 	LIBRARY_API bool OpenEquipInterface2();
@@ -818,23 +850,23 @@ namespace ME {
 	//
 	LIBRARY_API bool ClickMapTile_2(POINT ItemCoord2);
 
-	/*
-	finds and reads varpbits
-	as there can be 2 vars lets try different filters to find what we need from 0-2
-	*/
-	LIBRARY_API VB VB_FindPSett(int id, int try_filter = 0);
+	//finds and reads varpbits. if params is -1 then it is ignored
+	LIBRARY_API VB VB_FindPSett(int id, int FSarray = -1, int levelsdeep = -1);
+
+	//finds and reads varpbits. if params is -1 then it is ignored, go backwards 1,1 is always extended from 1,0 Recomended to set FSarray
+	LIBRARY_API VB VB_FindPSettinOrder(int id, int FSarray = -1);
 
 	//
-	LIBRARY_API std::vector<bool> VB_FindPSett2(int id, int try_filter = 0);
+	LIBRARY_API std::vector<bool> VB_FindPSett2(int id, int FSarray = -1);
 
 	//makes ints into bit arrays for displaying
 	LIBRARY_API std::string VB_IntToBit(int var);
 
 	//
-	LIBRARY_API int VB_FindPSett3int(int id, int spot_index, int try_filter = 0);
+	LIBRARY_API int VB_FindPSett3int(int id, int spot_index, int FSarray = -1);
 
 	//
-	LIBRARY_API WPOINT VB_FindPSett3wpoint(int id, int spot_index1, int spot_index2, int try_filter = 0);
+	LIBRARY_API WPOINT VB_FindPSett3wpoint(int id, int spot_index1, int spot_index2, int FSarray = -1);
 
 
 	//check if variable is between
@@ -954,7 +986,7 @@ namespace ME {
 	LIBRARY_API int Math_RandomNumber(int number);
 
 	//reverse int
-	LIBRARY_API int Math_Reverse_int(int val);
+	int Math_Reverse_int(int val);
 
 	//glue bytes together, into 16bit
 	LIBRARY_API unsigned short Math_AppendBytes16(unsigned char* val, int start);
@@ -992,6 +1024,9 @@ namespace ME {
 	//
 	LIBRARY_API bool Math_Compare_AllObject_dist_biggest(AllObject SummAddress1, AllObject SummAddress2);
 
+	//sorting function, by id
+	LIBRARY_API bool Math_Compare_VBreturn(VBreturn SummAddress1, VBreturn SummAddress2);
+
 	//for debubg
 	LIBRARY_API void FindChooseOptionLive();
 
@@ -1000,6 +1035,10 @@ namespace ME {
 
 	//dno
 	LIBRARY_API bool SelectCOption_Direct(int index);
+
+	std::tuple<ImVec2, ImVec2, ImVec2, ImVec2, ImVec2, ImVec2, ImVec2, ImVec2> Calc3DBox(const FFPOINT& Pos);
+
+	void Draw3DBox(const FFPOINT& Pos, ImColor color, int Thickness, ImDrawList* pDrawListBack);
 
 	//
 	LIBRARY_API bool ReadNPCInFocus_0();
@@ -1127,6 +1166,8 @@ namespace ME {
 	//rounded down and int
 	LIBRARY_API WPOINT PlayerCoord();
 
+	LIBRARY_API WPOINT PlayerRegion();
+
 	//outputs array of points from a to b
 	LIBRARY_API std::vector<WPOINT> Math_Bresenham_line(int x1, int y1, int x2, int y2);
 
@@ -1201,8 +1242,28 @@ namespace ME {
 
 	//
 	LIBRARY_API void Map_Walker2(FFPOINT tilexy, int distance);
+
+	//find 1 simple value from array of simple values
+	template<typename T>
+	bool Math_ValueEquals(T value, const std::vector<T>& arrayof);
+
+	//find 1 simple value from array of simple values
+	template<typename T>
+	int Math_ValueEqualsIndex(T value, const std::vector<T>& arrayof);
+
+	//find simple value from first array in second, same order comes out
+	template<typename T>
+	std::vector<bool> Math_ValueEqualsArr(const std::vector<T>& arrayof1, const std::vector<T>& arrayof2);
+
+	//dial-up, use hex! In case of messup delete C:\Users\USER\AppData\Local\Jagex folder
+	void Call_settings_function(int setting_id, int setting_value);
+
+	//read exepacked pointer, move exactly to the right byte
+	uint64_t EXEPackedPointer(std::string instruct, uint64_t from_instruction_start);
+
 };
 
+//General functions. Extra
 namespace MEX {
 
 	//Looks if localplayer is member
@@ -1229,11 +1290,25 @@ namespace MEX {
 	//count them
 	LIBRARY_API bool Count_ticks(int count);
 
+	class TickTimer {
+	public:
+		TickTimer() : timer_start(MEX::Get_tick()) {}
+		uint32_t start() { return timer_start; }
+		uint32_t ticks_elapsed() { return MEX::Get_tick() - timer_start; }
+		void reset() { timer_start = MEX::Get_tick(); }
+		void sleep_for(uint64_t count) { MEX::Sleep_tick(count); }
+	private:
+		uint32_t timer_start;
+	};
+
 	//
 	LIBRARY_API bool isAbilityAvailable(const std::string& ability_name);
 
 	//
 	LIBRARY_API float calculatePlayerOrientation();
+
+	//Is player facing tile direction
+	LIBRARY_API bool IsPlayerInDirection(WPOINT Tile, int howfar, int errorrange);
 
 	//any entitity, needs Allobject MemE
 	LIBRARY_API float calculateOrientation(uint64_t mem_addr);
@@ -1246,6 +1321,10 @@ namespace MEX {
 
 	//check if familiar is present
 	LIBRARY_API bool CheckFamiliar();
+
+	LIBRARY_API WPOINT GetProjectileDestination(AllObject projectile);
+
+	LIBRARY_API WPOINT GetProjectileDestination(uint64_t mem_addr);
 
 	//
 	LIBRARY_API std::vector<uint64_t> GetModel_ids(uint64_t entity_base, bool debug);
@@ -1329,6 +1408,8 @@ namespace MEX {
 	LIBRARY_API int BankGetItemStack(std::string itemname);
 	// Finds objects by name
 	LIBRARY_API std::vector<AllObject> FindObject_str(std::vector<std::string> obj, int maxdistance);
+	//
+	size_t writeFunction(void* ptr, size_t size, size_t nmemb, std::string* data);
 	//
 	LIBRARY_API std::vector<int> BankGetItemStack(std::vector<int> item);
 
@@ -1457,9 +1538,7 @@ namespace MEX {
 	LIBRARY_API bool ToggleSkillsPanelVisibility();
 
 	// id starts at 0, goes left to right, top to bottom. Attack is 0 smithing is 5
-	LIBRARY_API int GetBoostedSkillLevel(int id, int currentLevel);
-
-	LIBRARY_API int GetBoostedSkillLevel(int id);
+	int GetBoostedSkillLevel(int id, int currentLevel);
 
 	// id starts at 0, goes left to right, top to bottom. Attack is 0 smithing is 5
 	LIBRARY_API Skill GetSkillById(int id);
@@ -1476,6 +1555,8 @@ namespace MEX {
 
 	//
 	LIBRARY_API bool BankOpen2();
+	//
+	LIBRARY_API bool DoBankPin(const std::string& code);
 
 	//Get inventory status. Checks if items are present inventory
 	LIBRARY_API bool CheckInvStuff(int item1, int item2);
@@ -1540,7 +1621,14 @@ namespace MEX {
 	LIBRARY_API void BankClose();
 };
 
+//Dear ImGui wrappers
 namespace IG {
+	inline ImColor default_col = ImColor(0, 255, 128);
+
+	//removes specific, should not to be used another thread
+	void ImGui_clear_1(std::string ident);
+
+	void ImGui_clear_1(int slot);
 
 	//removes all, should not to be used another thread
 	LIBRARY_API void ImGui_clear_all(bool remove_perm = false);
@@ -1584,6 +1672,15 @@ namespace IG {
 	//add square,intended for backdrops
 	LIBRARY_API void DrawSquareFilled(bool permanent, IG_answer* return_);
 
+	//Push onto que, Test asking
+	void DrawAskInt(bool permanent, IG_answer* return_);
+
+	//Ask questions about npcs, global arrays are: ask_npcready
+	bool DrawAskNPCs(bool permanent, std::string foldername, std::string listname = "npc_list.txt");
+
+	//load list
+	bool load_AskGr(std::string foldername, std::string listname = "gr_list.txt");
+
 	//push box1, ask_box1 = false; turn manually off again
 	LIBRARY_API void DrawBox(bool permanent, IG_answer* return_);
 
@@ -1593,6 +1690,31 @@ namespace IG {
 	//progress bar - uses radius as progress amount
 	LIBRARY_API void DrawProgressBar(bool permanent, IG_answer* return_);
 
+	//load list
+	bool load_AskNPCs(std::string foldername, std::string listname = "npc_list.txt");
+
+	//Ask, global answer arrays are: ask_list_Gr_ids, ask_list_Gr_text
+	bool DrawAskGr(bool permanent, std::string foldername, std::string listname = "gr_list.txt");
+
 	//tick 1, box_bool returns state of tickbox, return_bool value is only needed to check if state changed
 	LIBRARY_API void DrawCheckbox(bool permanent, IG_answer* return_);
+
+	//load list
+	bool load_AskGr_note(std::string foldername, std::string listname = "gr_list_noted.txt");
+
+	//Ask, global 
+	bool DrawAskGr_note(bool permanent, std::string foldername, std::string listname = "gr_list_noted.txt");
+
+	//load list
+	bool load_AskGr_alch(std::string foldername, std::string listname = "gr_list_alched.txt");
+
+	//Ask, global 
+	bool DrawAskGr_alch(bool permanent, std::string foldername, std::string listname = "gr_list_alched.txt");
+
+	//load list
+	bool load_AskGr_drop(std::string foldername, std::string listname = "gr_list_drop.txt");
+
+	//Ask, global 
+	bool DrawAskGr_drop(bool permanent, std::string foldername, std::string listname = "gr_list_drop.txt");
+
 };

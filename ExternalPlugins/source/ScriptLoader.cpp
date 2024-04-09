@@ -3,6 +3,9 @@
 
 extern "C" __declspec(dllexport) void GetScripts(std::shared_ptr<ScriptFunction[]>*functions, size_t * count) {
     std::initializer_list<ScriptFunction> initList = {
+        { "Portflaskmaker", &Portflaskmaker },
+        { "HerblawTest", &HerblawTest },
+        { "CitadelWoodChopper", &CitadelWoodChopper },
         { "Function1", &TestScript },
         { "AutoDivination", &AutoDivination }
         //Add your scripts here
