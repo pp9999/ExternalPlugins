@@ -17,6 +17,8 @@ using namespace std;
 #    define LIBRARY_API extern "C++" __declspec(dllimport)
 #endif
 
+#include "GrandExchange.h"
+
 //Extra exports
 //Main loop
 LIBRARY_API bool LoopyLoop;
