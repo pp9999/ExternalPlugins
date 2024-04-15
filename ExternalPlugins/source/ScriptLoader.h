@@ -11,7 +11,7 @@ struct ScriptFunction {
 /// </summary>
 
 
-
+void FFA_fighter();
 void Portflaskmaker();
 void HerblawTest();
 void CitadelWoodChopper();
