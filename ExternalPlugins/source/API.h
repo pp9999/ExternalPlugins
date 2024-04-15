@@ -33,6 +33,9 @@ LIBRARY_API std::string ScripCuRunning2;
 LIBRARY_API bool fake_mouse_do;//generate fake reports
 LIBRARY_API bool OSRS_Injected;//osrs injected
 LIBRARY_API bool RS_Injected;
+LIBRARY_API std::string LocalPlayerName;
+LIBRARY_API bool WalkingBrake;//DoAction_Walker make true if u wanto stop walking loop
+LIBRARY_API bool Doaction_paint;
 
 
 //localPlayer
@@ -245,6 +248,93 @@ namespace DO {
 	LIBRARY_API bool DoAction_Fairy(std::string tele_loc);
 	//try to walk to the gate, then walk trough
 	LIBRARY_API bool Walk_gates(std::vector<GateTileStruct> gatetilesss, int walk_distance);
+
+};
+
+namespace ME {
+
+	//try determine if memory is in valid range
+	LIBRARY_API bool Mem_range(uint64_t Address);
+
+	//try determine if memory is in valid range, it is kinda blind-quess, without exe
+	LIBRARY_API bool Mem_rangeWexe(uint64_t Address);
+
+	//cast from void* to uint64_t
+	LIBRARY_API uint64_t CheckCrash(void* Address);
+
+	//cast from uint64_t to void*
+	LIBRARY_API void* CheckCrash(uint64_t Address);
+
+	// copy bytes to created buffer, only if RS_Injected
+	LIBRARY_API void Mem_read(uint64_t Address, int size, BYTE* buffer);
+
+	//Simple memory reading
+	template<typename T>
+	T Mem_read(uint64_t Address, int offset = 0);
+
+	//Simple memory reading
+	template<typename T>
+	T Mem_read(__int64 Address, int offset = 0);
+
+	//Simple memory reading
+	template<typename T>
+	T Mem_read(void* Address, int offset = 0);
+
+	//Simple memory reading
+	template<typename T>
+	T Mem_read(BYTE* pointer, int offset = 0);
+
+	//Simple memory writing
+	template<typename T>
+	bool Mem_write(char* Address, int offset, T Value);
+
+	//Simple memory writing
+	template<typename T>
+	bool Mem_write(int8_t* Address, int offset, T Value);
+
+	//Simple memory writing
+	template<typename T>
+	bool Mem_write(int16_t* Address, int offset, T Value);
+
+	//Simple memory writing
+	template<typename T>
+	bool Mem_write(BYTE* Address, int offset, T Value);
+
+	//Simple memory writing
+	template<typename T>
+	bool Mem_write(void* Address, int offset, T Value);
+
+	//Simple memory writing
+	template<typename T>
+	bool Mem_write(uint64_t Address, int offset, T Value);
+
+	//Copy data from Data_Address to To_Address
+	LIBRARY_API bool Mem_COPY(void* To_Address, void* Data_Address, int size);
+
+	//Read size amount of bytes
+	LIBRARY_API void Read_bytes(uint64_t Address, BYTE* buffer, size_t size);
+
+	//Read as unsigned char size (1 byte)
+	LIBRARY_API unsigned char ReadUINT8(uint64_t SummPointer);
+
+	//Read as char size (1 byte)
+	LIBRARY_API char ReadINT8(uint64_t SummPointer);
+
+	//Read as short (2 bytes)
+	LIBRARY_API short ReadINT16(uint64_t);
+
+	//Read as unsigned short (2 bytes)
+	LIBRARY_API unsigned short ReadUINT16(uint64_t);
+
+	//Read as int (4 bytes)
+	LIBRARY_API int Readint(uint64_t);
+
+	//Read as unsigned int64_t  (8 bytes)
+	LIBRARY_API uint64_t ReadUINT64(uint64_t);
+
+	//Read as float
+	LIBRARY_API float Readfloat(uint64_t SummPointer);
+
 
 };
 

@@ -97,6 +97,18 @@
     <ClCompile Include="API.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="scripts\PortablesMixer.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Portflaskmaker.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\CitadellWoodChopper.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\FFA_fighter.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ExternalPlugins.rc">
