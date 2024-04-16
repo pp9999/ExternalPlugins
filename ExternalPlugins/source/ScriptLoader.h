@@ -10,7 +10,7 @@ struct ScriptFunction {
 /// Main script functions
 /// </summary>
 
-
+void CombatTesting();
 void FFA_fighter();
 void Portflaskmaker();
 void HerblawTest();

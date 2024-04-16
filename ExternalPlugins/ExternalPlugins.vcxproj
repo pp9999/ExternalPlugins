@@ -158,6 +158,7 @@
     <ClInclude Include="libs\imgui\imstb_truetype.h" />
     <ClInclude Include="source\API.h" />
     <ClInclude Include="main\framework.h" />
+    <ClInclude Include="source\GrandExchange.h" />
     <ClInclude Include="source\Structs.h" />
     <ClInclude Include="main\resource.h" />
     <ClInclude Include="source\ScriptLoader.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="scripts\CitadellWoodChopper.cpp" />
+    <ClCompile Include="scripts\CombatTesting.cpp" />
     <ClCompile Include="scripts\FFA_fighter.cpp" />
     <ClCompile Include="scripts\PortablesMixer.cpp" />
     <ClCompile Include="scripts\Portflaskmaker.cpp" />

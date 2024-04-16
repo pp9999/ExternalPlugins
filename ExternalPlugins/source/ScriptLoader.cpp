@@ -3,6 +3,7 @@
 
 extern "C" __declspec(dllexport) void GetScripts(std::shared_ptr<ScriptFunction[]>*functions, size_t * count) {
     std::initializer_list<ScriptFunction> initList = {
+        { "CombatTesting", &CombatTesting },
         { "FFA_fighter", &FFA_fighter },
         { "Portflaskmaker", &Portflaskmaker },
         { "HerblawTest", &HerblawTest },

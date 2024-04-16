@@ -68,6 +68,9 @@
     <ClInclude Include="libs\imgui\backends\imgui_impl_opengl3_loader.h">
       <Filter>Libs\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="source\GrandExchange.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scripts\TestScript.cpp">
@@ -107,6 +110,9 @@
       <Filter>Scripts</Filter>
     </ClCompile>
     <ClCompile Include="scripts\FFA_fighter.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\CombatTesting.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
   </ItemGroup>

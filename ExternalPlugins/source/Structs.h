@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "imgui.h"
+#include <ctime>
 //we store data
 
 // ground items info
@@ -368,3 +369,17 @@ struct IG_answer {
 	std::vector<std::string>stringsArr{};
 	bool temp_created = false;//temp created by function by new, delete by new
 };
+
+struct EventData {
+	std::string name;
+	std::string text;
+	std::time_t timestamp1;
+	std::string timestamp2;
+	int timestamp3;
+	int skillIndex;
+	std::string skillName;
+	int exp;
+	int ItemID;
+	int ItemAM;
+};
+

@@ -12,9 +12,9 @@
 using namespace std;
 
 #ifdef LIBRARY_EXPORTS
-#    define LIBRARY_API extern "C++" __declspec(dllexport)
+#    define LIBRARY_API __declspec(dllexport)
 #else
-#    define LIBRARY_API extern "C++" __declspec(dllimport)
+#    define LIBRARY_API __declspec(dllimport)
 #endif
 
 #include "GrandExchange.h"
@@ -36,6 +36,13 @@ LIBRARY_API bool RS_Injected;
 LIBRARY_API std::string LocalPlayerName;
 LIBRARY_API bool WalkingBrake;//DoAction_Walker make true if u wanto stop walking loop
 LIBRARY_API bool Doaction_paint;
+
+LIBRARY_API std::vector<std::string> ask_npcready;//names
+LIBRARY_API std::vector<std::string> ask_list_Gr_ids_text;//in text
+LIBRARY_API std::vector<int> ask_list_Gr_ids_int;//in ints, used for grounditems finding
+LIBRARY_API std::vector<int> Note_ids_int;
+LIBRARY_API std::vector<int> Alch_ids_int;
+LIBRARY_API std::vector<int> Drop_ids_int;
 
 
 //localPlayer
@@ -405,13 +412,13 @@ namespace ME {
 	LIBRARY_API FFPOINT TilesToPixelsWF(WPOINT xy);
 
 	//read as string, constant size
-	LIBRARY_API std::string ReadChars(uint64_t SummPointer, int readsize = 250);
+	LIBRARY_API LIBRARY_API std::string ReadChars(uint64_t SummPointer, int readsize = 250);
 
 	//read as std::string, attempt to read short ones
-	std::string ReadCharsLimit(uint64_t SummPointer, int limit);
+	LIBRARY_API std::string ReadCharsLimit(uint64_t SummPointer, int limit);
 
 	//read as pointer, some pointers have specific build on interfaces, lets try that
-	std::string ReadCharsLimitPointer(uint64_t SummPointer, int limit = 255);
+	LIBRARY_API std::string ReadCharsLimitPointer(uint64_t SummPointer, int limit = 255);
 
 	//sorting function
 	LIBRARY_API bool Math_comparebigger(ChOpt SummAddress1, ChOpt SummAddress2);
@@ -1078,7 +1085,7 @@ namespace ME {
 	LIBRARY_API int Math_RandomNumber(int number);
 
 	//reverse int
-	int Math_Reverse_int(int val);
+	LIBRARY_API int Math_Reverse_int(int val);
 
 	//glue bytes together, into 16bit
 	LIBRARY_API unsigned short Math_AppendBytes16(unsigned char* val, int start);
@@ -1337,21 +1344,21 @@ namespace ME {
 
 	//find 1 simple value from array of simple values
 	template<typename T>
-	bool Math_ValueEquals(T value, const std::vector<T>& arrayof);
+	LIBRARY_API bool Math_ValueEquals(T value, const std::vector<T>& arrayof);
 
 	//find 1 simple value from array of simple values
 	template<typename T>
-	int Math_ValueEqualsIndex(T value, const std::vector<T>& arrayof);
+	LIBRARY_API int Math_ValueEqualsIndex(T value, const std::vector<T>& arrayof);
 
 	//find simple value from first array in second, same order comes out
 	template<typename T>
-	std::vector<bool> Math_ValueEqualsArr(const std::vector<T>& arrayof1, const std::vector<T>& arrayof2);
+	LIBRARY_API std::vector<bool> Math_ValueEqualsArr(const std::vector<T>& arrayof1, const std::vector<T>& arrayof2);
 
 	//dial-up, use hex! In case of messup delete C:\Users\USER\AppData\Local\Jagex folder
-	void Call_settings_function(int setting_id, int setting_value);
+	LIBRARY_API void Call_settings_function(int setting_id, int setting_value);
 
 	//read exepacked pointer, move exactly to the right byte
-	uint64_t EXEPackedPointer(std::string instruct, uint64_t from_instruction_start);
+	LIBRARY_API uint64_t EXEPackedPointer(std::string instruct, uint64_t from_instruction_start);
 
 };
 
@@ -1630,7 +1637,7 @@ namespace MEX {
 	LIBRARY_API bool ToggleSkillsPanelVisibility();
 
 	// id starts at 0, goes left to right, top to bottom. Attack is 0 smithing is 5
-	int GetBoostedSkillLevel(int id, int currentLevel);
+	LIBRARY_API int GetBoostedSkillLevel(int id, int currentLevel);
 
 	// id starts at 0, goes left to right, top to bottom. Attack is 0 smithing is 5
 	LIBRARY_API Skill GetSkillById(int id);
@@ -1765,13 +1772,13 @@ namespace IG {
 	LIBRARY_API void DrawSquareFilled(bool permanent, IG_answer* return_);
 
 	//Push onto que, Test asking
-	void DrawAskInt(bool permanent, IG_answer* return_);
+	LIBRARY_API void DrawAskInt(bool permanent, IG_answer* return_);
 
 	//Ask questions about npcs, global arrays are: ask_npcready
-	bool DrawAskNPCs(bool permanent, std::string foldername, std::string listname = "npc_list.txt");
+	LIBRARY_API bool DrawAskNPCs(bool permanent, std::string foldername, std::string listname = "npc_list.txt");
 
 	//load list
-	bool load_AskGr(std::string foldername, std::string listname = "gr_list.txt");
+	LIBRARY_API bool load_AskGr(std::string foldername, std::string listname = "gr_list.txt");
 
 	//push box1, ask_box1 = false; turn manually off again
 	LIBRARY_API void DrawBox(bool permanent, IG_answer* return_);
@@ -1783,30 +1790,42 @@ namespace IG {
 	LIBRARY_API void DrawProgressBar(bool permanent, IG_answer* return_);
 
 	//load list
-	bool load_AskNPCs(std::string foldername, std::string listname = "npc_list.txt");
+	LIBRARY_API bool load_AskNPCs(std::string foldername, std::string listname = "npc_list.txt");
 
 	//Ask, global answer arrays are: ask_list_Gr_ids, ask_list_Gr_text
-	bool DrawAskGr(bool permanent, std::string foldername, std::string listname = "gr_list.txt");
+	LIBRARY_API bool DrawAskGr(bool permanent, std::string foldername, std::string listname = "gr_list.txt");
 
 	//tick 1, box_bool returns state of tickbox, return_bool value is only needed to check if state changed
 	LIBRARY_API void DrawCheckbox(bool permanent, IG_answer* return_);
 
 	//load list
-	bool load_AskGr_note(std::string foldername, std::string listname = "gr_list_noted.txt");
+	LIBRARY_API bool load_AskGr_note(std::string foldername, std::string listname = "gr_list_noted.txt");
 
 	//Ask, global 
-	bool DrawAskGr_note(bool permanent, std::string foldername, std::string listname = "gr_list_noted.txt");
+	LIBRARY_API bool DrawAskGr_note(bool permanent, std::string foldername, std::string listname = "gr_list_noted.txt");
 
 	//load list
-	bool load_AskGr_alch(std::string foldername, std::string listname = "gr_list_alched.txt");
+	LIBRARY_API bool load_AskGr_alch(std::string foldername, std::string listname = "gr_list_alched.txt");
 
 	//Ask, global 
-	bool DrawAskGr_alch(bool permanent, std::string foldername, std::string listname = "gr_list_alched.txt");
+	LIBRARY_API bool DrawAskGr_alch(bool permanent, std::string foldername, std::string listname = "gr_list_alched.txt");
 
 	//load list
-	bool load_AskGr_drop(std::string foldername, std::string listname = "gr_list_drop.txt");
+	LIBRARY_API bool load_AskGr_drop(std::string foldername, std::string listname = "gr_list_drop.txt");
 
 	//Ask, global 
-	bool DrawAskGr_drop(bool permanent, std::string foldername, std::string listname = "gr_list_drop.txt");
+	LIBRARY_API bool DrawAskGr_drop(bool permanent, std::string foldername, std::string listname = "gr_list_drop.txt");
 
 };
+
+template bool LIBRARY_API ME::Math_ValueEquals(int value, const std::vector<int>& arrayof);
+template int LIBRARY_API ME::Math_ValueEqualsIndex(int value, const std::vector<int>& arrayof);
+
+//////////////////////////////////////////////////////////////////Event/////////////////////////////////////////////////////////////////////////////////////////////
+
+//check stored
+LIBRARY_API vector<EventData> GatherEvents_chat_check();
+LIBRARY_API vector<EventData> GatherEvents_xp_check();
+LIBRARY_API vector<EventData> GatherEvents_glisten_check();
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
