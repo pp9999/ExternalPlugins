@@ -115,6 +115,9 @@
     <ClCompile Include="scripts\CombatTesting.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="scripts\Auto_deploy_prot_traps.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ExternalPlugins.rc">

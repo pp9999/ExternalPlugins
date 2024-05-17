@@ -462,10 +462,10 @@ void CombatTesting() {
 		DO::RandomEvents();
 
 
-		if (ME::Math_RandomNumber(1000) > 960) {
+		if (ME::Math_RandomNumber(1000) > 985) {
 			ME::PIdle1();
 		}
-		if (ME::Math_RandomNumber(1000) > 965) {
+		if (ME::Math_RandomNumber(1000) > 990) {
 			ME::PIdle2();
 		}
 

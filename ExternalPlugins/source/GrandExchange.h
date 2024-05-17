@@ -1,3 +1,5 @@
+#include <string>
+#include <vector>
 #ifndef GRAND_EXCHANGE_H
 #define GRAND_EXCHANGE_H
 
@@ -34,12 +36,14 @@ struct GrandExchange {
         static constexpr int ENTRY_SIZE = 0x28;
         static constexpr int WINDOW_GE_OPEN = 82;
         static constexpr int WINDOW_CHAT_OPEN = 11;
-        static constexpr int SELECTED_ITEM = 135;
+        static constexpr int SELECTED_ITEM = 9465;//135 was doing some stuff on legacy
         static constexpr int INPUT_PRICE = 137;
         static constexpr int INPUT_SELL = 139;
         static constexpr int INPUT_QUANTITY = 136;
         static constexpr std::array<int, 8> SLOT_IDS = { 7, 28, 49, 70, 94, 118, 142, 166 };
     };
+
+    static int delayOffset;
 
     // Function declarations
     LIBRARY_API std::vector<ExchangeEntry> GetData();
@@ -49,7 +53,9 @@ struct GrandExchange {
     LIBRARY_API bool IsGESearchOpen();
     LIBRARY_API bool CollectToInventory();
     LIBRARY_API bool Back();
-    LIBRARY_API bool OpenGE();
+    LIBRARY_API bool Open();
+    LIBRARY_API void DelayOffset(int offset);
+    LIBRARY_API void Close();
     LIBRARY_API int GetAvailableSlots();
     LIBRARY_API int GetFinishedSlots();
     LIBRARY_API int GetNextAvailableSlot();

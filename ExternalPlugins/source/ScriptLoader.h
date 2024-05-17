@@ -10,6 +10,7 @@ struct ScriptFunction {
 /// Main script functions
 /// </summary>
 
+void Auto_deploy_prot_traps();
 void CombatTesting();
 void FFA_fighter();
 void Portflaskmaker();
