@@ -10,6 +10,7 @@ struct ScriptFunction {
 /// Main script functions
 /// </summary>
 
+void Priff_summ();
 void Auto_deploy_prot_traps();
 void CombatTesting();
 void FFA_fighter();
