@@ -18,27 +18,27 @@ static int SelectArea() {
 	string Cselect = MEX::ScriptDialogWindow2("FFA_fighter", { "StartPortal", "StartMultiNorth","West","South Pond","North Pond" }).Name;
 
 	if (Cselect.compare("StartPortal") == 0) {
-		std::cout << Cselect << endl;
+		DebugImGui.Debugtext_add(Cselect);
 		ScripCuRunning0 = Cselect;
 		return 1;
 	}
 	if (Cselect.compare("StartMultiNorth") == 0) {
-		std::cout << Cselect << endl;
+		DebugImGui.Debugtext_add(Cselect);
 		ScripCuRunning0 = Cselect;
 		return 2;
 	}
 	if (Cselect.compare("South Pond") == 0) {
-		std::cout << Cselect << endl;
+		DebugImGui.Debugtext_add(Cselect);
 		ScripCuRunning0 = Cselect;
 		return 3;
 	}
 	if (Cselect.compare("West") == 0) {
-		std::cout << Cselect << endl;
+		DebugImGui.Debugtext_add(Cselect);
 		ScripCuRunning0 = Cselect;
 		return 4;
 	}
 	if (Cselect.compare("North Pond") == 0) {
-		std::cout << Cselect << endl;
+		DebugImGui.Debugtext_add(Cselect);
 		ScripCuRunning0 = Cselect;
 		return 5;
 	}
@@ -104,7 +104,7 @@ static AllObject Playerfilter(vector <string> Players) {
 		if (!ME::ReadPlayerMovin2()) {
 			sort(far_players_list.begin(), far_players_list.end(), ME::Math_Compare_AllObject_dist_smallest);
 			//instead start walking towards our target
-			cout << "Walk to: " + far_players_list.front().Name << endl;
+			DebugImGui.Debugtext_add("Walk to: " + far_players_list.front().Name);
 			thread Walkto(DO::DoAction_WalkerF, far_players_list.front().Tile_XYZ, 50);
 			Walkto.detach();
 			//do 1 step and break
@@ -120,11 +120,12 @@ void antiIdleTask_FFA() {
 	// Time delay between 2 and 4 minutes
 	int nextTimeDelay = rand() % ((240 + 1) - 120) + 120;
 
-	cout << "[IdleHandler] Performing anti idle action" << endl;
+	DebugImGui.Debugtext_add("[IdleHandler] Performing anti idle action");
 	ME::PIdle2();
 	ME::RandomSleep2(100, 50, 100);
 	auto calcedGap = lastIdleCheck + nextTimeDelay;
-	cout << "[IdleHandler] Next anti idle action at " << put_time(std::localtime(&calcedGap), "%d-%m-%Y %H-%M-%S") << endl;
+	console_text << "[IdleHandler] Next anti idle action at " << put_time(std::localtime(&calcedGap), "%d-%m-%Y %H-%M-%S") << endl;
+	DebugImGui.Debugtext_addstream();
 
 	while (LoopyLoop && !Endall) {
 		if ((lastIdleCheck + nextTimeDelay) < time(NULL)) {
@@ -132,11 +133,12 @@ void antiIdleTask_FFA() {
 			lastIdleCheck = time(NULL);
 			nextTimeDelay = rand() % ((240 + 1) - 120) + 120;
 
-			cout << "[IdleHandler] Performing anti idle action" << endl;
+			DebugImGui.Debugtext_add("[IdleHandler] Performing anti idle action");
 			ME::PIdle2();
 			ME::RandomSleep2(100, 50, 100);
 			calcedGap = lastIdleCheck + nextTimeDelay;
-			cout << "[IdleHandler] Next anti idle action at " << put_time(std::localtime(&calcedGap), "%d-%m-%Y %H-%M-%S") << endl;
+			console_text << "[IdleHandler] Next anti idle action at " << put_time(std::localtime(&calcedGap), "%d-%m-%Y %H-%M-%S") << endl;
+			DebugImGui.Debugtext_addstream();
 		}
 		ME::RandomSleep2(400, 150, 250);
 	}
@@ -227,13 +229,13 @@ void FFA_fighter() {
 					ScripCuRunning1 = "Attack other players.";
 					AllObject player = Playerfilter(Players);
 					if (player.TileX > 0) {
-						cout << "Target is: " << player.Name << endl;
+						DebugImGui.Debugtext_add("Target is: " + player.Name);
 						ScripCuRunning1 = "Target is:";
 						ScripCuRunning1.append(player.Name);
 						DO::DoAction_VS_Player_action_Direct(player, OFF_ACT::Vs_player_attack_route);
 					}
 					else {
-						cout << "NO Target!" << endl;
+						DebugImGui.Debugtext_add("NO Target!");
 						ScripCuRunning1 = "NO Target!";
 					}
 					ME::RandomSleep2(2500, 4250, 12000);
@@ -286,13 +288,13 @@ void FFA_fighter() {
 					ScripCuRunning1 = "Attack other players.";
 					AllObject player = Playerfilter(Players);
 					if (player.TileX > 0) {
-						cout << "Target is: " << player.Name << endl;
+						DebugImGui.Debugtext_add("Target is: " + player.Name);
 						ScripCuRunning1 = "Target is:";
 						ScripCuRunning1.append(player.Name);
 						DO::DoAction_VS_Player_action_Direct(player, OFF_ACT::Vs_player_attack_route);
 					}
 					else {
-						cout << "NO Target!" << endl;
+						DebugImGui.Debugtext_add("NO Target!");
 						ScripCuRunning1 = "NO Target!";
 					}
 					ME::RandomSleep2(2500, 4250, 12000);
@@ -345,13 +347,13 @@ void FFA_fighter() {
 					ScripCuRunning1 = "Attack other players.";
 					AllObject player = Playerfilter(Players);
 					if (player.TileX > 0) {
-						cout << "Target is: " << player.Name << endl;
+						DebugImGui.Debugtext_add("Target is: " + player.Name);
 						ScripCuRunning1 = "Target is:";
 						ScripCuRunning1.append(player.Name);
 						DO::DoAction_VS_Player_action_Direct(player, OFF_ACT::Vs_player_attack_route);
 					}
 					else {
-						cout << "NO Target!" << endl;
+						DebugImGui.Debugtext_add("NO Target!");
 						ScripCuRunning1 = "NO Target!";
 					}
 					ME::RandomSleep2(2500, 4250, 12000);
@@ -404,13 +406,13 @@ void FFA_fighter() {
 					ScripCuRunning1 = "Attack other players.";
 					AllObject player = Playerfilter(Players);
 					if (player.TileX > 0) {
-						cout << "Target is: " << player.Name << endl;
+						DebugImGui.Debugtext_add("Target is: " + player.Name);
 						ScripCuRunning1 = "Target is:";
 						ScripCuRunning1.append(player.Name);
 						DO::DoAction_VS_Player_action_Direct(player, OFF_ACT::Vs_player_attack_route);
 					}
 					else {
-						cout << "NO Target!" << endl;
+						DebugImGui.Debugtext_add("NO Target!");
 						ScripCuRunning1 = "NO Target!";
 					}
 					ME::RandomSleep2(2500, 4250, 12000);
@@ -464,13 +466,13 @@ void FFA_fighter() {
 					ScripCuRunning1 = "Attack other players.";
 					AllObject player = Playerfilter(Players);
 					if (player.TileX > 0) {
-						cout << "Target is: " << player.Name << endl;
+						DebugImGui.Debugtext_add("Target is: " + player.Name);
 						ScripCuRunning1 = "Target is:";
 						ScripCuRunning1.append(player.Name);
 						DO::DoAction_VS_Player_action_Direct(player, OFF_ACT::Vs_player_attack_route);
 					}
 					else {
-						cout << "NO Target!" << endl;
+						DebugImGui.Debugtext_add("NO Target!");
 						ScripCuRunning1 = "NO Target!";
 					}
 					ME::RandomSleep2(2500, 4250, 12000);

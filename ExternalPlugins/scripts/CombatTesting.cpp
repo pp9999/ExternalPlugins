@@ -224,16 +224,19 @@ static void ScriptPaint() {
 			Push_rare_drops();
 			loadup = true;
 			IG::load_AskNPCs(NPC_folder);
-			cout << dec << "NPCs loaded:" << ask_npcready.size() << endl;
+			console_text << dec << "NPCs loaded:" << ask_npcready.size() << endl;
+			DebugImGui.Debugtext_addstream();
 			if (ask_npcready.size() > 0) {
 				setting_folder = ask_npcready[0];
 			}
 			area = IG::LoadIntSetting(setting_folder, setting_list, 0);
 			ask_int = area;
 			IGArea.int_value = area;
-			cout << dec << "Range:" << area << endl;
+			console_text << dec << "Range:" << area << endl;
+			DebugImGui.Debugtext_addstream();
 			IG::load_AskGr(setting_folder);
-			cout << dec << "Grounditems loaded:" << ask_list_Gr_ids_text.size() << endl;
+			console_text << dec << "Grounditems loaded:" << ask_list_Gr_ids_text.size() << endl;
+			DebugImGui.Debugtext_addstream();
 			IG::load_AskGr_note(setting_folder);
 			IG::load_AskGr_alch(setting_folder);
 			IG::load_AskGr_drop(setting_folder);
@@ -439,15 +442,15 @@ void CombatTesting() {
 
 	//get//check abilities, those that give no feedback/cooldown
 	Abilitybar DeflectMagic = MEX::GetABs_name("Deflect Magic");
-	if (DeflectMagic.id == 0) { cout << "Ability: Deflect Magic :not found" << endl; }
+	if (DeflectMagic.id == 0) { DebugImGui.Debugtext_add("Ability: Deflect Magic : not found"); }
 	Abilitybar DeflectMelee = MEX::GetABs_name("Deflect Melee");
-	if (DeflectMelee.id == 0) { cout << "Ability: Deflect Melee :not found" << endl; }
+	if (DeflectMelee.id == 0) { DebugImGui.Debugtext_add("Ability: Deflect Melee :not found"); }
 	Abilitybar DeflectMissiles = MEX::GetABs_name("Deflect Missiles");
-	if (DeflectMissiles.id == 0) { cout << "Ability: Deflect Missiles :not found" << endl; }
+	if (DeflectMissiles.id == 0) { DebugImGui.Debugtext_add("Ability: Deflect Missiles :not found"); }
 	Abilitybar SoulSplit = MEX::GetABs_name("Soul Split");
-	if (SoulSplit.id == 0) { cout << "Ability: Soul Split :not found" << endl; }
+	if (SoulSplit.id == 0) { DebugImGui.Debugtext_add("Ability: Soul Split :not found"); }
 	Abilitybar EatFood = MEX::GetABs_name("Eat Food");
-	if (EatFood.id == 0) { cout << "Ability: Eat Food :not found" << endl; }
+	if (EatFood.id == 0) { DebugImGui.Debugtext_add("Ability: Eat Food :not found"); }
 
 	int target_healt = 0;
 	fake_mouse_do = true;
@@ -457,10 +460,6 @@ void CombatTesting() {
 	Sleep(1000);
 
 	while (LoopyLoop) {
-
-		DebugImGui.Debugtext_add("Combat running");
-		//console_text << "Combat2";
-		//DebugImGui.Debugtext_addstream();
 
 		//randoms
 		DO::RandomEvents();
@@ -479,7 +478,7 @@ void CombatTesting() {
 				int notepaper = 30372;
 				if (ME::InvItemFound(notepaper)) {
 					if (ME::Math_ValueEquals(notepaper, Note_ids_int)) {
-						cout << "U fool, world is gona implode nows;S" << endl;
+						DebugImGui.Debugtext_add("U fool, world is gona implode nows;S");
 						bool_note = false;
 						LoopyLoop = false;
 						continue;
@@ -495,7 +494,7 @@ void CombatTesting() {
 				else {
 					failure_rate++;
 					if (failure_rate > 5) { failure_rate = 0; bool_note = false; }
-					cout << "No notepaper" << endl;
+					DebugImGui.Debugtext_add("No notepaper");
 				}
 			}
 			if (bool_alch && !Alch_ids_int.empty()) {
@@ -512,13 +511,13 @@ void CombatTesting() {
 						else {
 							failure_rate++;
 							if (failure_rate > 5) { failure_rate = 0; bool_alch = false; }
-							cout << "No alch" << endl;
+							DebugImGui.Debugtext_add("No alch");
 						}
 					}
 					else {
 						failure_rate++;
 						if (failure_rate > 5) { failure_rate = 0; bool_alch = false; }
-						cout << "Wrong spellbook" << endl;
+						DebugImGui.Debugtext_add("Wrong spellbook");
 					}
 				}
 			}
@@ -589,7 +588,7 @@ void CombatTesting() {
 				failure_rate++;
 				if (failure_rate > 5) { failure_rate = 0; Silent_Use_quickprays = true; }
 				if (!Silent_Use_quickprays) {
-					cout << "No pray pots" << endl;
+					DebugImGui.Debugtext_add("No pray pots");
 				}
 			}
 		}
@@ -603,7 +602,7 @@ void CombatTesting() {
 					ScripCuRunning1 = "Eatspace";
 					DO::DoAction_Ability_Direct(ab, 1, OFF_ACT::GeneralInterface_route);
 					done = true;
-					cout << "Eatspace" << endl;
+					DebugImGui.Debugtext_add("Eatspace");
 					ME::RandomSleep2(860, 550, 900);
 				}
 				if (!done) {
@@ -658,19 +657,19 @@ void CombatTesting() {
 			if (Health_precentage < 35 + ME::Math_RandomNumber(35)) {
 				Abilitybar ab = MEX::GetABs_name("Eat Food");
 				if (ab.id == 0) {
-					cout << "No Eat Food: at ability bar?" << endl;
+					DebugImGui.Debugtext_add("No Eat Food: at ability bar?");
 				}
 				if (ab.enabled) {
 					ScripCuRunning1 = "Eat";
 					DO::DoAction_Ability_Direct(ab, 1, OFF_ACT::GeneralInterface_route);
-					cout << "Eat" << endl;
+					DebugImGui.Debugtext_add("Eat");
 					ME::RandomSleep2(860, 550, 900);
 				}
 				else {
 					failure_rate++;
 					if (failure_rate > 5) { failure_rate = 0; Silent_Eat_foods = true; }
 					if (!Silent_Eat_foods) {
-						cout << "No foods" << endl;
+						DebugImGui.Debugtext_add("No foods");
 					}
 				}
 			}
@@ -680,7 +679,8 @@ void CombatTesting() {
 		bool Healthok = false;
 		if (Health_precentage < 30) {
 			ScripCuRunning1 = "Teleport?";
-			cout << "Healtcritical:teleport?: "<< Health_precentage << endl;
+			console_text << "Healtcritical:teleport?: "<< Health_precentage << endl;
+			DebugImGui.Debugtext_addstream();
 			vector<int>Ground_List{};
 			if (Pickup_D) {
 				Ground_List = ask_list_Gr_ids_int;
@@ -742,7 +742,7 @@ void CombatTesting() {
 			combat_check++;
 		}
 		if (combat_check > 200) {
-			cout << "CombatTesting:no combat?" << endl;
+			DebugImGui.Debugtext_add("CombatTesting:no combat?");
 			vector<int>Ground_List{};
 			if (Pickup_D) {
 				Ground_List = ask_list_Gr_ids_int;
@@ -770,7 +770,8 @@ void CombatTesting() {
 				if (ask_npcready.front().size() > 1 && ME::LocalPlayer_IsInCombat_()) {
 					if (ask_npcready.front().compare(ME::Local_PlayerInterActingWith_str(5)) != 0) {
 						if (DO::DoAction_NPC_str(42, OFF_ACT::AttackNPC_route, { ask_npcready.front() }, area, 1, 99)) {
-							cout << "CombatTesting:switch to: " << ask_npcready.front() << endl;
+							console_text << "CombatTesting:switch to: " << ask_npcready.front() << endl;
+							DebugImGui.Debugtext_addstream();
 							done = true;
 							ME::RandomSleep2(150, 550, 900);
 						}

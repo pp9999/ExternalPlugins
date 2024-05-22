@@ -623,7 +623,7 @@ void HerblawTest() {
 				break;
 			}
 		}
-		if (item1 == 0) { cout << "No fruits" << endl; LoopyLoop = false; }
+		if (item1 == 0) { DebugImGui.Debugtext_add("No fruits"); LoopyLoop = false; }
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -638,8 +638,8 @@ void HerblawTest() {
 
 		ME::RandomSleep2(1500, 4050, 12000);
 
-		if (loopprotect2 > 5) { if (scriptdebug) { cout << "can't open bank" << endl; }LoopyLoop = false; continue; }
-		if (loopprotect1 > 5) { if (scriptdebug) { cout << "can't mix" << endl; }LoopyLoop = false; continue; }
+		if (loopprotect2 > 5) { if (scriptdebug) { DebugImGui.Debugtext_add("can't open bank"); }LoopyLoop = false; continue; }
+		if (loopprotect1 > 5) { if (scriptdebug) { DebugImGui.Debugtext_add("can't mix"); }LoopyLoop = false; continue; }
 
 
 		if (!ME::CheckAnim(120)) {
@@ -650,18 +650,18 @@ void HerblawTest() {
 					if (oneslotitem) { loopprotect1 = 0; }
 					loopprotect2 = 0;
 					if (mixbyhandonly) {
-						if (scriptdebug) { cout << "mix herbs manually" << endl; }
+						if (scriptdebug) { DebugImGui.Debugtext_add("mix herbs manually"); }
 						MixHerbsManually(item1);
 					}
 					else
 					{
 						if (MEX::DoPortables(89770, "Mix")) {
 							ScripCuRunning2 = "Mix herbs";
-							if (scriptdebug) { cout << "mix herbs port" << endl; }
+							if (scriptdebug) { DebugImGui.Debugtext_add("mix herbs port"); }
 						}
 						else {
 							if (mixbyhand) {
-								if (scriptdebug) { cout << "mix herbs, port not found" << endl; }
+								if (scriptdebug) { DebugImGui.Debugtext_add("mix herbs, port not found"); }
 								MixHerbsManually(item1);
 							}
 						}
@@ -669,9 +669,9 @@ void HerblawTest() {
 				}
 				else {
 					loopprotect2++;
-					if (oneslotitem) { cout << "Out of item?" << endl; LoopyLoop = false; continue;}
+					if (oneslotitem) { DebugImGui.Debugtext_add("Out of item?"); LoopyLoop = false; continue;}
 					loopprotect1 = 0;
-					if (scriptdebug) { cout << "No stuff, trying to open bank" << endl; }
+					if (scriptdebug) { DebugImGui.Debugtext_add("No stuff, trying to open bank"); }
 					vector <int> count_array = MEX::OpenBankChest_am(79036, '1',{ item1,item2,item3,item4,item5,item6,item7 }, except_size);
 					if (!count_array.empty()) {
 						if (!start_count_done) {
@@ -681,7 +681,7 @@ void HerblawTest() {
 						if (end_limit > 0) {
 							if (count_array.front() < starting_amount - end_limit) {
 								LoopyLoop = false;
-								cout << "Reached limit" << endl;
+								DebugImGui.Debugtext_add("Reached limit");
 								break;
 							}
 						}
@@ -695,7 +695,7 @@ void HerblawTest() {
 						if (end_limit > 0) {
 							if (count_array2.front() < starting_amount - end_limit) {
 								LoopyLoop = false;
-								cout << "Reached limit" << endl;
+								DebugImGui.Debugtext_add("Reached limit");
 								break;
 							}
 						}
@@ -704,7 +704,7 @@ void HerblawTest() {
 			}
 			else {
 				ScripCuRunning1 = "Inventory not open";
-				if (scriptdebug) { cout << "Inventory not open" << endl; }
+				if (scriptdebug) { DebugImGui.Debugtext_add("Inventory not open"); }
 			}
 		}
 	}

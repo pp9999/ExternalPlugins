@@ -22,7 +22,7 @@ static int totalGained;
 static bool RandomEvents() {
 	std::vector <AllObject> F_obj = ME::GetAllObjArrayInteract({ 19884, 26022, 27228, 27297, 28411, 30599, 15451, 18204 }, 20, { 1 });
 	if (!F_obj.empty()) {
-		std::cout << "Random event object detected: trying to click" << std::endl;
+		DebugImGui.Debugtext_add("Random event object detected: trying to click");
 		//if(ME::Math_AO_ValueEqualsArr({18204,18205,19884,26022,27228,27297,28411,30599 }, F_obj)) {//if seperation is needed
 		if (DO::DoAction_NPC__Direct(0x29, OFF_ACT::InteractNPC_route, F_obj.front())) {
 			ME::RandomSleep2(1500, 4050, 12000);
@@ -129,8 +129,9 @@ void AutoDivination() {
 				ScripCuRunning1 = "Catching energy";
 				EnrichedSpring = ME::GetAllObjArrayInteract_str({ "Enriched" }, 40, { 1 });
 				RegularSpring = ME::GetAllObjArrayInteract_str({ "spring","wisp" }, 40, { 1 });
-				std::cout <<"Reg" << RegularSpring.size() << endl;
-				std::cout <<"Enriched" << EnrichedSpring.size() << endl;
+				console_text <<"Reg" << RegularSpring.size() << endl;
+				console_text <<"Enriched" << EnrichedSpring.size() << endl;
+				DebugImGui.Debugtext_addstream();
 				if (!EnrichedSpring.empty()) {
 					Sleep(300 + rand() % 300);
 					DO::DoAction_NPC__Direct(0xc8, OFF_ACT::InteractNPC_route, EnrichedSpring.front());
@@ -138,7 +139,8 @@ void AutoDivination() {
 				}
 				else {
 					RegularSpring = ME::GetAllObjArrayInteract_str({ "spring","wisp" }, 40, { 1 });
-					std::cout << RegularSpring.size() << endl;
+					console_text << RegularSpring.size() << endl;
+					DebugImGui.Debugtext_addstream();
 					if (!RegularSpring.empty()) {
 						Sleep(300 + rand() % 300);
 						DO::DoAction_NPC__Direct(0xc8, OFF_ACT::InteractNPC_route, RegularSpring.front());

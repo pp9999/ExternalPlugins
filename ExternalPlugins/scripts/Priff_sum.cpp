@@ -3,7 +3,6 @@
 #include "ScriptLoader.h"
 
 using std::string;
-using std::cout;
 using std::endl;
 
 //make a loopy script
@@ -41,8 +40,9 @@ void Priff_summ() {
 			ScripCuRunning1 = "Needed stuff in inventory <------";
 			//safety
 				safecounter1++;
-				cout << "Infuse try: " << safecounter1 << endl;
-				if (safecounter1 > 11) { cout << "Can't infuse stuff" << endl; break; }
+				console_text << "Infuse try: " << safecounter1 << endl;
+				DebugImGui.Debugtext_addstream();
+				if (safecounter1 > 11) { DebugImGui.Debugtext_add("Can't infuse stuff"); break; }
 				safecounter2 = 0;
 			//status:needed stuff in inventory
 			//close enough to obelisk
@@ -62,8 +62,9 @@ void Priff_summ() {
 			ScripCuRunning1 = "No stuff <------";
 			//safety
 				safecounter2++;
-				cout << "Bank try: " << safecounter2 << endl;
-				if (safecounter2 > 11) { cout << "Can't bank" << endl; break; }
+				console_text << "Bank try: " << safecounter2 << endl;
+				DebugImGui.Debugtext_addstream();
+				if (safecounter2 > 11) { DebugImGui.Debugtext_add("Can't bank"); break; }
 				safecounter1 = 0;
 			//status:inventory has not enough needed items
 			//close to bank

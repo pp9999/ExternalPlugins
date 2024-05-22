@@ -2,8 +2,6 @@
 #include "API.h"
 #include "ScriptLoader.h"
 using std::string;
-using std::cout;
-using std::endl;
 
 //make a loopy script
 void Auto_deploy_prot_traps() {
@@ -23,14 +21,14 @@ void Auto_deploy_prot_traps() {
 	while (LoopyLoop) {
 		MEX::RandomEvents();
 
-		if (loopprotect1 > 3) { cout << "Found nothing to click." << endl; LoopyLoop = false; break; }
-		if (loopprotect2 > 5) { cout << "Found no deploy animation." << endl; LoopyLoop = false; break; }
+		if (loopprotect1 > 3) { DebugImGui.Debugtext_add("Found nothing to click."); LoopyLoop = false; break; }
+		if (loopprotect2 > 5) { DebugImGui.Debugtext_add("Found no deploy animation."); LoopyLoop = false; break; }
 
 		ME::RandomSleep2(800, 4050, 12000);
 
 		//random mousemovement
 		if (ME::Math_RandomNumber(1000) > 940) {
-			cout << "idle" << endl;
+			DebugImGui.Debugtext_add("idle");
 			ME::PIdle1();
 		}
 

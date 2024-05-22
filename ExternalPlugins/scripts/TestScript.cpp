@@ -13,6 +13,6 @@ void GE_Example() {
 
 void TestScript() {
 	while (LoopyLoop && !Endall) {
-		cout << "Heloooo" << endl;
+		DebugImGui.Debugtext_add("Heloooo");
 	}
 }

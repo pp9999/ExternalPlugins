@@ -64,8 +64,8 @@ public:
 	LIBRARY_API void Debugtext_clear();
 };
 //debug text for DebugImGui.Debugtext_addstream();
-inline Debug_Text DebugImGui;
-//LIBRARY_API inline std::stringstream console_text;
+LIBRARY_API Debug_Text DebugImGui;
+LIBRARY_API std::stringstream console_text;
 
 /// <summary>
 /// Should only be used for rendering ImGui
@@ -914,9 +914,6 @@ namespace ME {
 
 	//use keyboard, keymod is shift or alt
 	LIBRARY_API void KeyboardPress3(unsigned char codes, int keymod = 0);
-
-	//
-	LIBRARY_API void ccout(int color, std::string tex);
 
 	//
 	LIBRARY_API bool InvRandom_(int action);

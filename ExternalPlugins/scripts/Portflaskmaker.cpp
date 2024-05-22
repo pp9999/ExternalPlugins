@@ -3,8 +3,6 @@
 #include "ScriptLoader.h"
 
 using std::string;
-using std::cout;
-using std::endl;
 
 //make a loopy script
 void Portflaskmaker() {
@@ -49,7 +47,7 @@ void Portflaskmaker() {
 
 		//random mousemovement
 		if (ME::Math_RandomNumber(1000) > 970) {
-			cout << "idle" << endl;
+			DebugImGui.Debugtext_add("idle");
 			ME::PIdle1();
 		}
 
@@ -60,7 +58,7 @@ void Portflaskmaker() {
 			//sandstone// for loading preset 1
 			if (script == 1) {
 				//if (!ME::CheckAnim(50)) {
-					if (Superglass.id == 0) { cout << "Superglass hotkey not found" << endl; break; }
+				if (Superglass.id == 0) { DebugImGui.Debugtext_add("Superglass hotkey not found"); break; }
 
 					if (ME::InvItemcount_(crystal_sand) > 0 || ME::InvItemcount_(robust_sand) > 0) {
 						loopprotect1++;
@@ -129,7 +127,7 @@ void Portflaskmaker() {
 						ScripCuRunning1 = "Looking for bank(Lumby)";
 						if (currentflask == 0) {
 							ScripCuRunning1 = "Checking";
-							cout << "Check preset" << endl;
+							DebugImGui.Debugtext_add("Check preset");
 							MEX::OpenBankChest(79036, '1');
 							MEX::OpenBankChest(125115, '1');
 						}
@@ -140,7 +138,7 @@ void Portflaskmaker() {
 							}
 							else {
 								loopprotect3++;
-								cout << "Item was not found in bank" << endl;
+								DebugImGui.Debugtext_add("Item was not found in bank");
 								if (loopprotect3 > 3) { LoopyLoop = false; break; }
 							}
 							if (MEX::OpenBankChest(125115, '1', { currentflask })) {
@@ -149,7 +147,7 @@ void Portflaskmaker() {
 							}
 							else {
 								loopprotect3++;
-								cout << "Item was not found in bank" << endl;
+								DebugImGui.Debugtext_add("Item was not found in bank");
 								if (loopprotect3 > 3) { LoopyLoop = false; break; }
 							}
 						}
