@@ -458,6 +458,10 @@ void CombatTesting() {
 
 	while (LoopyLoop) {
 
+		DebugImGui.Debugtext_add("Combat running");
+		//console_text << "Combat2";
+		//DebugImGui.Debugtext_addstream();
+
 		//randoms
 		DO::RandomEvents();
 

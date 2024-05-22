@@ -4,7 +4,7 @@
 #include <vector>
 #include <bitset>
 #include <functional>
-
+#include <sstream>
 #include "Structs.h"
 //#include "RenderEvent.h"
 #include "imgui.h"
@@ -52,6 +52,20 @@ LIBRARY_API uint64_t LocalPlayer;
 //or get the context first
 LIBRARY_API ImGuiContext* GetImGuiContext();
 LIBRARY_API void SubscribeToRenderEvent(std::function<void()> function);
+
+
+class Debug_Text {
+public:
+	//add to debug. 0 = default, 1 = info, 2 = warn, 3 error, 4 critical fail
+	LIBRARY_API void Debugtext_add(std::string text, int warn_level = 0, bool disable_print_time = false);
+	//add from gobal then clear global. 0 = default, 1 = info, 2 = warn, 3 error, 4 critical fail
+	LIBRARY_API void Debugtext_addstream(int warn_level = 0, bool disable_print_time = false);
+	//clear debug
+	LIBRARY_API void Debugtext_clear();
+};
+//debug text for DebugImGui.Debugtext_addstream();
+inline Debug_Text DebugImGui;
+//LIBRARY_API inline std::stringstream console_text;
 
 /// <summary>
 /// Should only be used for rendering ImGui

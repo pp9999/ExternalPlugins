@@ -2,9 +2,18 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include "imgui.h"
+#include <functional>
 #include <ctime>
+#include <sstream>
+#include "imgui.h"
+
 //we store data
+
+//debug box strings
+struct debugbox {
+	std::string text{};//text
+	int warn_level = 0;
+};
 
 // ground items info
 struct GroundItems {
@@ -17,9 +26,10 @@ struct GroundItems {
 struct ReturnText {
 	std::string Name{};
 	int Nr = 0;
+	int listNr = 0;
 
 	ReturnText() = default;
-	ReturnText(std::string _Name, int _Nr) : Name{ _Name }, Nr{ _Nr } {}
+	ReturnText(std::string _Name, int _Nr, int _listNr) : Name{ _Name }, Nr{ _Nr }, listNr{ _listNr } {}
 };
 
 //
@@ -99,6 +109,7 @@ struct GateTileStruct {
 	std::vector<FFPOINT> gatetiles_doors{};//door tiles, for finding room
 	std::vector<FFPOINT> gatetiles_npclocation{};//aprox wander, for finding room
 	int npc = 0;//id, for finding room
+	int npc_wander_area = 0;//for finding room
 	int special_item_use = 0;//use item on object puzzle
 	int special_object_use = 0;//use item on object puzzle, if alone also just click
 	int special_object_offset = 0;//use item on object puzzle, action offset
@@ -348,6 +359,22 @@ struct Skill {
 	Skill(int _idx = -1, int _id = -1, std::string _name = "", int _vb = -1, int _xp = -1, int _level = -1, int _boostedLevel = -1) :
 		interfaceIdx{ _idx }, id{ _id }, name{ _name }, vb{ _vb }, xp{ _xp }, level{ _level }, boostedLevel{ _boostedLevel } {}
 };
+
+struct EventData {
+	std::string name;
+	std::string text;
+	std::time_t timestamp1;
+	std::string timestamp2;
+	int timestamp3;
+	int skillIndex;
+	std::string skillName;
+	int exp;
+	int ItemID;
+	int ItemAM;
+};
+
+//for structs and includes that need some structs to be present from previous
+
 //input and output
 struct IG_answer {
 	std::string box_name{};//name
@@ -369,17 +396,10 @@ struct IG_answer {
 	std::vector<std::string>stringsArr{};
 	bool temp_created = false;//temp created by function by new, delete by new
 };
-
-struct EventData {
-	std::string name;
-	std::string text;
-	std::time_t timestamp1;
-	std::string timestamp2;
-	int timestamp3;
-	int skillIndex;
-	std::string skillName;
-	int exp;
-	int ItemID;
-	int ItemAM;
+//for ImGui processing
+struct ImGui_loop_info {
+	std::function<bool()> function_info{};//pointer + packed arguments
+	std::string unique_identifier{};//write or generate
+	bool resident = false;//permanent until removed
+	IG_answer* dat = nullptr;
 };
-
