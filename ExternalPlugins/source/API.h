@@ -1701,11 +1701,13 @@ namespace MEX {
 	//
 	LIBRARY_API bool OpenBankChest(int chest, int distance, std::string option, std::string sidetext);
 
-	//
-	LIBRARY_API bool WaitUntilMovingEnds();
+	LIBRARY_API bool WaitUntilMovingEnds(int howmanyticks = 0, int checks = 0);
 
 	// waits until player is done
-	LIBRARY_API bool WaitUntilMovingandAnimEnds();
+	LIBRARY_API bool WaitUntilMovingandAnimEnds(int howmanyticks = 0, int checks = 0);
+
+	//waits until player is done
+	LIBRARY_API bool WaitUntilMovingandAnimandCombatEnds(int howmanyticks = 0, int checks = 0);
 
 	//
 	LIBRARY_API bool DoPortables(int port, std::string checktext);
