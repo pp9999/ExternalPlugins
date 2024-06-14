@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include "../source/API.h"
 using namespace std;

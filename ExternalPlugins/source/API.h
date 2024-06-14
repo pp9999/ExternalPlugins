@@ -8,8 +8,12 @@
 #include "Structs.h"
 //#include "RenderEvent.h"
 #include "imgui.h"
+#include "curl.h"
+#include "json.hpp"
+#include "json_fwd.hpp"
 
 using namespace std;
+using json = nlohmann::json;
 
 #ifdef LIBRARY_EXPORTS
 #    define LIBRARY_API __declspec(dllexport)
@@ -47,6 +51,10 @@ LIBRARY_API std::vector<int> Drop_ids_int;
 
 //localPlayer
 LIBRARY_API uint64_t LocalPlayer;
+//
+LIBRARY_API GateTileStruct GetGatefromlist(std::string name);
+LIBRARY_API void reset_gates();
+LIBRARY_API std::vector<GateTileStruct> gatetiles;
 
 //ImGui use the premade function to subscribe a function to the render loop
 //or get the context first
@@ -426,7 +434,7 @@ namespace ME {
 	LIBRARY_API FFPOINT TilesToPixelsWF(WPOINT xy);
 
 	//read as string, constant size
-	LIBRARY_API LIBRARY_API std::string ReadChars(uint64_t SummPointer, int readsize = 250);
+	LIBRARY_API std::string ReadChars(uint64_t SummPointer, int readsize = 250);
 
 	//read as std::string, attempt to read short ones
 	LIBRARY_API std::string ReadCharsLimit(uint64_t SummPointer, int limit);
@@ -763,7 +771,7 @@ namespace ME {
 	LIBRARY_API bool SideTextEq(std::vector<std::string> text);
 
 	//active obj 0, npc 1, player 2, grounditems 3, pro 5, decor 12
-	LIBRARY_API std::vector<AllObject> ReadAllObjectsArray(vector< int> types, vector< int> ids, vector< std::string> name_strings = {});
+	LIBRARY_API std::vector<AllObject> ReadAllObjectsArray(vector< int> types = { -1 }, vector< int> ids = { -1 }, vector< std::string> name_strings = {});
 
 	//Reads inventory content and stores it in: InvArr
 	LIBRARY_API std::vector<IInfo> ReadInvArrays33();

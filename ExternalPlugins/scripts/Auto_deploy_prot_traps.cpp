@@ -1,6 +1,7 @@
 #pragma once
 #include "API.h"
 #include "ScriptLoader.h"
+
 using std::string;
 
 //make a loopy script

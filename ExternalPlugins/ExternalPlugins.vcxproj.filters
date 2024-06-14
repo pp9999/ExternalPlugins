@@ -21,6 +21,9 @@
     <Filter Include="Libs\imgui">
       <UniqueIdentifier>{4d9021b0-b913-4a51-ba5e-3480743fba5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Libs\JSON">
+      <UniqueIdentifier>{60485efa-7e92-4419-bac5-049f7ef96d52}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main\framework.h">
@@ -71,6 +74,18 @@
     <ClInclude Include="source\GrandExchange.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="libcurl\include\curl\curl.h">
+      <Filter>Libs\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="json-develop\single_include\nlohmann\json.hpp">
+      <Filter>Libs\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="json-develop\single_include\nlohmann\json_fwd.hpp">
+      <Filter>Libs\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="source\HttpClient.h">
+      <Filter>Libs\JSON</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scripts\TestScript.cpp">
@@ -118,6 +133,15 @@
     <ClCompile Include="scripts\Auto_deploy_prot_traps.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="HttpClient.cpp">
+      <Filter>Libs\JSON</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Priff_sum.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Clue_inclue.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ExternalPlugins.rc">
@@ -134,6 +158,9 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\MemoryError.lib">
+      <Filter>Libs</Filter>
+    </Library>
+    <Library Include="libcurl\lib\libcurl_a.lib">
       <Filter>Libs</Filter>
     </Library>
   </ItemGroup>

@@ -1,4 +1,5 @@
-﻿#include "API.h"
+﻿#pragma once
+#include "API.h"
 #include <filesystem>
 #include <iostream>
 
