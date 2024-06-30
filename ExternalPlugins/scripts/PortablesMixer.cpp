@@ -672,7 +672,7 @@ void HerblawTest() {
 					if (oneslotitem) { DebugImGui.Debugtext_add("Out of item?"); LoopyLoop = false; continue;}
 					loopprotect1 = 0;
 					if (scriptdebug) { DebugImGui.Debugtext_add("No stuff, trying to open bank"); }
-					vector <int> count_array = MEX::OpenBankChest_am(79036, '1',{ item1,item2,item3,item4,item5,item6,item7 }, except_size);
+					vector <uint64_t> count_array = MEX::OpenBankChest_am(79036, '1',{ item1,item2,item3,item4,item5,item6,item7 }, except_size);
 					if (!count_array.empty()) {
 						if (!start_count_done) {
 							start_count_done = true;
@@ -686,7 +686,7 @@ void HerblawTest() {
 							}
 						}
 					}
-					vector <int> count_array2 = MEX::OpenBankChest_am(125115, '1', { item1,item2,item3,item4,item5,item6,item7 }, except_size);
+					vector <uint64_t> count_array2 = MEX::OpenBankChest_am(125115, '1', { item1,item2,item3,item4,item5,item6,item7 }, except_size);
 					if (!count_array2.empty()) {
 						if (!start_count_done) {
 							start_count_done = true;

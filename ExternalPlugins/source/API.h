@@ -106,7 +106,9 @@ namespace OFF_ACT {
 	LIBRARY_API int GeneralInterface_route2;//take bob/store bob/drop items
 	LIBRARY_API int Vs_player_follow_route;//old
 	LIBRARY_API int Vs_player_trade_route;//old
+	LIBRARY_API int Vs_player_examine_route;
 	LIBRARY_API int Special_walk_route;//Bladed dive teleport
+	LIBRARY_API int GeneralObject_route_useon;//on fire
 
 };
 
@@ -275,6 +277,8 @@ namespace DO {
 	LIBRARY_API bool DoAction_Glider(int tele_loc);
 	//use fairy ring
 	LIBRARY_API bool DoAction_Fairy(std::string tele_loc);
+	//use quiver 4
+	LIBRARY_API bool DoAction_Quiver4(std::string tele_loc);
 	//try to walk to the gate, then walk trough
 	LIBRARY_API bool Walk_gates(std::vector<GateTileStruct> gatetilesss, int walk_distance);
 
@@ -296,46 +300,6 @@ namespace ME {
 
 	// copy bytes to created buffer, only if RS_Injected
 	LIBRARY_API void Mem_read(uint64_t Address, int size, BYTE* buffer);
-
-	//Simple memory reading
-	template<typename T>
-	T Mem_read(uint64_t Address, int offset = 0);
-
-	//Simple memory reading
-	template<typename T>
-	T Mem_read(__int64 Address, int offset = 0);
-
-	//Simple memory reading
-	template<typename T>
-	T Mem_read(void* Address, int offset = 0);
-
-	//Simple memory reading
-	template<typename T>
-	T Mem_read(BYTE* pointer, int offset = 0);
-
-	//Simple memory writing
-	template<typename T>
-	bool Mem_write(char* Address, int offset, T Value);
-
-	//Simple memory writing
-	template<typename T>
-	bool Mem_write(int8_t* Address, int offset, T Value);
-
-	//Simple memory writing
-	template<typename T>
-	bool Mem_write(int16_t* Address, int offset, T Value);
-
-	//Simple memory writing
-	template<typename T>
-	bool Mem_write(BYTE* Address, int offset, T Value);
-
-	//Simple memory writing
-	template<typename T>
-	bool Mem_write(void* Address, int offset, T Value);
-
-	//Simple memory writing
-	template<typename T>
-	bool Mem_write(uint64_t Address, int offset, T Value);
 
 	//Copy data from Data_Address to To_Address
 	LIBRARY_API bool Mem_COPY(void* To_Address, void* Data_Address, int size);
@@ -371,7 +335,10 @@ namespace ME {
 namespace ME {
 
 	//local time
-	LIBRARY_API std::tm* PrintLocalTime(bool print);
+	LIBRARY_API std::tm PrintLocalTime(bool print);
+
+	//get time/date
+	LIBRARY_API string GetStringTime();
 
 	//Read All object to ImVec2 pixels
 	LIBRARY_API ImVec2 ReadObjectCoordinatesImVec2(uint64_t mem_location);
@@ -652,6 +619,9 @@ namespace ME {
 	//look for specific objects, return all data, check if action text is there
 	LIBRARY_API std::vector<AllObject> GetAllObjArrayInteract(std::vector<int> obj, int maxdistance, vector< int> types);
 
+	//look for specific objects, return all data
+	LIBRARY_API std::vector<AllObject> GetAllObjArray_str(std::vector<std::string> obj, int maxdistance, vector<int> types);
+
 	//
 	LIBRARY_API std::vector<AllObject> GetAllObjArrayInteract_str(std::vector<std::string> obj, int maxdistance, vector< int> types);
 
@@ -747,7 +717,7 @@ namespace ME {
 	LIBRARY_API int InvItemcount_String(std::string item);
 
 	//finds inv item stack size
-	LIBRARY_API int InvItemcountStack_String(std::string item);
+	LIBRARY_API uint64_t InvItemcountStack_String(std::string item);
 
 	//
 	LIBRARY_API std::vector<int> InvItemcount_(std::vector<int> item);
@@ -844,6 +814,9 @@ namespace ME {
 
 	//
 	LIBRARY_API int GetAddreline_();
+
+	//
+	LIBRARY_API float GetAdrenalineFromInterface();
 
 	//
 	LIBRARY_API bool Compare2874Status(int status, bool debug = false);
@@ -1025,6 +998,9 @@ namespace ME {
 	//string filter
 	LIBRARY_API std::string Filter(std::string to, std::string remove);
 
+	//
+	LIBRARY_API std::string Filter22(std::string to, std::string remove);
+
 	//add space
 	LIBRARY_API std::string Filter2(std::string to, std::string remove);
 
@@ -1095,10 +1071,7 @@ namespace ME {
 	LIBRARY_API std::vector<bool> Math_AO_ValueEqualsArr2(const std::vector<int>& arrayof1, const std::vector<AllObject>& arrayof2);
 
 	//random number generator thing
-	LIBRARY_API double Math_RandomNumber(double number);
-
-	//random number generator thing
-	LIBRARY_API float Math_RandomNumber(float number);
+	LIBRARY_API uint64_t Math_RandomNumber(uint64_t number);
 
 	//random number generator thing
 	LIBRARY_API int Math_RandomNumber(int number);
@@ -1373,9 +1346,6 @@ namespace ME {
 	template<typename T>
 	LIBRARY_API std::vector<bool> Math_ValueEqualsArr(const std::vector<T>& arrayof1, const std::vector<T>& arrayof2);
 
-	//dial-up, use hex! In case of messup delete C:\Users\USER\AppData\Local\Jagex folder
-	LIBRARY_API void Call_settings_function(int setting_id, int setting_value);
-
 	//read exepacked pointer, move exactly to the right byte
 	LIBRARY_API uint64_t EXEPackedPointer(std::string instruct, uint64_t from_instruction_start);
 
@@ -1383,6 +1353,8 @@ namespace ME {
 
 //General functions. Extra
 namespace MEX {
+	//Set max idle time in minutes
+	LIBRARY_API void SetMaxIdleTime(int time);
 
 	//Looks if localplayer is member
 	LIBRARY_API bool IsMember();
@@ -1391,7 +1363,7 @@ namespace MEX {
 	LIBRARY_API bool Teleport_Option(std::string text);
 
 	// Get the current tick number.
-	LIBRARY_API uint32_t Get_tick();
+	LIBRARY_API int Get_tick();
 
 	// Sleeps until a specified amount of ticks have passed.
 	LIBRARY_API void Sleep_tick(int count);
@@ -1403,21 +1375,10 @@ namespace MEX {
 	LIBRARY_API void Tick_counter_init();
 
 	// Checks if the given number of ticks have passed since Tick_counter_init() was called last.
-	LIBRARY_API bool Ticks_passed(uint64_t count);
+	LIBRARY_API bool Ticks_passed(int count);
 
 	//count them
 	LIBRARY_API bool Count_ticks(int count);
-
-	class TickTimer {
-	public:
-		TickTimer() : timer_start(MEX::Get_tick()) {}
-		uint32_t start() { return timer_start; }
-		uint32_t ticks_elapsed() { return MEX::Get_tick() - timer_start; }
-		void reset() { timer_start = MEX::Get_tick(); }
-		void sleep_for(uint64_t count) { MEX::Sleep_tick(count); }
-	private:
-		uint32_t timer_start;
-	};
 
 	//
 	LIBRARY_API bool isAbilityAvailable(const std::string& ability_name);
@@ -1521,15 +1482,15 @@ namespace MEX {
 	LIBRARY_API bool BankClickItem(int id, int mouse);
 
 	//
-	LIBRARY_API int BankGetItemStack(int item);
+	LIBRARY_API uint64_t BankGetItemStack(int item);
 	//
-	LIBRARY_API int BankGetItemStack(std::string itemname);
+	LIBRARY_API uint64_t BankGetItemStack(std::string itemname);
 	// Finds objects by name
 	LIBRARY_API std::vector<AllObject> FindObject_str(std::vector<std::string> obj, int maxdistance);
 	//
 	size_t writeFunction(void* ptr, size_t size, size_t nmemb, std::string* data);
 	//
-	LIBRARY_API std::vector<int> BankGetItemStack(std::vector<int> item);
+	LIBRARY_API std::vector<uint64_t> BankGetItemStack(std::vector<int> item);
 
 	//for buffbar, convert all time to seconds
 	LIBRARY_API int Bbar_ConvToSeconds(Bbar bar);
@@ -1592,7 +1553,7 @@ namespace MEX {
 	LIBRARY_API bool BankClickItem_InvChoose(int id, std::string choose_text);
 
 	//
-	LIBRARY_API int BankGetItemStack_Inv(int item);
+	LIBRARY_API uint64_t BankGetItemStack_Inv(int item);
 
 	//
 	LIBRARY_API bool Wait_Timer(int wait_time, int random_time, bool reset);
@@ -1704,11 +1665,12 @@ namespace MEX {
 	LIBRARY_API bool OpenBankChest(int chest, char pushnumber, std::vector<int> content_ids);
 
 	//open bank, check content, push number(or dont if any them are 0), return found amounts, amount left is size
-	LIBRARY_API std::vector<int> OpenBankChest_am(int chest, char pushnumber, std::vector<int> content_ids, int size);
+	LIBRARY_API std::vector<uint64_t> OpenBankChest_am(int chest, char pushnumber, std::vector<int> content_ids, int size);
 
 	//
 	LIBRARY_API bool OpenBankChest(int chest, int distance, std::string option, std::string sidetext);
 
+	//
 	LIBRARY_API bool WaitUntilMovingEnds(int howmanyticks = 0, int checks = 0);
 
 	// waits until player is done
@@ -1767,6 +1729,7 @@ namespace IG {
 
 	//Push onto que, Draw simple circle but calculate from raw tile to pixels, to make it more dynamic
 	LIBRARY_API void DrawCircleRawTile(bool permanent, IG_answer* return_);
+	LIBRARY_API void DrawTable(std::vector<std::vector<std::string>> tableData);
 
 	//track entity, needs local memory spot
 	LIBRARY_API void DrawCircleEntity(bool permanent, IG_answer* return_);
@@ -1806,7 +1769,7 @@ namespace IG {
 
 	//push text1, turn manually off again
 	LIBRARY_API void DrawTextInput(bool permanent, IG_answer* return_);
-
+	
 	//progress bar - uses radius as progress amount
 	LIBRARY_API void DrawProgressBar(bool permanent, IG_answer* return_);
 
@@ -1837,6 +1800,17 @@ namespace IG {
 	//Ask, global 
 	LIBRARY_API bool DrawAskGr_drop(bool permanent, std::string foldername, std::string listname = "gr_list_drop.txt");
 
+};
+
+class TickTimer {
+public:
+	TickTimer() : timer_start(MEX::Get_tick()) {}
+	int start() const { return timer_start; }
+	int ticks_elapsed() const { return MEX::Get_tick() - timer_start; }
+	void reset() { timer_start = MEX::Get_tick(); }
+	void sleep_for(int count) { MEX::Sleep_tick(count); }
+private:
+	int timer_start;
 };
 
 template bool LIBRARY_API ME::Math_ValueEquals(int value, const std::vector<int>& arrayof);
