@@ -157,10 +157,10 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="libs\MemoryError.lib">
+    <Library Include="libcurl\lib\libcurl_a.lib">
       <Filter>Libs</Filter>
     </Library>
-    <Library Include="libcurl\lib\libcurl_a.lib">
+    <Library Include="libs\XInput1_4.lib">
       <Filter>Libs</Filter>
     </Library>
   </ItemGroup>
