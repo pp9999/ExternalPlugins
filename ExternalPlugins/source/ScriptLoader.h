@@ -10,7 +10,7 @@ struct ScriptFunction {
 /// Main script functions
 /// </summary>
 
-void ClueTest_loop();
+//void ClueTest_loop();
 void Priff_summ();
 void Auto_deploy_prot_traps();
 void CombatTesting();
