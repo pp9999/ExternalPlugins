@@ -6,7 +6,6 @@
 #include <functional>
 #include <sstream>
 #include "Structs.h"
-//#include "RenderEvent.h"
 #include "imgui.h"
 #include "curl.h"
 #include "json.hpp"
@@ -22,6 +21,7 @@ using json = nlohmann::json;
 #endif
 
 #include "GrandExchange.h"
+#include <mutex>
 
 //Extra exports
 //Main loop
@@ -1353,6 +1353,18 @@ namespace ME {
 
 //General functions. Extra
 namespace MEX {
+	//find minimap icon
+	LIBRARY_API AllObject GetMapIcon(int Id);
+
+	//find minimap icon at tile
+	LIBRARY_API AllObject GetMapIconTile(int Id, int x, int y);
+
+	//find minimap icons
+	LIBRARY_API vector<AllObject> GetMapIcons(int Id);
+
+	//get minimap icons for lua
+	LIBRARY_API vector<AllObject> GetALLMapIcons();
+
 	//Set max idle time in minutes
 	LIBRARY_API void SetMaxIdleTime(int time);
 
@@ -1528,8 +1540,14 @@ namespace MEX {
 	//get ability based on name, check 3 first bars, returns first found
 	LIBRARY_API Abilitybar GetABs_name(std::string ability_name);
 
-	//get ability based on name, check 3 first bars, returns first found, returns same order as in
-	LIBRARY_API std::vector<Abilitybar> GetABs_name(std::vector<std::string> ability_name);
+	//get ability by id, checks bars
+	LIBRARY_API Abilitybar GetABs_id(int ability_id);
+
+	//get ability based on name, check first bars, returns first found, returns same order as in
+	LIBRARY_API std::vector<Abilitybar> GetABs_names(std::vector<std::string> ability_name);
+
+	//get ability bar by ids
+	LIBRARY_API std::vector<Abilitybar> GetABs_ids(std::vector<int> ability_ids);
 
 	//
 	LIBRARY_API WPOINT BankGetLimits();

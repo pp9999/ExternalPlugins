@@ -70,7 +70,7 @@ static int getGainedCount(int start, int current) {
 	return current - start;
 }
 //UI Example
-void  onDraw() {
+static void  onDraw() {
 	ImGui::Begin("AutoDivination", 0);
 	ImGui::Text("Timer %s", getTime());
 	if (ImGui::BeginChild("Artistic", ImVec2(800, 500), true)) {
