@@ -403,3 +403,14 @@ struct ImGui_loop_info {
 	bool resident = false;//permanent until removed
 	IG_answer* dat = nullptr;
 };
+
+struct Target_data {
+	std::string Target_Name{};//name
+	int Hit_percent = 0;//
+	int Cmb_lv = 0;//
+	int Hitpoints = 0;//
+	std::vector<int> Buff_stack;//All buffs/debuffs
+	Target_data() = default;
+	Target_data(std::string _Target_Name, int _Hit_percent, int _Cmb_lv, int _Hitpoints, std::vector<int> _Buff_stack) :
+		Target_Name{ _Target_Name }, Hit_percent{ _Hit_percent }, Cmb_lv{ _Cmb_lv }, Hitpoints{ _Hitpoints }, Buff_stack{ _Buff_stack } {}
+};

@@ -114,6 +114,12 @@ namespace OFF_ACT {
 
 //detour related functions
 namespace DO {
+	//Find icon on minimap then Action to move to minimap icon
+	LIBRARY_API bool DoAction_Icon(int Id);
+	//Find icon on minimap at tile then Action to move to minimap icon
+	LIBRARY_API bool DoAction_IconTile(int Id, int x, int y);
+	//do previously found minimap icon
+	LIBRARY_API bool DoAction_IconObj(AllObject obj);
 	//Push action, move to a tile
 	LIBRARY_API bool DoAction_Tile(WPOINT normal_tile);
 	//Tile click
@@ -214,10 +220,6 @@ namespace DO {
 	LIBRARY_API bool DoAction_Ability_Direct(Abilitybar Ab, int m_action, int offset);
 	//for bladed dive
 	LIBRARY_API bool DoAction_BD_Tile(WPOINT normal_tile);
-	//for bladed dive OBJECT
-	LIBRARY_API bool DoAction_BD_Obj(int perma_object_id, int maxdistance = 50);
-	//for bladed dive NPC
-	LIBRARY_API bool DoAction_BD_NPC(int perma_object_id, int maxdistance = 50);
 	//for Dive
 	LIBRARY_API bool DoAction_Dive_Tile(WPOINT normal_tile);
 	//Check directions, give directions, surge
@@ -355,6 +357,12 @@ namespace ME {
 	//Calculation between 2 objects
 	LIBRARY_API float Math_DistanceA(AllObject object1, AllObject object2);
 
+	//To that huge global number
+	LIBRARY_API FFPOINT Math_TileToGlobal(FFPOINT entity);
+
+	//Make that huge number to just tile 
+	LIBRARY_API FFPOINT Math_TileToLocal(FFPOINT entity);
+
 	//Calculate future pixels or tiles based on angle
 	LIBRARY_API vector<WPOINT> Math_AnglePixels(WPOINT input, float angle, int steps);
 
@@ -404,7 +412,10 @@ namespace ME {
 	LIBRARY_API std::string ReadChars(uint64_t SummPointer, int readsize = 250);
 
 	//read as std::string, attempt to read short ones
-	LIBRARY_API std::string ReadCharsLimit(uint64_t SummPointer, int limit);
+	LIBRARY_API std::string ReadCharsLimit(uint64_t SummPointer, int limit = 255);
+
+	//check
+	std::string ReadCharsLimitColor(uint64_t SummPointer);
 
 	//read as pointer, some pointers have specific build on interfaces, lets try that
 	LIBRARY_API std::string ReadCharsLimitPointer(uint64_t SummPointer, int limit = 255);
@@ -548,7 +559,7 @@ namespace ME {
 	LIBRARY_API bool IsSelectingItem();
 
 	//
-	LIBRARY_API Choption ReadTargetInfo();
+	LIBRARY_API Target_data ReadTargetInfo(bool ForceRefresh = false);
 
 	//
 	LIBRARY_API AllObject ReadLpInteracting();
@@ -1025,6 +1036,8 @@ namespace ME {
 	//
 	LIBRARY_API bool Math_Compare_AllObject_dist_smallest(AllObject SummAddress1, AllObject SummAddress2);
 
+	LIBRARY_API bool Math_Compare_AllObject_id_smallest(AllObject SummAddress1, AllObject SummAddress2);
+
 	////sorting function, clue
 	LIBRARY_API bool Math_Compare_clue_biggest(clue_arrow SummAddress1, clue_arrow SummAddress2);
 
@@ -1172,6 +1185,9 @@ namespace ME {
 
 	//
 	LIBRARY_API bool FindRandomPlayers_(std::string option, bool usename);
+
+	//
+	LIBRARY_API int Local_PlayerInterActingWith_UID();
 
 	//find other player vs local, return closest
 	LIBRARY_API AllObject OtherPlayerIsInteractingWithVSLocal();
@@ -1549,6 +1565,9 @@ namespace MEX {
 	//get ability bar by ids
 	LIBRARY_API std::vector<Abilitybar> GetABs_ids(std::vector<int> ability_ids);
 
+	//any ids mathcing gets slot, in order of input, for potions, super_restore = { 3024,3026,3028,3030 }
+	LIBRARY_API Abilitybar GetAB_ids(std::vector<int> ability_ids);
+
 	//
 	LIBRARY_API WPOINT BankGetLimits();
 
@@ -1787,7 +1806,7 @@ namespace IG {
 
 	//push text1, turn manually off again
 	LIBRARY_API void DrawTextInput(bool permanent, IG_answer* return_);
-	
+
 	//progress bar - uses radius as progress amount
 	LIBRARY_API void DrawProgressBar(bool permanent, IG_answer* return_);
 
@@ -1817,6 +1836,11 @@ namespace IG {
 
 	//Ask, global 
 	LIBRARY_API bool DrawAskGr_drop(bool permanent, std::string foldername, std::string listname = "gr_list_drop.txt");
+
+	LIBRARY_API void DrawLine(bool permanent, IG_answer* return_);
+
+	//delete all
+	LIBRARY_API void DeleteIG_answers();
 
 };
 
