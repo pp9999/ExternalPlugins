@@ -218,10 +218,8 @@ namespace DO {
 	LIBRARY_API bool DoAction_Ability(std::string name, int m_action, int offset);
 	//from struct Abilitybar to action
 	LIBRARY_API bool DoAction_Ability_Direct(Abilitybar Ab, int m_action, int offset);
-	//for bladed dive
-	LIBRARY_API bool DoAction_BD_Tile(WPOINT normal_tile);
 	//for Dive
-	LIBRARY_API bool DoAction_Dive_Tile(WPOINT normal_tile);
+	LIBRARY_API bool DoAction_Dive_Tile(WPOINT normal_tile, int sleep = 0);
 	//Check directions, give directions, surge
 	LIBRARY_API bool DoAction_Surge_Tile(WPOINT normal_tile, int errorrange);
 	//choose chat box option, Whole words/sentences only
@@ -333,8 +331,32 @@ namespace ME {
 
 };
 
-//Raw functions
 namespace ME {
+
+
+	//Truncate to .
+	LIBRARY_API FFPOINT Math_FlattenFloat(FFPOINT FL);
+
+	//Truncate to .
+	LIBRARY_API vector<FFPOINT> Math_FlattenFloatArray(vector<FFPOINT> FL);
+
+	//check free tiles, order in distance from localplayer
+	LIBRARY_API vector<FFPOINT> Math_FreeTiles(vector<FFPOINT> OccupiedTiles, int TileSize, int AreaRange);
+
+	//check free tiles, order in distance from Tile
+	vector<FFPOINT> Math_FreeTilesTile(FFPOINT orig, vector<FFPOINT> OccupiedTiles, int TileSize, int AreaRange);
+
+	//Sort AObjects array by distance from tile, return AllObject
+	LIBRARY_API vector<AllObject> Math_SortAODistFromA(FFPOINT Tile, vector<AllObject> AllMain);
+
+	//Sort AObjects array by distance variable, return AllObject
+	LIBRARY_API vector<AllObject> Math_SortAODistA(vector<AllObject> AllMain);
+
+	//Sort AObjects array by distance from tile
+	LIBRARY_API AllObject Math_SortAODistFrom(FFPOINT Tile, vector<AllObject> AllMain);
+
+	//Sort AObjects array by distance variable
+	LIBRARY_API AllObject Math_SortAODist(vector<AllObject> AllMain);
 
 	//local time
 	LIBRARY_API std::tm PrintLocalTime(bool print);
@@ -772,6 +794,9 @@ namespace ME {
 	//Get container single target
 	LIBRARY_API inv_Container_struct Container_Get_s(int cont_id, int item_id);
 
+	//Get container get whole list of items
+	LIBRARY_API std::vector<inv_Container_struct> Container_Get_AllItems(int cont_id, std::vector<int> item_ids);
+
 	//Check if container is there
 	LIBRARY_API bool Container_Get_Check(int cont_id);
 
@@ -1046,6 +1071,9 @@ namespace ME {
 
 	//sorting function, find smallest
 	LIBRARY_API bool Math_Compare_smallest_FF(FFPOINT Summ1, FFPOINT Summ2);
+
+	//sorting function, floating points by distance
+	LIBRARY_API bool Math_Compare_smallest_FF_dist(FFPOINT point1, FFPOINT point2);
 
 	//sorting function, find biggest
 	LIBRARY_API bool Math_Compare_biggest(int Summ1, int Summ2);
@@ -1369,6 +1397,12 @@ namespace ME {
 
 //General functions. Extra
 namespace MEX {
+
+
+
+	//Color with DC
+	LIBRARY_API vector<int> ReadDCColor(int at_x, int at_y);
+
 	//find minimap icon
 	LIBRARY_API AllObject GetMapIcon(int Id);
 
@@ -1842,6 +1876,74 @@ namespace IG {
 	//delete all
 	LIBRARY_API void DeleteIG_answers();
 
+};
+
+struct Inventory {
+	struct InventoryItem
+	{
+		int id;
+		std::string name;
+		int amount;
+		int slot;
+		int xp = -1;
+	};
+
+	// Function declarations
+	// bools
+	LIBRARY_API bool IsOpen();
+	LIBRARY_API bool IsFull();
+	LIBRARY_API bool IsEmpty();
+	LIBRARY_API bool IsItemSelected();
+	LIBRARY_API bool Contains(int itemID);
+
+	// ints
+	LIBRARY_API int FreeSpaces();
+	LIBRARY_API int GetItemXp(int itemID);
+	LIBRARY_API int GetItemXp(const std::string& itemName);
+	LIBRARY_API int GetItemAmount(int itemID);
+	LIBRARY_API int GetItemAmount(const std::string& itemName);
+
+	// actions, which are bools and will return true if successful
+	// eat
+	LIBRARY_API bool Eat(int itemID);
+	LIBRARY_API bool Eat(const std::string& itemName);
+	// consume - maybe for potions?
+	//LIBRARY_API bool Consume(int itemID);	
+	// drop
+	LIBRARY_API bool Drop(int itemID);
+	LIBRARY_API bool Drop(const std::string& itemName);
+	// use
+	LIBRARY_API bool Use(int itemID);
+	LIBRARY_API bool Use(const std::string& itemName);
+	// note
+	LIBRARY_API bool NoteItem(int itemID);
+	LIBRARY_API bool NoteItem(const std::string& itemName);
+	// rub
+	LIBRARY_API bool Rub(int itemID);
+	LIBRARY_API bool Rub(const std::string& itemName);
+	// equip
+	LIBRARY_API bool Equip(int itemID);
+	LIBRARY_API bool Equip(const std::string& itemName);
+	//use one item on another
+	LIBRARY_API bool UseItemOnItem(int itemID, int targetID);
+	LIBRARY_API bool UseItemOnItem(int itemID, const std::string& targetName);
+	LIBRARY_API bool UseItemOnItem(const std::string& itemName, int targetID);
+	LIBRARY_API bool UseItemOnItem(const std::string& itemName, const std::string& targetName);
+
+	// get item data
+	LIBRARY_API std::vector<InventoryItem> GetItem(int itemID);
+	LIBRARY_API std::vector<InventoryItem> GetItems();
+	LIBRARY_API InventoryItem GetSlotData(int slot);
+
+	// doaction
+	LIBRARY_API bool DoAction(int itemID, int action, int offset);
+	LIBRARY_API bool DoAction(const std::string& itemName, int action, int offset);
+
+	// Helper function to convert IInfo to InventoryItem
+	InventoryItem ConvertToInventoryItem(const IInfo& item);
+
+	// Helper function to remove < > tags from name
+	static std::string RemoveTags(const std::string& input);
 };
 
 class TickTimer {
