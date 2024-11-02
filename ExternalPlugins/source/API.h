@@ -281,7 +281,8 @@ namespace DO {
 	LIBRARY_API bool DoAction_Quiver4(std::string tele_loc);
 	//try to walk to the gate, then walk trough
 	LIBRARY_API bool Walk_gates(std::vector<GateTileStruct> gatetilesss, int walk_distance);
-
+	// Loot from window using lootwindow keyboard shortcut
+	LIBRARY_API bool DoAction_Loot_k(std::vector<int> ids, int maxdistance, int max_item_count, unsigned char keycode, int keymod);
 };
 
 namespace ME {
@@ -495,6 +496,9 @@ namespace ME {
 
 	//Gets Interface name by dynamic
 	LIBRARY_API std::string GetINamebyDynamic(InterfaceComp5 ids);
+
+	//Gets Interface by dynamic, look for main box, highest to lower complexity
+	LIBRARY_API InterfaceComp5test GetInterfaceByDynamicClosest(InterfaceComp5 ids);
 
 	//Gets Interface by string id from I_Madness,
 	LIBRARY_API std::vector<InterfaceComp5> GetIbystringstatic(std::string text);
