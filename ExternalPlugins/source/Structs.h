@@ -221,12 +221,11 @@ struct InterfaceComp5 {
 	int id1 = 0;
 	int id2 = 0;
 	int id3 = 0;
-	int id4 = 0;
 	uint64_t memloc = 0;
 
 	InterfaceComp5() = default;
-	InterfaceComp5(int _id1, int _id2, int _id3, int _id4, uint64_t _memloc) :
-		id1{ _id1 }, id2{ _id2 }, id3{ _id3 }, id4{ _id4 }, memloc{ _memloc } {}
+	InterfaceComp5(int _id1, int _id2, int _id3, uint64_t _memloc) :
+		id1{ _id1 }, id2{ _id2 }, id3{ _id3 }, memloc{ _memloc } {}
 };
 
 /// <summary>
@@ -243,8 +242,7 @@ struct IInfo {
 	int id1 = 0;
 	int id2 = 0;
 	int id3 = 0;
-	int id4 = 0;
-	InterfaceComp5 firstIF = { 0,0,0,0,0 };
+	InterfaceComp5 firstIF = { 0,0,0,0 };
 	int itemid1 = 0;
 	uint64_t itemid1_size = 0;
 	int itemid2 = 0;

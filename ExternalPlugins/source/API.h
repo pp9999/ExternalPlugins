@@ -33,7 +33,7 @@ LIBRARY_API std::string ScripCuRunning0;
 LIBRARY_API std::string ScripCuRunning1;
 LIBRARY_API std::string ScripCuRunning2;
 //LIBRARY_API bool DrawLogs;
-//LIBRARY_API bool DrawTrackedSkills;
+LIBRARY_API bool DrawTrackedSkills;
 LIBRARY_API bool fake_mouse_do;//generate fake reports
 LIBRARY_API bool OSRS_Injected;//osrs injected
 LIBRARY_API bool RS_Injected;
