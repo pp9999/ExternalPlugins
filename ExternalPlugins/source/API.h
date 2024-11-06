@@ -190,6 +190,8 @@ namespace DO {
 	LIBRARY_API bool DoAction_Interface(int command1, int command2, int command3, int interface1, int interface2, int interface3, int offset, int pixel_x = 0, int pixel_y = 0);
 	//Push LootWindow interaction
 	LIBRARY_API bool DoAction_Loot_w(std::vector<int> ids, int maxdistance = 20, FFPOINT tile = { 0,0,0 }, float radius = 20.f);
+	// Loot from window using lootwindow keyboard shortcut
+	LIBRARY_API bool DoAction_Loot_k(std::vector<int> ids, int maxdistance, int max_item_count, unsigned char keycode, int keymod);
 	//Loot window:loot all button
 	LIBRARY_API bool DoAction_LootAll_Button();
 	//Loot window:closeX
@@ -281,8 +283,7 @@ namespace DO {
 	LIBRARY_API bool DoAction_Quiver4(std::string tele_loc);
 	//try to walk to the gate, then walk trough
 	LIBRARY_API bool Walk_gates(std::vector<GateTileStruct> gatetilesss, int walk_distance);
-	// Loot from window using lootwindow keyboard shortcut
-	LIBRARY_API bool DoAction_Loot_k(std::vector<int> ids, int maxdistance, int max_item_count, unsigned char keycode, int keymod);
+
 };
 
 namespace ME {
@@ -332,6 +333,7 @@ namespace ME {
 
 };
 
+//Raw functions
 namespace ME {
 
 
@@ -498,13 +500,16 @@ namespace ME {
 	LIBRARY_API std::string GetINamebyDynamic(InterfaceComp5 ids);
 
 	//Gets Interface by dynamic, look for main box, highest to lower complexity
-	LIBRARY_API InterfaceComp5test GetInterfaceByDynamicClosest(InterfaceComp5 ids);
+	InterfaceComp5test GetInterfaceByDynamicClosest(InterfaceComp5 ids);
 
 	//Gets Interface by string id from I_Madness,
 	LIBRARY_API std::vector<InterfaceComp5> GetIbystringstatic(std::string text);
 
 	//Gets data. x, y, index, 0, memory
 	LIBRARY_API InterfaceComp5 GetIMadnessOP(InterfaceComp5 mad);
+
+	//Gets and adds data from 2 interfaces, return pixels, for fm
+	vector<WPOINT> InterfacesCombineFullFM(InterfaceComp5 mad);
 
 	//compares text in dialog, if not found returns 0, else returns number to press
 	LIBRARY_API char Dialog_Option(std::string text);

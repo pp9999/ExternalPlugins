@@ -4,10 +4,17 @@
 #include <vector>
 #include <functional>
 #include <ctime>
-#include <sstream>
-#include "imgui.h"
+#include <imgui.h>
+
 
 //we store data
+
+struct SPLAT {
+	int Type = 0;
+	int Amount = 0;
+	uint64_t Time = 0;
+	int Slot = 0;
+};
 
 //debug box strings
 struct debugbox {
@@ -67,6 +74,9 @@ struct FFPOINT {
 
 	FFPOINT() = default;
 	FFPOINT(float _x, float _y, float _z) : x{ _x }, y{ _y }, z{ _z } {}
+
+	FFPOINT(const ImVec2& f) : x(f.x), y(f.y) {}
+	operator ImVec2() const { return ImVec2(x, y); }
 };
 
 // for coordinates, int size point
@@ -77,9 +87,11 @@ struct WPOINT {
 
 	WPOINT() = default;
 	WPOINT(int _x, int _y, int _z) : x{ _x }, y{ _y }, z{ _z } {}
-	WPOINT(const FFPOINT& f) : x(f.x), y(f.y), z(f.z) {}
 
-	operator FFPOINT() const { return FFPOINT(x, y, z); }
+	WPOINT(const FFPOINT& f) : x(static_cast<int>(f.x)), y(static_cast<int>(f.y)), z(static_cast<int>(f.z)) {}
+	operator FFPOINT() const { return FFPOINT(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)); }
+	WPOINT(const ImVec2& f) : x(static_cast<int>(f.x)), y(static_cast<int>(f.y)) {}
+	operator ImVec2() const { return ImVec2(static_cast<float>(x), static_cast<float>(y)); }
 };
 
 // for 4 edges, int size
@@ -273,6 +285,8 @@ struct InterfaceComp5test {
 	std::string Name{};
 	InterfaceComp5 IDdynamic{};
 	std::vector<InterfaceComp5> IDstatics{};
+	int x_offset = 0;
+	int y_offset = 0;
 };
 
 //
@@ -348,7 +362,7 @@ struct Abilitybar {
 struct Skill {
 	int interfaceIdx;
 	int id;
-	std::string name;
+	std::string name{};
 	int vb;
 	int xp;
 	int level;
@@ -359,16 +373,17 @@ struct Skill {
 };
 
 struct EventData {
-	std::string name;
-	std::string text;
-	std::time_t timestamp1;
-	std::string timestamp2;
+	std::string name{};
+	std::string text{};
+	std::time_t timestamp1{};
+	std::string timestamp2{};
 	int timestamp3;
 	int skillIndex;
-	std::string skillName;
+	std::string skillName{};
 	int exp;
 	int ItemID;
 	int ItemAM;
+	std::string chat{};
 };
 
 //for structs and includes that need some structs to be present from previous
