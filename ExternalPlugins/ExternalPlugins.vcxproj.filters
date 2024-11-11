@@ -139,9 +139,6 @@
     <ClCompile Include="scripts\Priff_sum.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Clue_inclue.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ExternalPlugins.rc">
