@@ -21,6 +21,9 @@ using json = nlohmann::json;
 #endif
 
 #include "GrandExchange.h"
+#include "Equipment.h"
+#include "Interact.h"
+#include "Inventory.h"
 #include <mutex>
 
 //Extra exports
@@ -89,7 +92,6 @@ namespace OFF_ACT {
 	LIBRARY_API int GeneralObject_route1;//General action on some objects
 	LIBRARY_API int GeneralObject_route2;//General action on some objects
 	LIBRARY_API int GeneralObject_route3;//General action on some objects
-	LIBRARY_API int BladedDiveNPC_route;//do bladed dive to npc
 	LIBRARY_API int InteractNPC_route;//default interact npc 0x29 
 	LIBRARY_API int AttackNPC_route;//default attack npc
 	LIBRARY_API int InteractNPC_route2;//second option
@@ -100,15 +102,15 @@ namespace OFF_ACT {
 	LIBRARY_API int Bladed_interface_route;//special interface route for bladed dive, familiar attack, use in inventory..items that can actualy do something use GeneralInterface_route
 	LIBRARY_API int GeneralInterface_Choose_option;//option in chat box
 	LIBRARY_API int GeneralInterface_Choose_jewelry;//teleport jewelry//chat box?
-	LIBRARY_API int Vs_player_attack_route;//
 	LIBRARY_API int GeneralInterface_route;//General action on lootwindow, also most interfaces
 	LIBRARY_API int GeneralInterface_route1;//note stuff, use item on empty inv spot, use item on item
+	LIBRARY_API int GeneralObject_route_useon;//right click > use fire
 	LIBRARY_API int GeneralInterface_route2;//take bob/store bob/drop items
-	LIBRARY_API int Vs_player_follow_route;//old
-	LIBRARY_API int Vs_player_trade_route;//old
+	LIBRARY_API int Vs_player_attack_route;//
+	LIBRARY_API int Vs_player_follow_route;//
+	LIBRARY_API int Vs_player_trade_route;//
 	LIBRARY_API int Vs_player_examine_route;
 	LIBRARY_API int Special_walk_route;//Bladed dive teleport
-	LIBRARY_API int GeneralObject_route_useon;//on fire
 
 };
 
@@ -1887,73 +1889,6 @@ namespace IG {
 
 };
 
-struct Inventory {
-	struct InventoryItem
-	{
-		int id;
-		std::string name;
-		int amount;
-		int slot;
-		int xp = -1;
-	};
-
-	// Function declarations
-	// bools
-	LIBRARY_API bool IsOpen();
-	LIBRARY_API bool IsFull();
-	LIBRARY_API bool IsEmpty();
-	LIBRARY_API bool IsItemSelected();
-	LIBRARY_API bool Contains(int itemID);
-
-	// ints
-	LIBRARY_API int FreeSpaces();
-	LIBRARY_API int GetItemXp(int itemID);
-	LIBRARY_API int GetItemXp(const std::string& itemName);
-	LIBRARY_API int GetItemAmount(int itemID);
-	LIBRARY_API int GetItemAmount(const std::string& itemName);
-
-	// actions, which are bools and will return true if successful
-	// eat
-	LIBRARY_API bool Eat(int itemID);
-	LIBRARY_API bool Eat(const std::string& itemName);
-	// consume - maybe for potions?
-	//LIBRARY_API bool Consume(int itemID);	
-	// drop
-	LIBRARY_API bool Drop(int itemID);
-	LIBRARY_API bool Drop(const std::string& itemName);
-	// use
-	LIBRARY_API bool Use(int itemID);
-	LIBRARY_API bool Use(const std::string& itemName);
-	// note
-	LIBRARY_API bool NoteItem(int itemID);
-	LIBRARY_API bool NoteItem(const std::string& itemName);
-	// rub
-	LIBRARY_API bool Rub(int itemID);
-	LIBRARY_API bool Rub(const std::string& itemName);
-	// equip
-	LIBRARY_API bool Equip(int itemID);
-	LIBRARY_API bool Equip(const std::string& itemName);
-	//use one item on another
-	LIBRARY_API bool UseItemOnItem(int itemID, int targetID);
-	LIBRARY_API bool UseItemOnItem(int itemID, const std::string& targetName);
-	LIBRARY_API bool UseItemOnItem(const std::string& itemName, int targetID);
-	LIBRARY_API bool UseItemOnItem(const std::string& itemName, const std::string& targetName);
-
-	// get item data
-	LIBRARY_API std::vector<InventoryItem> GetItem(int itemID);
-	LIBRARY_API std::vector<InventoryItem> GetItems();
-	LIBRARY_API InventoryItem GetSlotData(int slot);
-
-	// doaction
-	LIBRARY_API bool DoAction(int itemID, int action, int offset);
-	LIBRARY_API bool DoAction(const std::string& itemName, int action, int offset);
-
-	// Helper function to convert IInfo to InventoryItem
-	InventoryItem ConvertToInventoryItem(const IInfo& item);
-
-	// Helper function to remove < > tags from name
-	static std::string RemoveTags(const std::string& input);
-};
 
 class TickTimer {
 public:

@@ -24,6 +24,12 @@
     <Filter Include="Libs\JSON">
       <UniqueIdentifier>{60485efa-7e92-4419-bac5-049f7ef96d52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sol">
+      <UniqueIdentifier>{628c53fb-bf04-4738-aa9f-192107e79972}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{60d43702-a480-4071-afed-46d121513ef8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main\framework.h">
@@ -85,6 +91,336 @@
     </ClInclude>
     <ClInclude Include="source\HttpClient.h">
       <Filter>Libs\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Equipment.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Interact.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Inventory.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\src\lua.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\as_args.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\as_returns.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\assert.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\base_traits.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\bind_traits.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\bytecode.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\call.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\compatibility.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\config.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\coroutine.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\debug.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\demangle.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\deprecate.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\dump_handler.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\ebco.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\environment.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\epilogue.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\error.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\error_handler.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\forward.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\forward_detail.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\function.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\function_result.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\function_types.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\function_types_core.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\function_types_overloaded.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\function_types_stateful.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\function_types_stateless.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\function_types_templated.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\in_place.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\inheritance.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\load_result.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\lua_table.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\lua_value.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\make_reference.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\metatable.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\object.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\object_base.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\optional.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\optional_implementation.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\overload.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\packaged_coroutine.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\pairs_iterator.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\pointer_like.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\policies.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\prologue.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\property.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\protect.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\protected_function.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\protected_function_result.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\protected_handler.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\proxy_base.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\raii.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\reference.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\resolve.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\sol.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_check.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_check_get.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_check_get_qualified.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_check_get_unqualified.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_check_qualified.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_check_unqualified.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_core.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_field.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_get.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_get_qualified.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_get_unqualified.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_guard.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_iterator.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_pop.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_probe.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_proxy.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_proxy_base.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_push.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\stack_reference.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\state.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\state_handling.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\state_view.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\string_view.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\table.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\table_core.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\table_iterator.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\table_proxy.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\thread.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\tie.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\traits.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\trampoline.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\tuple.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\types.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\unicode.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\unique_usertype_traits.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\unsafe_function.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\unsafe_function_result.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\userdata.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\usertype.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\usertype_container.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\usertype_container_launch.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\usertype_core.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\usertype_proxy.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\usertype_storage.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\usertype_traits.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\variadic_args.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\variadic_results.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\version.hpp">
+      <Filter>sol</Filter>
+    </ClInclude>
+    <ClInclude Include="sol\sol\wrapper.hpp">
+      <Filter>sol</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -160,5 +496,10 @@
     <Library Include="libs\XInput1_4.lib">
       <Filter>Libs</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="sol\sol\LICENSE.txt">
+      <Filter>sol</Filter>
+    </Text>
   </ItemGroup>
 </Project>

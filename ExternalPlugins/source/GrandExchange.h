@@ -1,5 +1,3 @@
-#include <string>
-#include <vector>
 #ifndef GRAND_EXCHANGE_H
 #define GRAND_EXCHANGE_H
 
@@ -71,4 +69,4 @@ struct GrandExchange {
     LIBRARY_API bool PlaceOrder(ORDER_TYPE type, int itemId, const std::string& itemName, int price, int quantity);
 };
 
-#endif // GRAND_EXCHANGE_H
+#endif GRAND_EXCHANGE_H
