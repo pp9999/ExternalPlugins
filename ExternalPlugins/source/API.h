@@ -217,13 +217,15 @@ namespace DO {
 	//Push action, send commands to bank inventory, all safety checked, mostly
 	LIBRARY_API bool DoAction_Bank_Inv(int id, int m_action, int offset);
 	//check stuff before
-	LIBRARY_API bool DoAction_Ability_check(std::string name, int m_action, int offset, bool checkenabled, bool oncooldown);
+	LIBRARY_API bool DoAction_Ability_check(std::string name, int m_action, int offset, bool checkenabled, bool oncooldown, bool exact_match = false);
 	//find it on action bar 0-2,offset from interface debug
-	LIBRARY_API bool DoAction_Ability(std::string name, int m_action, int offset);
+	LIBRARY_API bool DoAction_Ability(std::string name, int m_action, int offset, bool exact_match = false);
 	//from struct Abilitybar to action
 	LIBRARY_API bool DoAction_Ability_Direct(Abilitybar Ab, int m_action, int offset);
 	//for Dive
 	LIBRARY_API bool DoAction_Dive_Tile(WPOINT normal_tile, int sleep = 0);
+	//for Bladed Dive
+	LIBRARY_API bool DoAction_BDive_Tile(WPOINT normal_tile, int sleep = 0);
 	//Check directions, give directions, surge
 	LIBRARY_API bool DoAction_Surge_Tile(WPOINT normal_tile, int errorrange);
 	//choose chat box option, Whole words/sentences only
@@ -1599,7 +1601,7 @@ namespace MEX {
 	LIBRARY_API Abilitybar GetAB_id(int bar_nr, int ability_id);
 
 	//get ability based on name, check 3 first bars, returns first found
-	LIBRARY_API Abilitybar GetABs_name(std::string ability_name);
+	LIBRARY_API Abilitybar GetABs_name(std::string ability_name, bool exact_match_only = false);
 
 	//get ability by id, checks bars
 	LIBRARY_API Abilitybar GetABs_id(int ability_id);
