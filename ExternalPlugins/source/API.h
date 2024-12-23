@@ -222,6 +222,8 @@ namespace DO {
 	LIBRARY_API bool DoAction_Ability(std::string name, int m_action, int offset, bool exact_match = false);
 	//from struct Abilitybar to action
 	LIBRARY_API bool DoAction_Ability_Direct(Abilitybar Ab, int m_action, int offset);
+	//Special walk. Dive from interface ab -> then this, do not use this with other dive functions!
+	LIBRARY_API bool DoAction_SpecialWalk(WPOINT normal_tile);
 	//for Dive
 	LIBRARY_API bool DoAction_Dive_Tile(WPOINT normal_tile, int sleep = 0);
 	//for Bladed Dive
@@ -661,6 +663,12 @@ namespace ME {
 
 	//look for specific objects, return all data 
 	LIBRARY_API std::vector<AllObject> GetAllObjArray(std::vector<int> obj, int maxdistance, vector< int> types);
+
+	//look for specific objects, return closest 
+	LIBRARY_API AllObject GetAllObjArrayFirst(std::vector<int> obj, int maxdistance, vector<int> types);
+
+	//look for specific objects at tile, return data, at tile
+	LIBRARY_API AllObject GetAllObjArrayFirstTile(std::vector<int> obj, int maxdistance, vector<int> types, WPOINT tile);
 
 	//look for specific objects, return all data, check if action text is there
 	LIBRARY_API std::vector<AllObject> GetAllObjArrayInteract(std::vector<int> obj, int maxdistance, vector< int> types);
@@ -1823,6 +1831,9 @@ namespace IG {
 
 	//Push onto que, Draw Text at static pixels
 	LIBRARY_API void DrawTextAt(bool permanent, IG_answer* return_);
+
+	//Push onto que, Draw Text at static pixels, with background 
+	LIBRARY_API void DrawTextAtBG(bool permanent, IG_answer* return_);
 
 	//Maybe save some settings, 20 slots
 	LIBRARY_API bool SaveIntSetting(std::string foldername, std::string name, BYTE slot, BYTE val);
