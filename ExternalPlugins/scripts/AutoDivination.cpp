@@ -83,7 +83,7 @@ static void  onDraw() {
 		ImGui::Text("^^^^^^^^^^^^");
 		ImGui::Text("     ||     ");
 	}
-
+	ImGui::EndChild();
 	ImGui::End();
 }
 
