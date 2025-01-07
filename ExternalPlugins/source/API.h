@@ -515,7 +515,7 @@ namespace ME {
 	LIBRARY_API InterfaceComp5 GetIMadnessOP(InterfaceComp5 mad);
 
 	//Gets and adds data from 2 interfaces, return pixels, for fm
-	vector<WPOINT> InterfacesCombineFullFM(InterfaceComp5 mad);
+	LIBRARY_API vector<WPOINT> InterfacesCombineFullFM(InterfaceComp5 mad);
 
 	//compares text in dialog, if not found returns 0, else returns number to press
 	LIBRARY_API char Dialog_Option(std::string text);
@@ -858,7 +858,7 @@ namespace ME {
 	LIBRARY_API std::bitset<32> VB_GetBits(int ID);
 
 	//
-	LIBRARY_API int VB_GetBit(int ID, int at, int FSarray = -1);
+	LIBRARY_API int VB_GetBit(int ID, int at);
 
 	//read varpbit directly
 	LIBRARY_API VB VB_ReadBits(VB bitaddr);
@@ -999,22 +999,22 @@ namespace ME {
 	LIBRARY_API bool ClickMapTile_2(POINT ItemCoord2);
 
 	//finds and reads varpbits. if params is -1 then it is ignored
-	LIBRARY_API VB VB_FindPSett(int id, int FSarray = -1, int levelsdeep = -1);
+	LIBRARY_API VB VB_FindPSett(int id);
 
-	//finds and reads varpbits. if params is -1 then it is ignored, go backwards 1,1 is always extended from 1,0 Recomended to set FSarray
-	LIBRARY_API VB VB_FindPSettinOrder(int id, int FSarray = -1);
+	//finds and reads varpbits.
+	LIBRARY_API VB VB_FindPSettinOrder(int id);
 
 	//
-	LIBRARY_API std::vector<bool> VB_FindPSett2(int id, int FSarray = -1);
+	LIBRARY_API std::vector<bool> VB_FindPSett2(int id);
 
 	//makes ints into bit arrays for displaying
 	LIBRARY_API std::string VB_IntToBit(int var);
 
 	//
-	LIBRARY_API int VB_FindPSett3int(int id, int spot_index, int FSarray = -1);
+	LIBRARY_API int VB_FindPSett3int(int id, int spot_index);
 
 	//
-	LIBRARY_API WPOINT VB_FindPSett3wpoint(int id, int spot_index1, int spot_index2, int FSarray = -1);
+	LIBRARY_API WPOINT VB_FindPSett3wpoint(int id, int spot_index1, int spot_index2);
 
 
 	//check if variable is between
