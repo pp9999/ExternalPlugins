@@ -78,7 +78,7 @@ static AllObject Playerfilter(vector <string> Players) {
 						}
 					}
 					//get stances
-					int stance = ME::Readint(AllMain[i].Mem + 0xF08);
+					int stance = ME::Readint(AllMain[i].Mem + 0xF48);//needs to be correct
 					if (CheckforOtherPlayerCombatthenAtt.box_ticked) {
 						if (stance > 2686 && stance < 2694) {
 							continue;
