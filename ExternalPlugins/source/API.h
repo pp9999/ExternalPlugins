@@ -800,6 +800,12 @@ namespace ME {
 	//Reads inventory content and stores it in: InvArr
 	LIBRARY_API std::vector<IInfo> ReadInvArrays33();
 
+	//Read that table that has all levels, in pairs of 29 so 58 in total
+	LIBRARY_API vector<int> GetSkillsTable();
+
+	//first original, +1 boosted
+	int GetSkillsTableSkill(int nr);
+
 	//Reads cont
 	LIBRARY_API std::vector<inv_Container> GetContainerSettings();
 
@@ -840,7 +846,13 @@ namespace ME {
 	LIBRARY_API std::bitset<32> VB_ToBitSet(int value);
 
 	//
-	LIBRARY_API std::bitset<32> VB_ModifyBitSet(std::bitset<32> set, int at, bool state);
+	LIBRARY_API bool CheckBooleanBit(int value, int pos);
+
+	//
+	LIBRARY_API bool CheckBooleanBits(int value, std::vector<int> pos);
+
+	//
+	LIBRARY_API std::vector<bool> GetBooleanBits(int value, std::vector<int> pos);
 
 	//
 	LIBRARY_API void VB_PrintBitsSet(std::bitset<32> to_print);
@@ -1419,8 +1431,6 @@ namespace ME {
 //General functions. Extra
 namespace MEX {
 
-
-
 	//Color with DC
 	LIBRARY_API vector<int> ReadDCColor(int at_x, int at_y);
 
@@ -1478,6 +1488,8 @@ namespace MEX {
 	//
 	LIBRARY_API void RandomEvents();
 
+	// Highlights the list of tiles passed ingame
+	LIBRARY_API void MarkTiles(std::vector<WPOINT> tiles);
 	//Get familiar name
 	LIBRARY_API std::string GetFamiliarName();
 

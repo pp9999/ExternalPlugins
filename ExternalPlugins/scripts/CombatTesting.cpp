@@ -641,12 +641,12 @@ void CombatTesting() {
 					if (DO::DoAction_Loot_w(Ground_List, 50, starttile, area)) {
 						ScripCuRunning1 = "Loot";
 					}
-					LoopyLoop = false;
-					DO::DoAction_Ability("Retreat Teleport", 1, OFF_ACT::GeneralInterface_route);
-					ME::RandomSleep2(8650, 550, 900);
-					DO::DoAction_Logout_mini();
-					ME::RandomSleep2(650, 550, 900);
-					DO::DoAction_then_lobby();
+					//LoopyLoop = false;
+					//DO::DoAction_Ability("Retreat Teleport", 1, OFF_ACT::GeneralInterface_route);
+					//ME::RandomSleep2(8650, 550, 900);
+					//DO::DoAction_Logout_mini();
+					//ME::RandomSleep2(650, 550, 900);
+					//DO::DoAction_then_lobby();
 					continue;
 				}
 			}
@@ -692,12 +692,12 @@ void CombatTesting() {
 			if (DO::DoAction_Loot_w(Ground_List, 50, starttile, area)) {
 				ScripCuRunning1 = "Loot";
 			}
-			LoopyLoop = false;
-			DO::DoAction_Ability("Retreat Teleport", 1, OFF_ACT::GeneralInterface_route);
-			ME::RandomSleep2(8650, 550, 900);
-			DO::DoAction_Logout_mini();
-			ME::RandomSleep2(650, 550, 900);
-			DO::DoAction_then_lobby();
+			//LoopyLoop = false;
+			//DO::DoAction_Ability("Retreat Teleport", 1, OFF_ACT::GeneralInterface_route);
+			//ME::RandomSleep2(8650, 550, 900);
+			//DO::DoAction_Logout_mini();
+			//ME::RandomSleep2(650, 550, 900);
+			//DO::DoAction_then_lobby();
 			continue;
 		}
 		else {
@@ -754,12 +754,12 @@ void CombatTesting() {
 			if (DO::DoAction_Loot_w(Ground_List, 50, starttile, area)) {
 				ScripCuRunning1 = "Loot";
 			}
-			LoopyLoop = false;
-			DO::DoAction_Ability("Retreat Teleport", 1, OFF_ACT::GeneralInterface_route);
-			ME::RandomSleep2(8650, 550, 900);
-			DO::DoAction_Logout_mini();
-			ME::RandomSleep2(650, 550, 900);
-			DO::DoAction_then_lobby();
+			//LoopyLoop = false;
+			//DO::DoAction_Ability("Retreat Teleport", 1, OFF_ACT::GeneralInterface_route);
+			//ME::RandomSleep2(8650, 550, 900);
+			//DO::DoAction_Logout_mini();
+			//ME::RandomSleep2(650, 550, 900);
+			//DO::DoAction_then_lobby();
 			continue;
 		}
 
