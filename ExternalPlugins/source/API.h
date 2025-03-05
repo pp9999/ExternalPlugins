@@ -350,10 +350,10 @@ namespace ME {
 	LIBRARY_API vector<FFPOINT> Math_FlattenFloatArray(vector<FFPOINT> FL);
 
 	//check free tiles, order in distance from localplayer
-	LIBRARY_API vector<FFPOINT> Math_FreeTiles(vector<FFPOINT> OccupiedTiles, int TileSize, int AreaRange);
+	LIBRARY_API vector<FFPOINT> Math_FreeTiles(vector<FFPOINT> OccupiedTiles, int TileSize, int AreaRange, vector <FFPOINT> BlockedTiles = {}, bool DrawDebugTiles = false);
 
 	//check free tiles, order in distance from Tile
-	vector<FFPOINT> Math_FreeTilesTile(FFPOINT orig, vector<FFPOINT> OccupiedTiles, int TileSize, int AreaRange);
+	vector<FFPOINT> Math_FreeTilesTile(FFPOINT orig, vector<FFPOINT> OccupiedTiles, int TileSize, int AreaRange, vector <FFPOINT> BlockedTiles = {}, bool DrawDebugTiles = false);
 
 	//Sort AObjects array by distance from tile, return AllObject
 	LIBRARY_API vector<AllObject> Math_SortAODistFromA(FFPOINT Tile, vector<AllObject> AllMain);
@@ -1367,6 +1367,9 @@ namespace ME {
 	//
 	LIBRARY_API bool FindHObj(std::vector<int> obj, int maxdistance, int accuracy, bool usemap, int action, std::string sidetext);
 
+	//reads localplayer name from pointer if there is any
+	LIBRARY_API std::string ReadLPNameP();
+
 	//
 	LIBRARY_API bool ClickInv_(std::string item, int randomelement, int action, int xrand = 0, int yrand = 0);
 
@@ -1805,6 +1808,8 @@ namespace MEX {
 
 	//
 	LIBRARY_API void BankClose();
+
+	LIBRARY_API bool LogDrop(int itemId, int quantity);
 };
 
 //Dear ImGui wrappers
