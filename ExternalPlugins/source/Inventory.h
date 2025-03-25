@@ -12,6 +12,8 @@
 #    define LIBRARY_API __declspec(dllimport)
 #endif
 
+using ItemType = std::variant<int, std::string>;
+
 struct Inventory {
     struct InventoryItem
     {
@@ -29,30 +31,32 @@ struct Inventory {
     LIBRARY_API bool IsItemSelected();
 
     // Contains functions
-    LIBRARY_API bool Contains(const sol::object& item);
-    LIBRARY_API bool ContainsAll(const sol::table& luaTable);
-    LIBRARY_API bool ContainsAny(const sol::table& luaTable);
-    LIBRARY_API bool ContainsOnly(const sol::table& luaTable);
+    LIBRARY_API bool Contains(const std::variant<std::vector<ItemType>, sol::table>& items);
+    LIBRARY_API bool ContainsAll(const std::variant<std::vector<ItemType>, sol::table>& items);
+    LIBRARY_API bool ContainsAny(const std::variant<std::vector<ItemType>, sol::table>& items);
+    LIBRARY_API bool ContainsOnly(const std::variant<std::vector<ItemType>, sol::table>& items);
 
     // Item amount and XP
-    LIBRARY_API int GetItemAmount(const sol::object& item);
-    LIBRARY_API int GetItemXp(const sol::object& item);
+    LIBRARY_API int GetItemAmount(const ItemType& item);
+    LIBRARY_API int GetItemXp(const ItemType& item);
 
     // Actions
-    LIBRARY_API bool Eat(const sol::object& item);
-    LIBRARY_API bool Drop(const sol::object& item);
-    LIBRARY_API bool Use(const sol::object& item);
-    LIBRARY_API bool Equip(const sol::object& item);
-    LIBRARY_API bool Rub(const sol::object& item);
-    LIBRARY_API bool NoteItem(const sol::object& item);
-    LIBRARY_API bool UseItemOnItem(const sol::object& item1, const sol::object& item2);
-    LIBRARY_API bool DoAction(const sol::object& item, int action, int offset);
+    LIBRARY_API bool Eat(const ItemType& item);
+    LIBRARY_API bool Drop(const ItemType& item);
+    LIBRARY_API bool Use(const ItemType& item);
+    LIBRARY_API bool Equip(const ItemType& item);
+    LIBRARY_API bool Rub(const ItemType& item);
+    LIBRARY_API bool NoteItem(const ItemType& item);
+    LIBRARY_API bool UseItemOnItem(const ItemType& item1, const ItemType& item2);
+    LIBRARY_API bool DoAction(const ItemType& item, int action, int offset);
 
     // Inventory information
     LIBRARY_API int FreeSpaces();
-    LIBRARY_API std::vector<InventoryItem> GetItem(const sol::object& item);
+    LIBRARY_API std::vector<InventoryItem> GetItem(const ItemType& item);
     LIBRARY_API std::vector<InventoryItem> GetItems();
     LIBRARY_API InventoryItem GetSlotData(int slot);
+
+    static std::string RemoveTags(const std::string& input);
 
 private:
     // Helper functions
@@ -63,7 +67,6 @@ private:
     int GetItemXpByID(int itemID);
     int GetItemXpByName(const std::string& itemName);
     InventoryItem ConvertToInventoryItem(const IInfo& item);
-    static std::string RemoveTags(const std::string& input);
 };
 
-#endif INVENTORY_H
+#endif // INVENTORY_H

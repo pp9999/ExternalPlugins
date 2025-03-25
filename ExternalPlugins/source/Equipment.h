@@ -5,6 +5,7 @@
 #include <vector>
 #include <array>
 #include <Structs.h>
+#include <variant>
 #include <sol/sol.hpp> // Include Sol2
 
 #ifdef LIBRARY_EXPORTS
@@ -12,6 +13,8 @@
 #else
 #    define LIBRARY_API __declspec(dllimport)
 #endif
+
+using ItemType = std::variant<int, std::string>;
 
 struct Equipment
 {
@@ -48,13 +51,13 @@ struct Equipment
     LIBRARY_API bool IsFull();
 
     // Contains methods
-    LIBRARY_API bool Contains(const sol::object& item);
-    LIBRARY_API bool ContainsAll(const sol::table& items);
-    LIBRARY_API bool ContainsAny(const sol::table& items);
-    LIBRARY_API bool ContainsOnly(const sol::table& items);
+    LIBRARY_API bool Contains(const std::variant<ItemType, sol::table>& itemVariant);
+    LIBRARY_API bool ContainsAll(const std::variant<std::vector<ItemType>, sol::table>& itemsVariant);
+    LIBRARY_API bool ContainsAny(const std::variant<std::vector<ItemType>, sol::table>& itemsVariant);
+    LIBRARY_API bool ContainsOnly(const std::variant<std::vector<ItemType>, sol::table>& itemsVariant);
 
     // Actions
-    //LIBRARY_API bool Unequip(const sol::object& item);
+    LIBRARY_API bool Unequip(const std::variant<int, std::string, sol::table>& itemVariant);
 
     // Get item(s)
     LIBRARY_API int GetItemID(ESlot slot);
