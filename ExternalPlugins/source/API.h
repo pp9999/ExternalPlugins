@@ -235,7 +235,7 @@ namespace DO {
 	//Continue dialog
 	LIBRARY_API bool Continue_Dialog();
 	//find random events, and click them
-	LIBRARY_API bool RandomEvents();
+	LIBRARY_API bool RandomEvents(int waitTime = 600, int sleepTime = 1200);
 	//click specific rand id
 	LIBRARY_API bool RandomEvent(int npcid);
 	//That heart button,to generate health from adreline
@@ -439,6 +439,9 @@ namespace ME {
 	//normal tiles to pixels on screen, WPOINT in float out
 	LIBRARY_API FFPOINT TilesToPixelsWF(WPOINT xy);
 
+	//No safety checks, due some very odd chars in chat and used with EAstl standard
+	std::string ReadChars2(uint64_t SummPointer, uint64_t readsize);
+
 	//read as string, constant size
 	LIBRARY_API std::string ReadChars(uint64_t SummPointer, int readsize = 250);
 
@@ -450,6 +453,9 @@ namespace ME {
 
 	//read as pointer, some pointers have specific build on interfaces, lets try that
 	LIBRARY_API std::string ReadCharsLimitPointer(uint64_t SummPointer, int limit = 255);
+
+	//EAstl somekind of EA standard
+	std::string ReadCharsEAstl(uint64_t SummPointer);
 
 	//sorting function
 	LIBRARY_API bool Math_comparebigger(ChOpt SummAddress1, ChOpt SummAddress2);
@@ -799,6 +805,15 @@ namespace ME {
 
 	//Reads inventory content and stores it in: InvArr
 	LIBRARY_API std::vector<IInfo> ReadInvArrays33();
+
+	//
+	vector<std::string> ReadFriendList();
+
+	//
+	vector<std::string> ReadIgnoreList();
+
+	//
+	vector<std::string> ReadFriendChatList();
 
 	//Read that table that has all levels, in pairs of 29 so 58 in total
 	LIBRARY_API vector<int> GetSkillsTable();
