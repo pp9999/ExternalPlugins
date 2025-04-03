@@ -757,6 +757,7 @@ void CombatTesting() {
 			if (Health_precentage < 45) {
 				if (ME::GetAddreline_() > 80) {
 					ME::RandomSleep2(15560, 550, 4900);//rest
+					continue;
 				}
 			}
 		}
