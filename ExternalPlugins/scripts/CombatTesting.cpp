@@ -440,6 +440,7 @@ static void ScriptPaint() {
 		}
 		//
 		IG::DrawCheckbox(true, &RestToHeal);
+		RestToHeal.tooltip_text = "Not with agressive mobs";
 		if (RestToHeal.return_click) {
 			RestToHeal.return_click = false;//turn manually off
 			bool_RestToHeal = RestToHeal.box_ticked;
@@ -755,7 +756,7 @@ void CombatTesting() {
 		if (bool_RestToHeal) {
 			if (Health_precentage < 45) {
 				if (ME::GetAddreline_() > 80) {
-					ME::RandomSleep2(15560, 550, 900);//rest
+					ME::RandomSleep2(15560, 550, 4900);//rest
 				}
 			}
 		}
