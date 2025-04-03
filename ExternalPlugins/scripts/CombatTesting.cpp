@@ -35,7 +35,8 @@ static bool bool_pickup = false;
 static bool bool_eatfoodstomakespace = false;
 static bool bool_endfull = false;
 static bool bool_focusonnpc = false;
-
+static bool bool_RestToHeal = false;
+static bool bool_BuryBones = false;
 
 void Push_rare_drops() {
 	Rare_D.clear();
@@ -110,7 +111,7 @@ static void ScriptPaint() {
 	IG_answer IG_back{};
 	IG_back.box_name = "back";
 	IG_back.box_start = { 0,50,0 };
-	IG_back.box_size = { 160,375,0 };
+	IG_back.box_size = { 160,420,0 };
 	IG_back.colour = backdrop;
 	IG_answer PRAY_textt{};
 	PRAY_textt.box_name = "PRAY_textt";
@@ -216,6 +217,14 @@ static void ScriptPaint() {
 	focusfirstnpc.box_name = "focusfirstnpc";//focus on first npc on list
 	focusfirstnpc.box_start = { 0,340,0 };
 	focusfirstnpc.box_size = { 160,20,0 };
+	IG_answer RestToHeal{};
+	RestToHeal.box_name = "RestToHeal";//use adreline to heal
+	RestToHeal.box_start = { 0,360,0 };
+	RestToHeal.box_size = { 160,20,0 };
+	IG_answer BuryBones{};
+	BuryBones.box_name = "BuryBones";//if bones in inv then bury them
+	BuryBones.box_start = { 0,380,0 };
+	BuryBones.box_size = { 160,20,0 };
 
 
 	while (LoopyLoop) {
@@ -253,6 +262,8 @@ static void ScriptPaint() {
 			eatfoodspace.box_ticked = bool_eatfoodstomakespace = IG::LoadIntSetting(setting_folder, setting_list, 11);
 			outofspaceend.box_ticked = bool_endfull = IG::LoadIntSetting(setting_folder, setting_list, 12);
 			focusfirstnpc.box_ticked = bool_focusonnpc = IG::LoadIntSetting(setting_folder, setting_list, 13);
+			RestToHeal.box_ticked = bool_RestToHeal = IG::LoadIntSetting(setting_folder, setting_list, 14);
+			BuryBones.box_ticked = bool_BuryBones = IG::LoadIntSetting(setting_folder, setting_list, 15);
 		}
 
 		if (ask_npcready.size() > 0) {
@@ -427,7 +438,20 @@ static void ScriptPaint() {
 			bool_focusonnpc = focusfirstnpc.box_ticked;
 			IG::SaveIntSetting(setting_folder, setting_list, 13, bool_focusonnpc);
 		}
-
+		//
+		IG::DrawCheckbox(true, &RestToHeal);
+		if (RestToHeal.return_click) {
+			RestToHeal.return_click = false;//turn manually off
+			bool_RestToHeal = RestToHeal.box_ticked;
+			IG::SaveIntSetting(setting_folder, setting_list, 14, bool_RestToHeal);
+		}
+		//
+		IG::DrawCheckbox(true, &BuryBones);
+		if (BuryBones.return_click) {
+			BuryBones.return_click = false;//turn manually off
+			bool_BuryBones = BuryBones.box_ticked;
+			IG::SaveIntSetting(setting_folder, setting_list, 15, bool_BuryBones);
+		}
 
 		Sleep(50);
 	}
@@ -698,6 +722,7 @@ void CombatTesting() {
 			//DO::DoAction_Logout_mini();
 			//ME::RandomSleep2(650, 550, 900);
 			//DO::DoAction_then_lobby();
+			ME::RandomSleep2(1550, 550, 900);
 			continue;
 		}
 		else {
@@ -727,13 +752,25 @@ void CombatTesting() {
 			lootok = true;
 		}
 
+		if (bool_RestToHeal) {
+			if (Health_precentage < 45) {
+				if (ME::GetAddreline_() > 80) {
+					ME::RandomSleep2(15560, 550, 900);//rest
+				}
+			}
+		}
+
+		if (bool_BuryBones) {
+			DO::DoAction_Inventory("Bones",0,1, OFF_ACT::GeneralInterface_route);
+			ME::RandomSleep2(260, 50, 200);
+		}
+
 		bool target = true;
 		if (IgnoreInCombat) {
 			if (ME::GetTargetHealth() == 0) {
 				target = false;
 			}
 		}
-
 		//check if combat is actually happening
 		if (ME::LocalPlayer_IsInCombat_()) {
 			combat_check = 0;
@@ -760,6 +797,7 @@ void CombatTesting() {
 			//DO::DoAction_Logout_mini();
 			//ME::RandomSleep2(650, 550, 900);
 			//DO::DoAction_then_lobby();
+			ME::RandomSleep2(1650, 550, 900);
 			continue;
 		}
 
