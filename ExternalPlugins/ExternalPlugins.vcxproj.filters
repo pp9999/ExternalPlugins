@@ -493,7 +493,7 @@
     <Library Include="libcurl\lib\libcurl_a.lib">
       <Filter>Libs</Filter>
     </Library>
-    <Library Include="libs\XInput1_4.lib">
+    <Library Include="libs\XInput1_4_inject.lib">
       <Filter>Libs</Filter>
     </Library>
   </ItemGroup>
