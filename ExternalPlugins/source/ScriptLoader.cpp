@@ -12,7 +12,8 @@ extern "C" __declspec(dllexport) void GetScripts(std::shared_ptr<ScriptFunction[
         { "HerblawTest", &HerblawTest },
         { "CitadelWoodChopper", &CitadelWoodChopper },
         { "TestScript", &TestScript },
-        { "AutoDivination", &AutoDivination }
+        { "AutoDivination", &AutoDivination },
+        { "KappieArch", &KappieArch }
         //Add your scripts here
     };
 
