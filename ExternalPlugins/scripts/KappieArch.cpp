@@ -138,7 +138,6 @@ bool gameStateChecks() {
     int gameState = ME::GetGameState2();
     if (gameState != 3) {
         DebugImGui.Debugtext_add("Not ingame with state: " + to_string(gameState));
-        std::cout << "Not ingame with state: " << gameState << std::endl;
         LoopyLoop = false;
         return false;
     }
@@ -176,16 +175,16 @@ void bankInFalador() {
     if (!isBanking) {
         DebugImGui.Debugtext_add("Going to ladder in cave");
         DO::DoAction_Object(0x35, OFF_ACT::GeneralObject_route0, { OBJECTS.FALADOR_DOOR_IN_CAVE }, 50);
-        ME::WaitUntilMovingEnds(6, 50);
+        MEX::WaitUntilMovingEnds(6, 50);
         DO::DoAction_Object(0x35, OFF_ACT::GeneralObject_route0, { OBJECTS.FALADOR_LADDER_IN_CAVE }, 50);
-        ME::WaitUntilMovingEnds(6, 50);
+        MEX::WaitUntilMovingEnds(6, 50);
         isBanking = true;
     }
 
     DebugImGui.Debugtext_add("Going to bank");
     if (!hasBanked) {
         DO::DoAction_Object(0x33, OFF_ACT::GeneralObject_route3, { OBJECTS.FALADOR_BANK }, 50);
-        ME::WaitUntilMovingEnds(6, 50);
+        MEX::WaitUntilMovingEnds(6, 50);
         if (ME::InvItemFound(44820) == false) {
             hasBanked = true;
         }
@@ -194,9 +193,9 @@ void bankInFalador() {
     if (hasBanked) {
         DebugImGui.Debugtext_add("Going back to the caves");
         DO::DoAction_Object(0x35, OFF_ACT::GeneralObject_route0, { OBJECTS.FALADOR_LADDER_TO_CAVE }, 50);
-        ME::WaitUntilMovingEnds(6, 50);
+        MEX::WaitUntilMovingEnds(6, 50);
         DO::DoAction_Object(0x35, OFF_ACT::GeneralObject_route0, { OBJECTS.FALADOR_DOOR_IN_CAVE }, 50);
-        ME::WaitUntilMovingEnds(6, 50);
+        MEX::WaitUntilMovingEnds(6, 50);
         isMining = false;
         hasBanked = false;
         isBanking = false;
@@ -759,5 +758,5 @@ void KappieArch() {
         ME::RandomSleep2(600, 800, 1200);
     }
 
-    DebugImGui.Debugtext_add("Stopped KappieArch " + version);
+    DebugImGui.Debugtext_add("Stopped ErnieAIO " + version);
 }
