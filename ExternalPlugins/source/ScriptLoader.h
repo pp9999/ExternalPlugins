@@ -21,4 +21,3 @@ void CitadelWoodChopper();
 void TestScript();
 void AutoDivination();
 void CitadelWoodChopper();
-void KappieArch();
