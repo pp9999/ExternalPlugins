@@ -75,7 +75,7 @@
     <LibraryPath>$(ProjectDir)libs;$(ProjectDir)\libcurl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)source;$(ProjectDir)libs\imgui;$(ProjectDir)libcurl\include\curl;$(ProjectDir)json-develop\single_include\nlohmann;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)source;$(ProjectDir)libs\imgui;$(ProjectDir)libcurl\include\curl;$(ProjectDir)json-develop\single_include\nlohmann;$(SolutionDir)ExternalPlugins\lua\src;$(SolutionDir)ExternalPlugins\sol;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)libs;$(ProjectDir)\libcurl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
@@ -133,6 +133,12 @@
       <AdditionalLibraryDirectories>$(SolutionDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/NOEXP /NOIMPLIB %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(SolutionDir)$(Platform)\$(Configuration)\ExternalPlugins.dll" "$(USERPROFILE)\MemoryError\External_DLL\ExternalPlugins.dll"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy DLL to ME</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -156,6 +162,10 @@
       <AdditionalDependencies>XInput1_4_inject.lib;ws2_32.lib;Normaliz.lib;Crypt32.lib;Wldap32.lib;libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Message>Copy DLL to ME</Message>
+      <Command>copy /Y "$(SolutionDir)$(Platform)\$(Configuration)\ExternalPlugins.dll" "$(USERPROFILE)\MemoryError\External_DLL\ExternalPlugins.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="json-develop\single_include\nlohmann\json.hpp" />

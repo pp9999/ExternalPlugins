@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 
+static bool g_unloadRequested = false;
 struct ScriptFunction {
     const char* name;
     void (*functionPointer)();

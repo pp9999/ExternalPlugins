@@ -969,16 +969,16 @@ namespace ME {
 	LIBRARY_API bool PInArea2(float xstart, float xend, float ystart, float yend);
 
 	//
-	LIBRARY_API void KeyboardPress(char codes, int sleep, int rand);
+	LIBRARY_API bool KeyboardPress(char codes, int sleep, int rand);
 
 	//
-	LIBRARY_API void KeyboardPress2(int codes, int sleep, int rand);
+	LIBRARY_API bool KeyboardPress2(int codes, int sleep, int rand);
 
 	//use keyboard
-	LIBRARY_API void KeyboardPress3(unsigned char codes, int sleep, int rand);
+	LIBRARY_API bool KeyboardPress3(unsigned char codes, int sleep, int rand);
 
 	//use keyboard, keymod is shift or alt
-	LIBRARY_API void KeyboardPress3(unsigned char codes, int keymod = 0);
+	LIBRARY_API bool KeyboardPress3(unsigned char codes, int keymod = 0);
 
 	//
 	LIBRARY_API bool InvRandom_(int action);
