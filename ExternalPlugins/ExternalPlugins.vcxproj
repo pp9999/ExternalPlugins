@@ -134,7 +134,7 @@
       <AdditionalOptions>/NOEXP /NOIMPLIB %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)$(Platform)\$(Configuration)\ExternalPlugins.dll" "$(USERPROFILE)\Documents\MemoryError\External_DLL\ExternalPlugins.dll"</Command>
+      <Command>copy /Y "$(SolutionDir)$(Platform)\$(Configuration)\ExternalPlugins.dll" "$(USERPROFILE)\MemoryError\External_DLL\ExternalPlugins.dll"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy DLL to ME</Message>
@@ -164,7 +164,7 @@
     </Link>
     <PostBuildEvent>
       <Message>Copy DLL to ME</Message>
-      <Command>copy /Y "$(SolutionDir)$(Platform)\$(Configuration)\ExternalPlugins.dll" "$(USERPROFILE)\Documents\MemoryError\External_DLL\ExternalPlugins.dll"</Command>
+      <Command>copy /Y "$(SolutionDir)$(Platform)\$(Configuration)\ExternalPlugins.dll" "$(USERPROFILE)\MemoryError\External_DLL\ExternalPlugins.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
