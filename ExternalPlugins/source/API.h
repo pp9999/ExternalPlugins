@@ -122,6 +122,8 @@ namespace DO {
 	LIBRARY_API bool DoAction_IconTile(int Id, int x, int y);
 	//do previously found minimap icon
 	LIBRARY_API bool DoAction_IconObj(AllObject obj);
+	//In certain cases ability or selected item will be unselected too early
+	LIBRARY_API bool DoAction_DontResetSelection();
 	//Push action, move to a tile
 	LIBRARY_API bool DoAction_Tile(WPOINT normal_tile);
 	//Tile click
@@ -174,17 +176,17 @@ namespace DO {
 	LIBRARY_API bool DoAction_G_Items(int action, std::vector<int> obj, int maxdistance);
 	//tries to get items, at tile
 	LIBRARY_API bool DoAction_G_Items(int action, std::vector<int> obj, int maxdistance, WPOINT atTile);
-	//tries to get items, look around raw tile and radius
+	//tries to get items, look around tile and radius
 	LIBRARY_API bool DoAction_G_Items_r(int action, std::vector<int> obj, int maxdistance, FFPOINT tile, float radius);
 	//tries to get items, look around tile and radius
 	LIBRARY_API bool DoAction_G_Items_r_norm(int action, std::vector<int> obj, int maxdistance, FFPOINT tile, float radius);
-	//tries to get items, look around raw tile and radius, checks if inventory is full if it is then gets only stacks that exist in inventory
+	//tries to get items, look around tile and radius, checks if inventory is full if it is then gets only stacks that exist in inventory
 	LIBRARY_API bool DoAction_G_Items_r_normSTACKs(int action, std::vector<int> obj, int maxdistance, FFPOINT tile, float radius);
 	//tries to get items, does special action on them
 	LIBRARY_API bool DoAction_G_Items(int action, int action_route, std::vector<int> obj, int maxdistance);
 	//tries to get items, does special action on them, at tile
 	LIBRARY_API bool DoAction_G_Items(int action, int action_route, std::vector<int> obj, int maxdistance, WPOINT atTile);
-	//tries to get items, look around raw tile and radius, does special action on them
+	//tries to get items, look around tile and radius, does special action on them
 	LIBRARY_API bool DoAction_G_Items_r(int action, int action_route, std::vector<int> obj, int maxdistance, FFPOINT tile, float radius);
 	//Push action, direct, very unhealty to use directly
 	LIBRARY_API bool DoAction_G_Items_Direct(int action, int route, AllObject obj);
@@ -490,18 +492,6 @@ namespace ME {
 	//
 	LIBRARY_API bool PlayerLoggedIn();
 
-	//
-	LIBRARY_API bool World_Hopper(int worldtohop);
-
-	//
-	LIBRARY_API bool World_Hopper(std::string worldtohop);
-
-	//
-	LIBRARY_API bool LoginFunction(std::string name, std::string password, int world);
-
-	//
-	LIBRARY_API bool LoginFunction(std::string name, std::string password, std::string world);
-
 	//presses dialog, PostM only
 	LIBRARY_API bool Select_Option(std::string text);
 
@@ -594,9 +584,6 @@ namespace ME {
 
 	//
 	LIBRARY_API int ReadPlayerAnim();
-
-	//for loot list
-	LIBRARY_API std::string GetItemText(int ID);
 
 	//check if item is selected
 	LIBRARY_API bool IsSelectingItem();
@@ -708,61 +695,37 @@ namespace ME {
 	LIBRARY_API bool FindObjCheck_(std::vector<int> obj, int maxdistance, int accuracy, bool usemap, int action, std::string sidetext, WPOINT tile);
 
 	//
-	LIBRARY_API POINT MousePos_();
-
-	//
-	LIBRARY_API void MouseCLRS(POINT cursor, bool type);
-
-	//
-	LIBRARY_API void MouseMove_(POINT cursor);
-
-	//
-	LIBRARY_API void MouseMove_2(int x, int y, int rx, int ry);
-
-	//
 	LIBRARY_API float Hypot(float dx, float dy);
 
 	//
-	LIBRARY_API void MoveMouse2(int x, int y, int rx, int ry);
+	LIBRARY_API bool MoveMouse2(int x, int y, int rx, int ry);
 
 	//
-	LIBRARY_API void MoveMouse3(int x, int y, int rx, int ry, bool updown);
+	LIBRARY_API bool MoveMouse3(int x, int y, int rx, int ry, bool updown);
 
 	//
-	LIBRARY_API void MouseLeftClick(int sleep, int rand);
+	LIBRARY_API bool MouseLeftClick(int sleep, int rand);
 
 	//
-	LIBRARY_API void MouseRightClick(int sleep, int rand);
+	LIBRARY_API bool MouseRightClick(int sleep, int rand);
 
 	//
 	LIBRARY_API bool ClickInv_(int item, int randomelement, int action, int xrand = 0, int yrand = 0);
 
 	//
-	LIBRARY_API void KeyPress_(char mK);
+	LIBRARY_API bool Post_MouseMove(int x, int y);
 
 	//
-	LIBRARY_API void KeyPress_2(int mK);
+	LIBRARY_API bool Post_MouseMoveAtoB(int x, int y);
 
 	//
-	LIBRARY_API void Send_MouseLeftClick(int sleep, int random);
+	LIBRARY_API bool Post_MouseLeftClick(int x, int y, int sleep, int random);
 
 	//
-	LIBRARY_API void Send_MouseRightClick(int sleep, int random);
+	LIBRARY_API bool Post_MouseLeftClick_AtoB(int x, int y, int sleep, int random);
 
 	//
-	LIBRARY_API void Post_MouseMove(int x, int y);
-
-	//
-	LIBRARY_API void Post_MouseMoveAtoB(int x, int y);
-
-	//
-	LIBRARY_API void Post_MouseLeftClick(int x, int y, int sleep, int random);
-
-	//
-	LIBRARY_API void Post_MouseLeftClick_AtoB(int x, int y, int sleep, int random);
-
-	//
-	LIBRARY_API void Post_MouseRightClick(int x, int y, int sleep, int random);
+	LIBRARY_API bool Post_MouseRightClick(int x, int y, int sleep, int random);
 
 	//
 	LIBRARY_API int InvItemcount_(int item);
@@ -805,6 +768,9 @@ namespace ME {
 
 	//Reads inventory content and stores it in: InvArr
 	LIBRARY_API std::vector<IInfo> ReadInvArrays33();
+
+	////Reads inventory content
+	std::vector<IInfo> ReadInvArrays33_container();
 
 	//
 	vector<std::string> ReadFriendList();
@@ -981,6 +947,9 @@ namespace ME {
 	LIBRARY_API bool KeyboardPress3(unsigned char codes, int keymod = 0);
 
 	//
+	LIBRARY_API bool KeyboardPress33(unsigned char codes, int keymod, int sleep, int rand);
+
+	//
 	LIBRARY_API bool InvRandom_(int action);
 
 	//Check that inventory is open
@@ -1057,6 +1026,12 @@ namespace ME {
 
 	//get LootWindow data, LootWArr array
 	LIBRARY_API std::vector<IInfo> LootWindow_GetData();
+
+	//get LootWindow data, uses containers
+	std::vector<IInfo> LootWindow_GetData_container();
+
+	//amount of items in 
+	int LootWindow_GetData_container_am();
 
 	//
 	LIBRARY_API int LootWindow_space_needed(std::vector<int> Except_item, bool Inventory_stacks);
@@ -1368,9 +1343,6 @@ namespace ME {
 	LIBRARY_API bool FindHLvsLocalPlayer(std::vector<int> objIds, int maxdistance, int accuracy, bool usemap, int action, std::string sidetext, std::vector<int> hlIds, float localp_dist = 2.f);
 
 	//
-	LIBRARY_API bool FindObjRot(std::vector<int> obj, int maxdistance, float sens);
-
-	//
 	LIBRARY_API bool RotateCamera(FFPOINT ItemXY, FFPOINT currxy, float sens);
 
 	//
@@ -1449,6 +1421,21 @@ namespace ME {
 //General functions. Extra
 namespace MEX {
 
+	//check
+	LIBRARY_API bool IsAuraResetAvailable();
+
+	//check
+	LIBRARY_API bool IsAuraXPAvailable();
+
+	//check if has items to reclaim from death
+	LIBRARY_API bool HasDeathItemsReclaim();
+
+	//check fixed area
+	LIBRARY_API bool IsInDeathOffice();
+
+	//check
+	LIBRARY_API bool IsPremiumMember();
+
 	//Color with DC
 	LIBRARY_API vector<int> ReadDCColor(int at_x, int at_y);
 
@@ -1507,7 +1494,10 @@ namespace MEX {
 	LIBRARY_API void RandomEvents();
 
 	// Highlights the list of tiles passed ingame
-	LIBRARY_API void MarkTiles(std::vector<WPOINT> tiles);
+	LIBRARY_API void MarkTiles(std::vector<FFPOINT> tiles, int fortime);
+
+	LIBRARY_API void ClearMarkTiles();
+
 	//Get familiar name
 	LIBRARY_API std::string GetFamiliarName();
 
@@ -1824,7 +1814,7 @@ namespace MEX {
 	//
 	LIBRARY_API void BankClose();
 
-	LIBRARY_API bool LogDrop(int itemId, int quantity);
+	LIBRARY_API bool LogDrop(int itemId, uint64_t quantity);
 };
 
 //Dear ImGui wrappers
