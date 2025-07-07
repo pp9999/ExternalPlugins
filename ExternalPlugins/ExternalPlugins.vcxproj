@@ -73,6 +73,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(ProjectDir)source;$(ProjectDir)libs\imgui;$(ProjectDir)libcurl\include\curl;$(ProjectDir)json-develop\single_include\nlohmann;$(SolutionDir)ExternalPlugins\lua\src;$(SolutionDir)ExternalPlugins\sol;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)libs;$(ProjectDir)\libcurl\lib;$(LibraryPath)</LibraryPath>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)source;$(ProjectDir)libs\imgui;$(ProjectDir)libcurl\include\curl;$(ProjectDir)json-develop\single_include\nlohmann;$(SolutionDir)ExternalPlugins\lua\src;$(SolutionDir)ExternalPlugins\sol;$(IncludePath)</IncludePath>
