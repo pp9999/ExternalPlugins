@@ -309,12 +309,9 @@
     <ClCompile Include="libs\imgui\imgui_draw.cpp" />
     <ClCompile Include="libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="libs\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="scripts\Auto_deploy_prot_traps.cpp" />
     <ClCompile Include="scripts\CitadellWoodChopper.cpp" />
     <ClCompile Include="scripts\CombatTesting.cpp" />
     <ClCompile Include="scripts\FFA_fighter.cpp" />
-    <ClCompile Include="scripts\PortablesMixer.cpp" />
-    <ClCompile Include="scripts\Portflaskmaker.cpp" />
     <ClCompile Include="scripts\Priff_sum.cpp" />
     <ClCompile Include="source\ScriptLoader.cpp" />
     <ClCompile Include="scripts\TestScript.cpp" />

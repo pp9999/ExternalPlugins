@@ -451,12 +451,6 @@
     <ClCompile Include="API.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\PortablesMixer.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\Portflaskmaker.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
     <ClCompile Include="scripts\CitadellWoodChopper.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
@@ -464,9 +458,6 @@
       <Filter>Scripts</Filter>
     </ClCompile>
     <ClCompile Include="scripts\CombatTesting.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\Auto_deploy_prot_traps.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
     <ClCompile Include="HttpClient.cpp">

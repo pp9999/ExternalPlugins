@@ -90,7 +90,7 @@ static void  onDraw() {
 
 void AutoDivination() {
 
-	static int startCount = ME::InvItemcountStack_String("energy");
+	static int startCount = InventoryClass.InvItemcount_String("energy");
 	vector<AllObject>EnergyRiftOpen;
 	vector<AllObject>EnergyRift;
 	vector<AllObject>EnrichedSpring;
@@ -100,14 +100,14 @@ void AutoDivination() {
 	while (LoopyLoop && !Endall) {
 		idleCheck();
 		RandomEvents();
-		currentCount = ME::InvItemcountStack_String("energy");
+		currentCount = InventoryClass.InvItemcount_String("energy");
 		totalGained = getGainedCount(startCount, currentCount);
 		ScripCuRunning2 = "Energy Gained: ";
 		ScripCuRunning2.append(to_string(totalGained));
 		ScripCuRunning1 = "Waiting";
 
 
-		if (ME::InvFull_()) {
+		if (InventoryClass.IsFull()) {
 			ScripCuRunning1 = "Looking to convert";
 			EnergyRiftOpen = ME::GetAllObjArrayInteract({ 93489 }, 40, { 0 });
 			if (!EnergyRiftOpen.empty()) {

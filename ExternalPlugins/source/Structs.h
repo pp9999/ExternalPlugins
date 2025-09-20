@@ -156,24 +156,74 @@ struct VB {
 };
 
 
+//for items, generally inventory
 struct inv_Container_struct {
 	int item_id = 0;
 	int item_stack = 0;
 	int item_slot = 0;
+	std::string item_name{};
+	int item_cat = 0;
+	int item_gelimit = 0;
+	int item_highalch = 0;
+	bool item_noted = false;
+	bool item_stackable = false;
+	bool item_tradeable = false;
+	bool item_bankable = false;
+	bool item_alchable = false;
+	WPOINT item_interface{};//for interface
+	WPOINT item_xyz{};//for pixels
+	std::vector<int> Pmap{};
 	std::vector<uint64_t> Extra_mem{};
 	std::vector<int> Extra_ints{};
+
 	inv_Container_struct() = default;
-	inv_Container_struct(int _item_id, int _item_stack, int _item_slot, std::vector<uint64_t> _Extra_mem, std::vector<int> _Extra_ints) :
-		item_id{ _item_id }, item_stack{ _item_stack }, item_slot{ _item_slot }, Extra_mem{ _Extra_mem }, Extra_ints{ _Extra_ints } {}
+
+	inv_Container_struct(
+		int _item_id,
+		int _item_stack,
+		int _item_slot,
+		const std::string& _item_name,
+		int _item_cat,
+		int _item_gelimit,
+		int _item_highalch,
+		bool _item_noted,
+		bool _item_stackable,
+		bool _item_tradeable,
+		bool _item_bankable,
+		WPOINT _item_interface,
+		WPOINT _item_xyz,
+		const std::vector<int>& _Pmap,
+		const std::vector<uint64_t>& _Extra_mem,
+		const std::vector<int>& _Extra_ints
+	)
+		: item_id(_item_id),
+		item_stack(_item_stack),
+		item_slot(_item_slot),
+		item_name(_item_name),
+		item_cat(_item_cat),
+		item_gelimit(_item_gelimit),
+		item_highalch(_item_highalch),
+		item_noted(_item_noted),
+		item_stackable(_item_stackable),
+		item_tradeable(_item_tradeable),
+		item_bankable(_item_bankable),
+		item_interface(_item_interface),
+		item_xyz(_item_xyz),
+		Pmap(_Pmap),
+		Extra_mem(_Extra_mem),
+		Extra_ints(_Extra_ints)
+	{
+	}
 };
 
-struct inv_Container {
+struct General_Container {
 	int id = 0;//somekind of container id
 	uint64_t mem = 0;//
-	std::vector<inv_Container_struct> ID_stack;//item id, stacksize, order, extra
-	inv_Container() = default;
-	inv_Container(int _id, inv_Container_struct _ID_stack) :
-		id{ _id }, ID_stack{ _ID_stack } {}
+	std::vector<inv_Container_struct> ID_stack;//item id, stacksize, order, extra, All data is read by at once by GetContainerSettings()
+	General_Container() = default;
+	General_Container(int _id, inv_Container_struct _ID_stack) :
+		id{ _id }, ID_stack{ _ID_stack } {
+	}
 };
 
 //for RefVarpBits444 return

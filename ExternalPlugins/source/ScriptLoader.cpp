@@ -11,11 +11,8 @@ extern "C" __declspec(dllexport) void GetScripts(std::shared_ptr<ScriptFunction[
     std::initializer_list<ScriptFunction> initList = {
        //{ "ClueTest_loop", &ClueTest_loop },
         { "Priff_summ", &Priff_summ },
-        { "Auto_deploy_prot_traps", &Auto_deploy_prot_traps },
         { "CombatTesting", &CombatTesting },
         { "FFA_fighter", &FFA_fighter },
-        { "Portflaskmaker", &Portflaskmaker },
-        { "HerblawTest", &HerblawTest },
         { "CitadelWoodChopper", &CitadelWoodChopper },
         { "TestScript", &TestScript },
         { "AutoDivination", &AutoDivination }

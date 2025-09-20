@@ -36,7 +36,7 @@ void Priff_summ() {
 
 	while (LoopyLoop) {
 
-		if (ME::InvStackSize(pouches_ID) > pouches_amount && ME::InvStackSize(spirit_shards_ID) > spirit_shards_amount && ME::InvStackSize(needed_charms_ID) > needed_charms_amount && MEX::CheckInvStuff(items1, items2)) {
+		if (InventoryClass.InvStackSize(pouches_ID) > pouches_amount && InventoryClass.InvStackSize(spirit_shards_ID) > spirit_shards_amount && InventoryClass.InvStackSize(needed_charms_ID) > needed_charms_amount && InventoryClass.InvItemFounds({ items1, items2 })) {
 			ScripCuRunning1 = "Needed stuff in inventory <------";
 			//safety
 				safecounter1++;
@@ -70,7 +70,7 @@ void Priff_summ() {
 			//close to bank
 			if (ME::PInArea2(2150, 2158, 3337, 3345)) {
 				ScripCuRunning2 = "Open bank";
-				MEX::OpenBankChest(92692, '1');
+				//MEX::OpenBankChest(92692, '1');
 			}
 			else {
 				//run to bank

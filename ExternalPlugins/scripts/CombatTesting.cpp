@@ -501,14 +501,14 @@ void CombatTesting() {
 		if (1) {
 			if (bool_note && !Note_ids_int.empty()) {
 				int notepaper = 30372;
-				if (ME::InvItemFound(notepaper)) {
+				if (InventoryClass.InvItemFound(notepaper)) {
 					if (ME::Math_ValueEquals(notepaper, Note_ids_int)) {
 						DebugImGui.Debugtext_add("U fool, world is gona implode nows;S");
 						bool_note = false;
 						LoopyLoop = false;
 						continue;
 					}
-					if (ME::InvItemFound(Note_ids_int)) {
+					if (InventoryClass.InvItemFounds(Note_ids_int)) {
 						ScripCuRunning1 = "Certs";  
 						DO::DoAction_Inventory(Note_ids_int, 0, 0, OFF_ACT::Bladed_interface_route);
 						ME::RandomSleep2(40, 550, 900);
@@ -523,7 +523,7 @@ void CombatTesting() {
 				}
 			}
 			if (bool_alch && !Alch_ids_int.empty()) {
-				if (ME::InvItemFound(Alch_ids_int)) {
+				if (InventoryClass.InvItemFounds(Alch_ids_int)) {
 					if (ME::VB_FindPSettinOrder(4).state == 1024) {
 						Abilitybar HLA = MEX::GetABs_name("High Level Alchemy");
 						if (HLA.enabled) {
@@ -551,7 +551,7 @@ void CombatTesting() {
 				int eexalibur_aug = 36619;//2
 				int ancientshard = 43358;//1
 				if (Health_precentage < 50 + ME::Math_RandomNumber(30)) {
-					if (ME::InvItemFound(eexalibur)) {
+					if (InventoryClass.InvItemFound(eexalibur)) {
 						Bbar be = MEX::DeBuffbar_GetIDstatus(eexalibur, false);
 						if (!be.found) {
 							ScripCuRunning1 = "Ex";
@@ -562,7 +562,7 @@ void CombatTesting() {
 					}
 				}
 				if (Pray_precentage < 50 + ME::Math_RandomNumber(30)) {
-					if (ME::InvItemFound(ancientshard)) {
+					if (InventoryClass.InvItemFound(ancientshard)) {
 						Bbar ba = MEX::DeBuffbar_GetIDstatus(ancientshard, false);
 						if (!ba.found) {
 							ScripCuRunning1 = "Ancient";
@@ -574,7 +574,7 @@ void CombatTesting() {
 				}
 			}
 			if (bool_drop && !Drop_ids_int.empty()) {
-				if (ME::InvItemFound(Drop_ids_int)) {
+				if (InventoryClass.InvItemFounds(Drop_ids_int)) {
 					ScripCuRunning1 = "Drop";
 					DO::DoAction_Inventory(Drop_ids_int, 0, 8, OFF_ACT::GeneralInterface_route2);
 					ME::RandomSleep2(700, 888, 1866);
@@ -620,7 +620,7 @@ void CombatTesting() {
 
 		//do inv space
 		if (bool_eatfoodstomakespace) {
-			if (ME::InvFull_()) {
+			if (InventoryClass.IsFull()) {
 				bool done = false;
 				Abilitybar ab = MEX::GetABs_name("Eat Food");
 				if (ab.enabled) {

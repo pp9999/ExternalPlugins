@@ -550,12 +550,6 @@ namespace ME {
 	LIBRARY_API float Dist_FLPW(WPOINT tile);
 
 	//
-	LIBRARY_API WPOINT InvFindItem(int item, int action);
-
-	//
-	LIBRARY_API WPOINT InvFindItem(std::string item, int action);
-
-	//
 	LIBRARY_API bool FindGItemBool_(std::vector<int> item);
 
 	//
@@ -584,9 +578,6 @@ namespace ME {
 
 	//
 	LIBRARY_API int ReadPlayerAnim();
-
-	//check if item is selected
-	LIBRARY_API bool IsSelectingItem();
 
 	//
 	LIBRARY_API Target_data ReadTargetInfo(bool ForceRefresh = false);
@@ -623,12 +614,6 @@ namespace ME {
 
 	//for localplayer: waits few cycles and then reports did it find any animation.
 	LIBRARY_API bool CheckAnim(int Loops);
-
-	//
-	LIBRARY_API bool InvFull_();
-
-	//
-	LIBRARY_API int Invfreecount_();
 
 	//
 	LIBRARY_API bool ReadPlayerMovin();
@@ -710,9 +695,6 @@ namespace ME {
 	LIBRARY_API bool MouseRightClick(int sleep, int rand);
 
 	//
-	LIBRARY_API bool ClickInv_(int item, int randomelement, int action, int xrand = 0, int yrand = 0);
-
-	//
 	LIBRARY_API bool Post_MouseMove(int x, int y);
 
 	//
@@ -726,27 +708,6 @@ namespace ME {
 
 	//
 	LIBRARY_API bool Post_MouseRightClick(int x, int y, int sleep, int random);
-
-	//
-	LIBRARY_API int InvItemcount_(int item);
-
-	//finds inv item
-	LIBRARY_API bool InvItemFound(int item);
-
-	//finds inv item
-	LIBRARY_API bool InvItemFound(std::vector<int> items);
-
-	//
-	LIBRARY_API int InvItemcount_String(std::string item);
-
-	//finds inv item stack size
-	LIBRARY_API uint64_t InvItemcountStack_String(std::string item);
-
-	//
-	LIBRARY_API std::vector<int> InvItemcount_(std::vector<int> item);
-
-	//
-	LIBRARY_API uint64_t InvStackSize(int item);
 
 	//
 	LIBRARY_API uint64_t SystemTime();
@@ -769,9 +730,6 @@ namespace ME {
 	//Reads inventory content and stores it in: InvArr
 	LIBRARY_API std::vector<IInfo> ReadInvArrays33();
 
-	////Reads inventory content
-	std::vector<IInfo> ReadInvArrays33_container();
-
 	//
 	vector<std::string> ReadFriendList();
 
@@ -788,7 +746,7 @@ namespace ME {
 	int GetSkillsTableSkill(int nr);
 
 	//Reads cont
-	LIBRARY_API std::vector<inv_Container> GetContainerSettings();
+	LIBRARY_API std::vector<General_Container> GetContainerSettings(int targetID = -1);
 
 	//Reads, replacement for ReadInvArrays33
 	LIBRARY_API std::vector<IInfo> Container_Inventory();
@@ -801,6 +759,9 @@ namespace ME {
 
 	//Get container single target
 	LIBRARY_API inv_Container_struct Container_Get_s(int cont_id, int item_id);
+
+	//Check if items are there, return true if are
+	LIBRARY_API bool Container_Check_Items(int cont_id, std::vector<int> item_ids);
 
 	//Get container get whole list of items
 	LIBRARY_API std::vector<inv_Container_struct> Container_Get_AllItems(int cont_id, std::vector<int> item_ids);
@@ -939,6 +900,10 @@ namespace ME {
 
 	//
 	LIBRARY_API bool KeyboardPress2(int codes, int sleep, int rand);
+	// Non-blocking key hold: send only KEYDOWN. Use KeyboardUp to release.
+	LIBRARY_API bool KeyboardDown(int codes);
+	// Release a previously held key (KEYUP).
+	LIBRARY_API bool KeyboardUp(int codes);
 
 	//use keyboard
 	LIBRARY_API bool KeyboardPress3(unsigned char codes, int sleep, int rand);
@@ -949,11 +914,27 @@ namespace ME {
 	//
 	LIBRARY_API bool KeyboardPress33(unsigned char codes, int keymod, int sleep, int rand);
 
-	//
-	LIBRARY_API bool InvRandom_(int action);
-
-	//Check that inventory is open
-	LIBRARY_API bool InvCheck1_();
+	// Non-blocking held-key API
+	// Start holding a key (posts KEYDOWN if not already held). Optional timeout_ms to auto-release; 0 means no timeout.
+	LIBRARY_API bool KeyboardHoldStart(int codes, int timeout_ms = 0);
+	// Stop holding a key (posts KEYUP if currently held).
+	LIBRARY_API bool KeyboardHoldStop(int codes);
+	// Release all held keys.
+	LIBRARY_API void KeyboardHoldStopAll();
+	// Service function to auto-release expired holds. Call periodically from your main loop.
+	LIBRARY_API void KeyboardHoldService();
+	// Query if a key is currently held by this API.
+	LIBRARY_API bool KeyboardIsHeld(int codes);
+	// Inspect current held keys for debug/overlay
+	struct KeyHoldInfo {
+		int vk;
+		uint64_t ms_remaining; // 0 if no timeout
+		uint32_t repeatCount;
+		uint32_t initialDelayMs;
+		uint32_t repeatRateMs;
+		bool extended;
+	};
+	LIBRARY_API std::vector<KeyHoldInfo> KeyboardHoldInspect();
 
 	//Play windows alarm, sound will come trough client so turn rs sound up on windows mixer
 	LIBRARY_API void Play_sound(int sleeptime = 100, std::string location = "C:\\Windows\\Media\\ringout.wav");
@@ -981,7 +962,7 @@ namespace ME {
 	LIBRARY_API IInfo Get_Check_Interface(IInfo* current_data, std::vector<InterfaceComp5> search_components, bool refresh_data = false, bool refresh_text = false);
 
 	//find, check, for IInfo, keep tabs on 1 interface and return interfaces under it
-	LIBRARY_API std::vector<IInfo> Get_Check_Interface_Under(IInfo* current_data, std::vector<InterfaceComp5> search_components);
+	LIBRARY_API std::vector<IInfo> Get_Check_Interface_Under(IInfo* current_data, std::vector<InterfaceComp5> search_components, bool refresh_data = false, bool refresh_text = false);
 
 	LIBRARY_API IInfo Get_Check_Interfacer(IInfo* current_data, std::vector<InterfaceComp5> search_components, bool refresh_data = false, bool refresh_text = false);
 
@@ -1358,15 +1339,6 @@ namespace ME {
 	LIBRARY_API std::string ReadLPNameP();
 
 	//
-	LIBRARY_API bool ClickInv_(std::string item, int randomelement, int action, int xrand = 0, int yrand = 0);
-
-	//
-	LIBRARY_API bool ClickInv_Multi(std::vector<int> items, int randomelement, int action);
-
-	//
-	LIBRARY_API bool ClickInvOffset_(int item, int action, int randx, int randy, int offsetx, int offsety, std::string sidetext);
-
-	//
 	LIBRARY_API FFPOINT FindObjTileName(std::vector<int> obj, int maxdistance);
 
 	//
@@ -1420,6 +1392,9 @@ namespace ME {
 
 //General functions. Extra
 namespace MEX {
+
+	//world nr
+	int GetWorldNR();
 
 	//check
 	LIBRARY_API bool IsAuraResetAvailable();
@@ -1749,39 +1724,6 @@ namespace MEX {
 	//
 	LIBRARY_API bool DoBankPin(const std::string& code);
 
-	//Get inventory status. Checks if items are present inventory
-	LIBRARY_API bool CheckInvStuff(int item1, int item2);
-
-	//Get inventory status. Checks if items are present inventory
-	LIBRARY_API bool CheckInvStuff(int item1);
-
-	//Get inventory status. Checks if items are present inventory
-	std::vector<bool> CheckInvStuff(std::vector<int> item1);
-
-	//Get inventory status. Checks if items are present inventory, check if all that
-	LIBRARY_API bool CheckInvStuffCheckAll(std::vector<int> items);
-
-	//Get inventory status. Checks if items are present inventory, size is amount to be considered ok
-	LIBRARY_API std::vector<bool> CheckInvStuff(std::vector<int> items, int size);
-
-	//Get inventory status. Checks if items are present inventory, size is amount to be considered ok
-	LIBRARY_API bool CheckInvStuffCheckAll(std::vector<int> items, int size);
-
-	//
-	LIBRARY_API bool OpenBankChest(int chest);
-
-	//open bank, push number
-	LIBRARY_API bool OpenBankChest(int chest, char pushnumber);
-
-	//open bank, check content, push number
-	LIBRARY_API bool OpenBankChest(int chest, char pushnumber, std::vector<int> content_ids);
-
-	//open bank, check content, push number(or dont if any them are 0), return found amounts, amount left is size
-	LIBRARY_API std::vector<uint64_t> OpenBankChest_am(int chest, char pushnumber, std::vector<int> content_ids, int size);
-
-	//
-	LIBRARY_API bool OpenBankChest(int chest, int distance, std::string option, std::string sidetext);
-
 	//
 	LIBRARY_API bool WaitUntilMovingEnds(int howmanyticks = 0, int checks = 0);
 
@@ -1792,21 +1734,7 @@ namespace MEX {
 	LIBRARY_API bool WaitUntilMovingandAnimandCombatEnds(int howmanyticks = 0, int checks = 0);
 
 	//
-	LIBRARY_API bool DoPortables(int port, std::string checktext);
-
-	//
-	LIBRARY_API bool Notestuff(int item);
-
-	LIBRARY_API bool DoNoteStuff(int item);
-
-	//
-	LIBRARY_API bool NotestuffInvfull(int item);
-
-	//
 	LIBRARY_API bool WalkUntilClose(WPOINT walktile, int stopdistance);
-
-	//-1 dont check id, 1 check id is bigger than 0, or straight up 1170 varbit id
-	LIBRARY_API bool DoPortables(int port, int settID, std::string checktext);
 
 	//
 	LIBRARY_API bool Smithing_interface_open();

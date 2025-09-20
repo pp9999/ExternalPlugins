@@ -59,8 +59,11 @@
 //#define IMGUI_INCLUDE_IMGUI_USER_H
 //#define IMGUI_USER_H_FILENAME         "my_folder/my_imgui_user.h"
 
-//---- Pack colors to BGRA8 instead of RGBA8 (to avoid converting from one to another)
+//---- Pack vertex colors as BGRA8 instead of RGBA8 (to avoid converting from one to another). Need dedicated backend support.
 //#define IMGUI_USE_BGRA_PACKED_COLOR
+
+//---- Use legacy CRC32-adler tables (used before 1.91.6), in order to preserve old .ini data that you cannot afford to invalidate.
+//#define IMGUI_USE_LEGACY_CRC32_ADLER
 
 //---- Use 32-bit for ImWchar (default is 16-bit) to support Unicode planes 1-16. (e.g. point beyond 0xFFFF like emoticons, dingbats, symbols, shapes, ancient languages, etc...)
 //#define IMGUI_USE_WCHAR32
@@ -85,8 +88,7 @@
 
 //---- Use FreeType + plutosvg or lunasvg to render OpenType SVG fonts (SVGinOT)
 // Only works in combination with IMGUI_ENABLE_FREETYPE.
-// - lunasvg is currently easier to acquire/install, as e.g. it is part of vcpkg.
-// - plutosvg will support more fonts and may load them faster. It currently requires to be built manually but it is fairly easy. See misc/freetype/README for instructions.
+// - plutosvg is currently easier to install, as e.g. it is part of vcpkg. It will support more fonts and may load them faster. See misc/freetype/README for instructions.
 // - Both require headers to be available in the include path + program to be linked with the library code (not provided).
 // - (note: lunasvg implementation is based on Freetype's rsvg-port.c which is licensed under CeCILL-C Free Software License Agreement)
 //#define IMGUI_ENABLE_FREETYPE_PLUTOSVG
@@ -126,6 +128,10 @@
 // (use 'Metrics->Tools->Item Picker' to pick widgets with the mouse and break into them for easy debugging.)
 //#define IM_DEBUG_BREAK  IM_ASSERT(0)
 //#define IM_DEBUG_BREAK  __debugbreak()
+
+//---- Debug Tools: Enable highlight ID conflicts _before_ hovering items. When io.ConfigDebugHighlightIdConflicts is set.
+// (THIS WILL SLOW DOWN DEAR IMGUI. Only use occasionally and disable after use)
+//#define IMGUI_DEBUG_HIGHLIGHT_ALL_ID_CONFLICTS
 
 //---- Debug Tools: Enable slower asserts
 //#define IMGUI_DEBUG_PARANOID
