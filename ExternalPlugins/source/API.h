@@ -237,7 +237,7 @@ namespace DO {
 	//Continue dialog
 	LIBRARY_API bool Continue_Dialog();
 	//find random events, and click them
-	LIBRARY_API bool RandomEvents(int waitTime = 600, int sleepTime = 1200);
+	LIBRARY_API bool RandomEvents(int waitTime = 600, int sleepTime = 1200, bool pengs = false);
 	//click specific rand id
 	LIBRARY_API bool RandomEvent(int npcid);
 	//That heart button,to generate health from adreline
