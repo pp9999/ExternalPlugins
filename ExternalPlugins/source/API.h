@@ -344,6 +344,11 @@ namespace ME {
 //Raw functions
 namespace ME {
 
+	//
+	LIBRARY_API bool GetInterfaceOpenBySize(int ID);
+
+	//using item container id, inv 93, equipment 94, loot 773, familiar 530, bank 95, bankinv 9593, materialcache 99, tradewindow 90, shop 4
+	std::vector<inv_Container_struct> ReadCertainItemContainers(int what_container, bool GetCoords);
 
 	//Truncate to .
 	LIBRARY_API FFPOINT Math_FlattenFloat(FFPOINT FL);
@@ -1469,7 +1474,7 @@ namespace MEX {
 	LIBRARY_API void RandomEvents();
 
 	// Highlights the list of tiles passed ingame
-	LIBRARY_API void MarkTiles(std::vector<FFPOINT> tiles, int fortime);
+	LIBRARY_API void MarkTiles(std::vector<FFPOINT>, uint64_t fortime = 0, unsigned int color = 0, float thick = 0, bool filled = 0, bool square = 0, WPOINT pixelshape = { 0,0,0 }, WPOINT pixellocation = { 0,0,0 });
 
 	LIBRARY_API void ClearMarkTiles();
 
