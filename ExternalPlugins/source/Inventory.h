@@ -26,7 +26,7 @@ struct Inventory {
     };
 
     //combine containers and cache
-    LIBRARY_API std::vector<inv_Container_struct> ReadInvArrays33(int GetCoords = 0);
+    LIBRARY_API std::vector<inv_Container_struct> ReadInvArrays33(bool GetCoords = false);
 
     // random functions
     LIBRARY_API bool IsOpen();

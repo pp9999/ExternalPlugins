@@ -67,6 +67,14 @@ struct GrandExchange {
     LIBRARY_API int FindOrder(int itemId);
     LIBRARY_API bool CancelOrder(int slot);
     LIBRARY_API bool PlaceOrder(ORDER_TYPE type, int itemId, const std::string& itemName, int price, int quantity);
-};
+
+    inline const char* ENUM_ToString(ORDER_TYPE type) {
+        switch (type) {
+        case ORDER_TYPE::BUY:    return "Buy";
+        case ORDER_TYPE::SELL:   return "Sell";
+        default:                return "Unknown";
+        }
+    }
+}inline GEX;
 
 #endif GRAND_EXCHANGE_H

@@ -67,15 +67,18 @@ LIBRARY_API void SubscribeToRenderEvent(std::function<void()> function);
 
 class Debug_Text {
 public:
+	//display debug text box in imgui
+	void Debugtext_display();
 	//add to debug. 0 = default, 1 = info, 2 = warn, 3 error, 4 critical fail
 	LIBRARY_API void Debugtext_add(std::string text, int warn_level = 0, bool disable_print_time = false);
 	//add from gobal then clear global. 0 = default, 1 = info, 2 = warn, 3 error, 4 critical fail
 	LIBRARY_API void Debugtext_addstream(int warn_level = 0, bool disable_print_time = false);
+	//extra debug for packets window
+	void Debugtext_packets_addstream(int warn_level = 0, bool disable_print_time = false, int length = 0, std::string Name = {}, unsigned char OP = 0, std::string MagicalBytes = {}, std::vector < std::string> DataSections = {});
 	//clear debug
 	LIBRARY_API void Debugtext_clear();
-};
+}inline DebugImGui{};
 //debug text for DebugImGui.Debugtext_addstream();
-LIBRARY_API Debug_Text DebugImGui;
 LIBRARY_API std::stringstream console_text;
 
 /// <summary>
@@ -344,6 +347,11 @@ namespace ME {
 //Raw functions
 namespace ME {
 
+	//
+	LIBRARY_API bool GetInterfaceOpenBySize(int ID);
+
+	//using item container id, inv 93, equipment 94, loot 773, familiar 530, bank 95, bankinv 9593, materialcache 99, tradewindow 90, shop 4
+	std::vector<inv_Container_struct> ReadCertainItemContainers(int what_container, bool GetCoords);
 
 	//Truncate to .
 	LIBRARY_API FFPOINT Math_FlattenFloat(FFPOINT FL);
@@ -743,7 +751,7 @@ namespace ME {
 	LIBRARY_API vector<int> GetSkillsTable();
 
 	//first original, +1 boosted
-	int GetSkillsTableSkill(int nr);
+	LIBRARY_API int GetSkillsTableSkill(int nr);
 
 	//Reads cont
 	LIBRARY_API std::vector<General_Container> GetContainerSettings(int targetID = -1);
@@ -1136,6 +1144,9 @@ namespace ME {
 	//glue bytes together in reverse, into 24bit, return standard int
 	LIBRARY_API int Math_AppendBytes24rev(unsigned char* val, int start);
 
+	//2x2 bytes reverse
+	LIBRARY_API int Math_AppendBytes1616r(unsigned char* val, int start);
+
 	//glue bytes together, into 32bit
 	LIBRARY_API int Math_AppendBytes32(unsigned char* val, int start);
 
@@ -1469,7 +1480,7 @@ namespace MEX {
 	LIBRARY_API void RandomEvents();
 
 	// Highlights the list of tiles passed ingame
-	LIBRARY_API void MarkTiles(std::vector<FFPOINT> tiles, int fortime);
+	LIBRARY_API void MarkTiles(std::vector<FFPOINT>, uint64_t fortime = 0, unsigned int color = 0, float thick = 0, bool filled = 0, bool square = 0, WPOINT pixelshape = { 0,0,0 }, WPOINT pixellocation = { 0,0,0 });
 
 	LIBRARY_API void ClearMarkTiles();
 

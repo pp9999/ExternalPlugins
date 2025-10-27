@@ -35,13 +35,13 @@ struct Equipment
         MAINHAND = 3,
         BODY = 4,
         OFFHAND = 5,
-        BOTTOM = 7,
-        GLOVES = 9,
-        BOOTS = 10,
-        RING = 12,
-        AMMO = 13,
-        AURA = 14,
-        POCKET = 17
+        BOTTOM = 6,
+        GLOVES = 7,
+        BOOTS = 8,
+        RING = 9,
+        AMMO = 10,
+        AURA = 11,
+        POCKET = 12
     };
 
     // Bools
@@ -51,13 +51,14 @@ struct Equipment
     LIBRARY_API bool IsFull();
 
     // Contains methods
-    LIBRARY_API bool Contains(const std::variant<ItemType, sol::table>& itemVariant);
+    LIBRARY_API bool Contains(const std::variant<ItemType, std::vector<ItemType>, sol::table>& itemsVariant);
     LIBRARY_API bool ContainsAll(const std::variant<std::vector<ItemType>, sol::table>& itemsVariant);
     LIBRARY_API bool ContainsAny(const std::variant<std::vector<ItemType>, sol::table>& itemsVariant);
     LIBRARY_API bool ContainsOnly(const std::variant<std::vector<ItemType>, sol::table>& itemsVariant);
 
     // Actions
     LIBRARY_API bool Unequip(const std::variant<int, std::string, sol::table>& itemVariant);
+    LIBRARY_API bool DoAction(const std::variant<int, std::string>& item, int m_action);
 
     // Get item(s)
     LIBRARY_API int GetItemID(ESlot slot);
@@ -87,6 +88,6 @@ private:
     int GetItemXpByID(int itemID);
     EquipmentItem ConvertToEquipmentItem(const IInfo& item);
     static std::string RemoveTags(const std::string& input);
-};
+}inline EquipmentClass;
 
 #endif EQUIPMENT_H
