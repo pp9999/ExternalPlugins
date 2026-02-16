@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "API.h"
+#include "ScriptRegistry.h"
 #include <filesystem>
 #include <iostream>
 
@@ -69,6 +70,11 @@ static std::string getTime() {
 static int getGainedCount(int start, int current) {
 	return current - start;
 }
+
+static ScriptRegistrar g_register_AutoDivination(
+	"AutoDivination",
+	&AutoDivination,
+	"Divination helper with random event interaction and idle checks.");
 //UI Example
 static void  onDraw() {
 	ImGui::Begin("AutoDivination", 0);

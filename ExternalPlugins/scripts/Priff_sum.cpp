@@ -1,6 +1,6 @@
 #pragma once
 #include "API.h"
-#include "ScriptLoader.h"
+#include "ScriptRegistry.h"
 
 using std::string;
 using std::endl;
@@ -84,3 +84,8 @@ void Priff_summ() {
 	ScripCuRunning1 = "";
 	ScripCuRunning2 = "";
 }
+
+static ScriptRegistrar g_register_PriffSumm(
+	"Priff_summ",
+	&Priff_summ,
+	"Summoning pouch crafter in Prifddinas (Pack yak or Geyser titan).");

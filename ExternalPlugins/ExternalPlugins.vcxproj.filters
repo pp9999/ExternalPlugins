@@ -50,6 +50,12 @@
     <ClInclude Include="source\ScriptLoader.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="source\IconsFontAwesome6.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ScriptRegistry.h">
+      <Filter>Source</Filter>
+    </ClInclude>
     <ClInclude Include="libs\imgui\imconfig.h">
       <Filter>Libs\imgui</Filter>
     </ClInclude>
@@ -454,8 +460,14 @@
     <ClCompile Include="scripts\CitadellWoodChopper.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="scripts\ExampleScripts.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
     <ClCompile Include="scripts\FFA_fighter.cpp">
       <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ScriptRegistry.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="scripts\CombatTesting.cpp">
       <Filter>Scripts</Filter>
