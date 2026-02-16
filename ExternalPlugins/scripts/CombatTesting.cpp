@@ -1,6 +1,7 @@
 #pragma once
 #include "API.h"
 #include "ScriptLoader.h"
+#include "ScriptRegistry.h"
 #include <thread>
 
 using namespace std;
@@ -37,6 +38,11 @@ static bool bool_endfull = false;
 static bool bool_focusonnpc = false;
 static bool bool_RestToHeal = false;
 static bool bool_BuryBones = false;
+
+static ScriptRegistrar g_register_CombatTesting(
+	"CombatTesting",
+	&CombatTesting,
+	"Configurable combat/loot test script with potion/food handling.");
 
 void Push_rare_drops() {
 	Rare_D.clear();

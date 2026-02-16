@@ -71,14 +71,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)source;$(ProjectDir)libs\imgui;$(ProjectDir)libcurl\include\curl;$(ProjectDir)json-develop\single_include\nlohmann;$(SolutionDir)ExternalPlugins\lua\src;$(SolutionDir)ExternalPlugins\sol;$(IncludePath)</IncludePath>
+        <IncludePath>$(ProjectDir)source;$(ProjectDir)libs\imgui;$(ProjectDir)libcurl\include\curl;$(ProjectDir)json-develop\single_include\nlohmann;$(SolutionDir)ExternalPlugins\lua\src;$(SolutionDir)ExternalPlugins\sol;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)libs;$(ProjectDir)\libcurl\lib;$(LibraryPath)</LibraryPath>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)source;$(ProjectDir)libs\imgui;$(ProjectDir)libcurl\include\curl;$(ProjectDir)json-develop\single_include\nlohmann;$(SolutionDir)ExternalPlugins\lua\src;$(SolutionDir)ExternalPlugins\sol;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)libs;$(ProjectDir)\libcurl\lib;$(LibraryPath)</LibraryPath>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnabled>false</VcpkgEnabled>
@@ -124,7 +124,8 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
       <EnableModules>true</EnableModules>
       <BuildStlModules>true</BuildStlModules>
     </ClCompile>
@@ -133,10 +134,10 @@
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalDependencies>XInput1_4_inject.lib;ws2_32.lib;Normaliz.lib;Crypt32.lib;Wldap32.lib;libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/NOEXP /NOIMPLIB %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/NOIMPLIB %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)$(Platform)\$(Configuration)\ExternalPlugins.dll" "$(USERPROFILE)\MemoryError\External_DLL\ExternalPlugins.dll"</Command>
+      <Command>copy /Y "$(SolutionDir)$(Platform)\$(Configuration)\ExternalPlugins.dll" "$(USERPROFILE)\MemoryError\ExternalPlugins.dll"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy DLL to ME</Message>
@@ -153,6 +154,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
       <EnableModules>true</EnableModules>
       <BuildStlModules>true</BuildStlModules>
     </ClCompile>
@@ -166,7 +168,7 @@
     </Link>
     <PostBuildEvent>
       <Message>Copy DLL to ME</Message>
-      <Command>copy /Y "$(SolutionDir)$(Platform)\$(Configuration)\ExternalPlugins.dll" "$(USERPROFILE)\MemoryError\External_DLL\ExternalPlugins.dll"</Command>
+      <Command>copy /Y "$(SolutionDir)$(Platform)\$(Configuration)\ExternalPlugins.dll" "$(USERPROFILE)\MemoryError\ExternalPlugins.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -298,6 +300,8 @@
     <ClInclude Include="source\Inventory.h" />
     <ClInclude Include="source\Structs.h" />
     <ClInclude Include="main\resource.h" />
+    <ClInclude Include="source\IconsFontAwesome6.h" />
+    <ClInclude Include="source\ScriptRegistry.h" />
     <ClInclude Include="source\ScriptLoader.h" />
     <ClInclude Include="main\targetver.h" />
   </ItemGroup>
@@ -311,8 +315,10 @@
     <ClCompile Include="libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="scripts\CitadellWoodChopper.cpp" />
     <ClCompile Include="scripts\CombatTesting.cpp" />
+    <ClCompile Include="scripts\ExampleScripts.cpp" />
     <ClCompile Include="scripts\FFA_fighter.cpp" />
     <ClCompile Include="scripts\Priff_sum.cpp" />
+    <ClCompile Include="source\ScriptRegistry.cpp" />
     <ClCompile Include="source\ScriptLoader.cpp" />
     <ClCompile Include="scripts\TestScript.cpp" />
     <ClCompile Include="scripts\AutoDivination.cpp" />

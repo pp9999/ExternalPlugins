@@ -1,6 +1,7 @@
 #pragma once
 #include "API.h"
 #include "ScriptLoader.h"
+#include "ScriptRegistry.h"
 
 using std::string;
 using std::endl;
@@ -26,8 +27,13 @@ void CitadelWoodChopper() {
 			if (CitadelLimitVarCount0 > 5) {
 				DebugImGui.Debugtext_add("Stopped. Not unlocked citadel?");
 				LoopyLoop = FALSE;
-			}
-		}
+	}	
+}
+
+static ScriptRegistrar g_register_CitadelWoodChopper(
+	"CitadelWoodChopper",
+	&CitadelWoodChopper,
+	"Citadel T7 woodcutting with cap and stuck checks.");
 		if (CitadelLimitVar >= 270000) {
 			DebugImGui.Debugtext_add("Stopped. Reached limit");
 			LoopyLoop = FALSE;

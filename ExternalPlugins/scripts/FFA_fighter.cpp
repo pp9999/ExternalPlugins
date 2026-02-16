@@ -1,6 +1,7 @@
 #pragma once
 #include "API.h"
 #include "ScriptLoader.h"
+#include "ScriptRegistry.h"
 #include <algorithm>
 #include <thread>
 #include <filesystem>
@@ -13,6 +14,11 @@ static IG_answer CheckforTargetthenAtt{};
 static IG_answer CheckforCombatthenAtt{};
 static IG_answer CheckforOtherPlayerCombatthenAtt{};
 static IG_answer WalkBacktoZone{};
+
+static ScriptRegistrar g_register_FFAFighter(
+	"FFA_fighter",
+	&FFA_fighter,
+	"FFA PvP fighter with selectable start area and target handling.");
 
 static int SelectArea() {
 	string Cselect = MEX::ScriptDialogWindow2("FFA_fighter", { "StartPortal", "StartMultiNorth","West","South Pond","North Pond" }).Name;
