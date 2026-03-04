@@ -152,6 +152,7 @@ void antiIdleTask_FFA() {
 //v2
 void FFA_fighter() {
 
+	LoopyLoop = true;
 	Doaction_paint = true;
 
 	AttackBack.box_name = "AttackBack";

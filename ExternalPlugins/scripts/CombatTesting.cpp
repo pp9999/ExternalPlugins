@@ -466,6 +466,7 @@ static void ScriptPaint() {
 
 //make a loopy script
 void CombatTesting() {
+	LoopyLoop = true;
 
 	int foods_failcount = 0;
 	combat_check = 0;

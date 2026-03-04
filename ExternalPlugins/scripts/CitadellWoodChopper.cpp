@@ -14,7 +14,7 @@ void CitadelWoodChopper() {
 	int CitadelLimitVarCount = 0;
 	int CitadelLimitVarCount0 = 0;
 	int CitadelLimitId = 1880;
-
+	LoopyLoop = true;
 	DebugImGui.Debugtext_add("chops tier 7 tree and tries to watch limit of 2700");
 	while (LoopyLoop) {
 		ScripCuRunning1 = "Looping";

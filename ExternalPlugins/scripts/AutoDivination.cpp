@@ -102,7 +102,7 @@ void AutoDivination() {
 	vector<AllObject>EnrichedSpring;
 	vector<AllObject>RegularSpring;
 	DrawImGui(onDraw);
-
+	LoopyLoop = true;
 	while (LoopyLoop && !Endall) {
 		idleCheck();
 		RandomEvents();

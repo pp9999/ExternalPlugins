@@ -20,12 +20,14 @@ void Priff_summ() {
 	string Cselect = MEX::ScriptDialogWindow2("Summ", { "Pack yak","Geyser titan" }).Name;
 	//Assign stuff here
 	if (Cselect.compare("Pack yak") == 0) {
-		ScripCuRunning0 = "Pack yaks";
+		console_text << "Pack yaks" << endl;
+		DebugImGui.Debugtext_addstream();
 		needed_charms_ID = 12160;
 		items1 = 10818;
 	}
 	if (Cselect.compare("Geyser titan") == 0) {
-		ScripCuRunning0 = "Geyser titan";
+		console_text << "Geyser titan" << endl;
+		DebugImGui.Debugtext_addstream();
 		needed_charms_ID = 12163;
 		items1 = 1444;
 	}
@@ -33,11 +35,12 @@ void Priff_summ() {
 	int safecounter1 = 0;
 	int safecounter2 = 0;
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	LoopyLoop = true;
 	while (LoopyLoop) {
 
 		if (InventoryClass.InvStackSize(pouches_ID) > pouches_amount && InventoryClass.InvStackSize(spirit_shards_ID) > spirit_shards_amount && InventoryClass.InvStackSize(needed_charms_ID) > needed_charms_amount && InventoryClass.InvItemFounds({ items1, items2 })) {
-			ScripCuRunning1 = "Needed stuff in inventory <------";
+			console_text << "Needed stuff in inventory <------" << endl;
+			DebugImGui.Debugtext_addstream();
 			//safety
 				safecounter1++;
 				console_text << "Infuse try: " << safecounter1 << endl;
@@ -47,19 +50,22 @@ void Priff_summ() {
 			//status:needed stuff in inventory
 			//close enough to obelisk
 			if (ME::PInArea2(2135, 2143, 3367, 3375)) {
-				ScripCuRunning2 = "Close to obby, craft pouches";
+				console_text << "Close to obby, craft pouches" << endl;
+				DebugImGui.Debugtext_addstream();
 				ME::FindObj({ 94230 }, 11, 20, 0, 0, "Infuse");
 					ME::RandomSleep2(1200, 2500, 5000);
 					ME::KeyboardPress(' ', 40, 100);//with right indrigents it should be highlighted
 			}
 			else {
 				//run to obelisk
-				ScripCuRunning2 = "Go to obby";
+				console_text << "Go to obby: " << endl;
+				DebugImGui.Debugtext_addstream();
 				ME::Map_Walker1NT({ 2139,3371,0 }, 50);
 			}
 		}
 		else {
-			ScripCuRunning1 = "No stuff <------";
+			console_text << "No stuff <------" << endl;
+			DebugImGui.Debugtext_addstream();
 			//safety
 				safecounter2++;
 				console_text << "Bank try: " << safecounter2 << endl;
@@ -69,20 +75,20 @@ void Priff_summ() {
 			//status:inventory has not enough needed items
 			//close to bank
 			if (ME::PInArea2(2150, 2158, 3337, 3345)) {
-				ScripCuRunning2 = "Open bank";
+				console_text << "Open bank" << endl;
+				DebugImGui.Debugtext_addstream();
 				//MEX::OpenBankChest(92692, '1');
 			}
 			else {
 				//run to bank
-				ScripCuRunning2 = "Go to bank";
+				console_text << "Go to bank" << endl;
+				DebugImGui.Debugtext_addstream();
 				ME::Map_Walker1NT({ 2153,3341,0 }, 50);
 			}
 		}
 
 		ME::RandomSleep2(1000, 2050, 3000);
 	}
-	ScripCuRunning1 = "";
-	ScripCuRunning2 = "";
 }
 
 static ScriptRegistrar g_register_PriffSumm(
