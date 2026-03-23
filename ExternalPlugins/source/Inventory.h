@@ -30,6 +30,7 @@ struct Inventory {
 
     // random functions
     LIBRARY_API bool IsOpen();
+    LIBRARY_API bool IsArrayNull();
     LIBRARY_API bool IsFull();
     LIBRARY_API int Invfreecount();
     LIBRARY_API bool IsEmpty();
@@ -47,6 +48,8 @@ struct Inventory {
 
     // Contains functions
     LIBRARY_API bool Contains(const std::variant<int, std::string, std::vector<ItemType>, sol::table>& itemsVariant);
+    LIBRARY_API bool Contains(const ItemType& item);
+    LIBRARY_API bool Contains(const std::vector<ItemType>& items);
     LIBRARY_API bool ContainsAll(const std::variant<std::vector<ItemType>, sol::table>& items);
     LIBRARY_API bool ContainsAny(const std::variant<std::vector<ItemType>, sol::table>& items);
     LIBRARY_API bool ContainsOnly(const std::variant<std::vector<ItemType>, sol::table>& items);
@@ -81,7 +84,7 @@ private:
     int GetItemAmountByName(const std::string& itemName);
     int GetItemXpByID(int itemID);
     int GetItemXpByName(const std::string& itemName);
-    InventoryItem ConvertToInventoryItem(const IInfo& item);
+    InventoryItem ConvertToInventoryItem(const inv_Container_struct& item);
 }inline InventoryClass;
 
 #endif // INVENTORY_H

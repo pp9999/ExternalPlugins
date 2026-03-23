@@ -495,14 +495,29 @@ struct ImGui_loop_info {
 	IG_answer* dat = nullptr;
 };
 
+//Target buff/debuff with detailed info
+struct TargetBuff {
+	int id = 0;              // Varbit value (stack count, etc.)
+	int varbitId = 0;        // Varbit ID
+	int spriteId = 0;        // Sprite/icon ID (BuffID)
+	std::string name{};      // Buff name
+	bool isDebuff = false;   // true = debuff, false = buff
+
+	TargetBuff() = default;
+	TargetBuff(int _id, int _varbitId, int _spriteId, std::string _name, bool _isDebuff) :
+		id{ _id }, varbitId{ _varbitId }, spriteId{ _spriteId }, name{ _name }, isDebuff{ _isDebuff } {
+	}
+};
+
 struct Target_data {
 	std::string Target_Name{};//name
 	int Hit_percent = 0;//
 	int Cmb_lv = 0;//
 	int Hitpoints = 0;//
-	std::vector<int> Buff_stack;//All buffs/debuffs
+	std::vector<TargetBuff> Buff_stack;//All buffs/debuffs
+
 	Target_data() = default;
-	Target_data(std::string _Target_Name, int _Hit_percent, int _Cmb_lv, int _Hitpoints, std::vector<int> _Buff_stack) :
+	Target_data(std::string _Target_Name, int _Hit_percent, int _Cmb_lv, int _Hitpoints, std::vector<TargetBuff> _Buff_stack) :
 		Target_Name{ _Target_Name }, Hit_percent{ _Hit_percent }, Cmb_lv{ _Cmb_lv }, Hitpoints{ _Hitpoints }, Buff_stack{ _Buff_stack } {
 	}
 };

@@ -155,8 +155,8 @@ namespace DO {
 	LIBRARY_API bool DoAction_Object_string_r(int action, int offset, std::vector<std::string> obj, int maxdistance, WPOINT tile, float tile_range, bool CheckInteractbool = false);
 	//Push action, do action on object, directly sends command to do
 	LIBRARY_API bool DoAction_Object_Direct(int action, int offset, AllObject object);
-	//Push action, do action on NPC, find by id
-	LIBRARY_API bool DoAction_NPC(int action, int offset, std::vector<int> obj, int maxdistance, bool ignore_star = false, int health = 0);
+	//Push action, do action on NPC, find by id, optional tile
+	LIBRARY_API bool DoAction_NPC(int action, int offset, std::vector<int> obj, int maxdistance, std::optional<WPOINT> tile = std::nullopt, bool ignore_star = false, int health = 0);
 	//Push action, do action on NPC, find by string
 	LIBRARY_API bool DoAction_NPC_str(int action, int offset, std::vector<std::string> obj, int maxdistance, bool ignore_star = false, int health = 0);
 	//Push action, do action on NPC, find by id, filter by area
@@ -351,7 +351,7 @@ namespace ME {
 	LIBRARY_API bool GetInterfaceOpenBySize(int ID);
 
 	//using item container id, inv 93, equipment 94, loot 773, familiar 530, bank 95, bankinv 9593, materialcache 99, tradewindow 90, shop 4
-	std::vector<inv_Container_struct> ReadCertainItemContainers(int what_container, bool GetCoords);
+	LIBRARY_API std::vector<inv_Container_struct> ReadCertainItemContainers(int what_container, bool GetCoords);
 
 	//Truncate to .
 	LIBRARY_API FFPOINT Math_FlattenFloat(FFPOINT FL);
@@ -360,10 +360,10 @@ namespace ME {
 	LIBRARY_API vector<FFPOINT> Math_FlattenFloatArray(vector<FFPOINT> FL);
 
 	//check free tiles, order in distance from localplayer
-	LIBRARY_API vector<FFPOINT> Math_FreeTiles(vector<FFPOINT> OccupiedTiles, int TileSize, int AreaRange, vector <FFPOINT> BlockedTiles = {}, bool DrawDebugTiles = false);
+	LIBRARY_API vector<FFPOINT> Math_FreeTiles(vector<FFPOINT> OccupiedTiles, int TileSize, int AreaRange, vector <FFPOINT> BlockedTiles = {}, bool DrawDebugTiles = true);
 
 	//check free tiles, order in distance from Tile
-	vector<FFPOINT> Math_FreeTilesTile(FFPOINT orig, vector<FFPOINT> OccupiedTiles, int TileSize, int AreaRange, vector <FFPOINT> BlockedTiles = {}, bool DrawDebugTiles = false);
+	vector<FFPOINT> Math_FreeTilesTile(FFPOINT orig, vector<FFPOINT> OccupiedTiles, int TileSize, int AreaRange, vector <FFPOINT> BlockedTiles = {}, bool DrawDebugTiles = true);
 
 	//Sort AObjects array by distance from tile, return AllObject
 	LIBRARY_API vector<AllObject> Math_SortAODistFromA(FFPOINT Tile, vector<AllObject> AllMain);
@@ -382,6 +382,12 @@ namespace ME {
 
 	//get time/date
 	LIBRARY_API string GetStringTime();
+
+	//get timestamp for filenames (YYYY-MM-DD_HH-MM-SS)
+	LIBRARY_API string GetTimestampForFilename();
+
+	//Save console log to file. filename optional - defaults to console_log_YYYY-MM-DD_HH-MM-SS.txt
+	LIBRARY_API bool SaveConsoleToFile(std::string filename = "", bool clearAfterSave = false);
 
 	//Read All object to ImVec2 pixels
 	LIBRARY_API ImVec2 ReadObjectCoordinatesImVec2(uint64_t mem_location);
@@ -454,6 +460,8 @@ namespace ME {
 
 	//read as string, constant size
 	LIBRARY_API std::string ReadChars(uint64_t SummPointer, int readsize = 250);
+
+	std::string ReadCharsNorm(uint64_t SummPointer);
 
 	//read as std::string, attempt to read short ones
 	LIBRARY_API std::string ReadCharsLimit(uint64_t SummPointer, int limit = 255);
@@ -588,7 +596,7 @@ namespace ME {
 	LIBRARY_API int ReadPlayerAnim();
 
 	//
-	LIBRARY_API Target_data ReadTargetInfo(bool ForceRefresh = false);
+	LIBRARY_API Target_data ReadTargetInfo99(bool GetCombatData = true);
 
 	//
 	LIBRARY_API AllObject ReadLpInteracting();
@@ -694,7 +702,7 @@ namespace ME {
 	LIBRARY_API bool MoveMouse2(int x, int y, int rx, int ry);
 
 	//
-	LIBRARY_API bool MoveMouse3(int x, int y, int rx, int ry, bool updown);
+	LIBRARY_API bool MoveMouse3(int x, int y);
 
 	//
 	LIBRARY_API bool MouseLeftClick(int sleep, int rand);
@@ -706,19 +714,16 @@ namespace ME {
 	LIBRARY_API bool Post_MouseMove(int x, int y);
 
 	//
-	LIBRARY_API bool Post_MouseMoveAtoB(int x, int y);
-
-	//
 	LIBRARY_API bool Post_MouseLeftClick(int x, int y, int sleep, int random);
-
-	//
-	LIBRARY_API bool Post_MouseLeftClick_AtoB(int x, int y, int sleep, int random);
 
 	//
 	LIBRARY_API bool Post_MouseRightClick(int x, int y, int sleep, int random);
 
 	//
 	LIBRARY_API uint64_t SystemTime();
+
+	//
+	LIBRARY_API std::string GetEnvVar(std::string Envvar);
 
 	//
 	LIBRARY_API int CRC32CheckSum(void* Data, int Size, int InitialValue);
@@ -732,8 +737,11 @@ namespace ME {
 	//
 	LIBRARY_API bool SideTextEq(std::vector<std::string> text);
 
+	//
+	std::vector<AllObject> ReadAllObjectsArrayOSRS();
+
 	//active obj 0, npc 1, player 2, grounditems 3, pro 5, decor 12
-	LIBRARY_API std::vector<AllObject> ReadAllObjectsArray(vector< int> types = { -1 }, vector< int> ids = { -1 }, vector< std::string> name_strings = {});
+	LIBRARY_API std::vector<AllObject> ReadAllObjectsArray(vector< int> types = {}, vector< int> ids = { -1 }, vector< std::string> name_strings = {});
 
 	//Reads inventory content and stores it in: InvArr
 	LIBRARY_API std::vector<IInfo> ReadInvArrays33();
@@ -751,7 +759,7 @@ namespace ME {
 	LIBRARY_API vector<int> GetSkillsTable();
 
 	//first original, +1 boosted
-	LIBRARY_API int GetSkillsTableSkill(int nr);
+	int GetSkillsTableSkill(int nr);
 
 	//Reads cont
 	LIBRARY_API std::vector<General_Container> GetContainerSettings(int targetID = -1);
@@ -1145,7 +1153,7 @@ namespace ME {
 	LIBRARY_API int Math_AppendBytes24rev(unsigned char* val, int start);
 
 	//2x2 bytes reverse
-	LIBRARY_API int Math_AppendBytes1616r(unsigned char* val, int start);
+	int Math_AppendBytes1616r(unsigned char* val, int start);
 
 	//glue bytes together, into 32bit
 	LIBRARY_API int Math_AppendBytes32(unsigned char* val, int start);
@@ -1318,6 +1326,8 @@ namespace ME {
 
 	LIBRARY_API WPOINT PlayerRegion();
 
+	LIBRARY_API bool InInstancedArea();
+
 	//outputs array of points from a to b
 	LIBRARY_API std::vector<WPOINT> Math_Bresenham_line(int x1, int y1, int x2, int y2);
 
@@ -1397,7 +1407,7 @@ namespace ME {
 	LIBRARY_API std::vector<bool> Math_ValueEqualsArr(const std::vector<T>& arrayof1, const std::vector<T>& arrayof2);
 
 	//read exepacked pointer, move exactly to the right byte
-	LIBRARY_API uint64_t EXEPackedPointer(std::string instruct, uint64_t from_instruction_start);
+	LIBRARY_API uint64_t EXEPackedPointer(std::string instruct, uint64_t from_instruction_start, bool retonlyvalue = false);
 
 };
 
@@ -1439,6 +1449,9 @@ namespace MEX {
 
 	//Set max idle time in minutes
 	LIBRARY_API void SetMaxIdleTime(int time);
+
+	//Get membership expriy timestamp
+	LIBRARY_API uint64_t MemberExpiry();
 
 	//Looks if localplayer is member
 	LIBRARY_API bool IsMember();
@@ -1596,6 +1609,15 @@ namespace MEX {
 	//check debuff status based id
 	LIBRARY_API Bbar DeBuffbar_GetIDstatus(int id, bool debug);
 
+	//Get detailed target buff/debuff info with names from varbit mapping
+	LIBRARY_API std::vector<TargetBuff> ReadTargetBuffsDetailed(bool debug = false);
+
+	//Check if target has specific buff/debuff by varbit ID or sprite/buff ID
+	LIBRARY_API bool TargetHasBuff(int id);
+
+	//Check if target has specific buff/debuff by name (case insensitive, partial match)
+	LIBRARY_API bool TargetHasBuff(const std::string& name);
+
 	//main ability bar, get all critical data
 	LIBRARY_API std::vector<Abilitybar> GetABarInfo(int bar_nr);
 
@@ -1666,6 +1688,9 @@ namespace MEX {
 
 	//
 	LIBRARY_API std::vector <NameData> ScriptDialogWindow_input(std::string boxtext, bool password, int arrtype, std::string filename);
+
+	//square = 0 square, 1 crircle, 2 line
+	void MarkTiles2(std::vector<FFPOINT> tiles, FFPOINT tiles2, uint64_t fortime, unsigned int color, float thick, bool filled, int square, WPOINT pixelshape, WPOINT pixellocation, WPOINT pixellocation2, std::string attext);
 
 	//kinda extended vbs for some reason, get value
 	LIBRARY_API int GetExtendedVB(VB set);
@@ -1754,6 +1779,8 @@ namespace MEX {
 	LIBRARY_API void BankClose();
 
 	LIBRARY_API bool LogDrop(int itemId, uint64_t quantity);
+
+	LIBRARY_API std::string GetMemoryErrorPath();
 };
 
 //Dear ImGui wrappers

@@ -90,4 +90,4 @@ private:
     static std::string RemoveTags(const std::string& input);
 }inline EquipmentClass;
 
-#endif EQUIPMENT_H
+#endif //EQUIPMENT_H
