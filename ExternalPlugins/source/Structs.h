@@ -214,6 +214,7 @@ struct AllObject {
 	int CalcY = 0;
 	FFPOINT Tile_XYZ{};//norm tile x & y
 	WPOINT Pixel_XYZ{};//norm pixels
+	WPOINT Head_XYZ{};//canvas position above actor head (for icons)
 
 	AllObject() = default;
 	AllObject(uint64_t _Mem, uint64_t _MemE, float _TileX, float _TileY, float _TileZ, int _Id, int _Life, int _Anim,
