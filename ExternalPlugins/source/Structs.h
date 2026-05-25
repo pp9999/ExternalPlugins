@@ -5,6 +5,20 @@
 #include <functional>
 #include <ctime>
 #include <imgui.h>
+#include <variant>
+#include <sstream>
+#include <optional>
+
+// Define a variant type for items, which can be either an int (item ID) or a string (item name)
+using ItemType = std::variant<int, std::string>;
+
+// RGBA pixel data fetched from RuneLite's SpriteManager
+struct SpriteData {
+	int width = 0;
+	int height = 0;
+	std::vector<uint8_t> rgba; // width * height * 4 bytes (R,G,B,A)
+	bool valid = false;
+};
 
 
 //we store data
@@ -12,8 +26,15 @@
 struct SPLAT {
 	int Type = 0;
 	int Amount = 0;
+	int EInfo1 = 0;
+	int EInfo2 = 0;
 	uint64_t Time = 0;
 	int Slot = 0;
+
+	SPLAT() = default;
+	SPLAT(int _Type, int _Amount, int _EInfo1, int _EInfo2, uint64_t _Time, int _Slot) :
+		Type{ _Type }, Amount{ _Amount }, EInfo1{ _EInfo1 }, EInfo2{ _EInfo2 }, Time{ _Time }, Slot{ _Slot } {
+	}
 };
 
 //debug box strings
@@ -106,6 +127,8 @@ struct WPOINT {
 
 	WPOINT() = default;
 	WPOINT(int _x, int _y, int _z) : x{ _x }, y{ _y }, z{ _z } {}
+
+	static WPOINT FromLocal(int localX, int localY, int plane);
 
 	WPOINT(const FFPOINT& f) : x(static_cast<int>(f.x)), y(static_cast<int>(f.y)), z(static_cast<int>(f.z)) {}
 	operator FFPOINT() const { return FFPOINT(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)); }
@@ -215,6 +238,12 @@ struct AllObject {
 	FFPOINT Tile_XYZ{};//norm tile x & y
 	WPOINT Pixel_XYZ{};//norm pixels
 	WPOINT Head_XYZ{};//canvas position above actor head (for icons)
+	uint64_t tileObject = 0;//must be global ref
+	uint64_t objClass = 0;//must be global ref
+	FFPOINT Start_Tile_XYZ{};//mostly for projectiles, start
+	FFPOINT End_Tile_XYZ{};//mostly for projectiles, end
+	uint64_t Time = 0;
+	int pray = 0;
 
 	AllObject() = default;
 	AllObject(uint64_t _Mem, uint64_t _MemE, float _TileX, float _TileY, float _TileZ, int _Id, int _Life, int _Anim,
@@ -277,6 +306,21 @@ struct IInfo {
 		, notvisible{ _notvisible }, OP{ _OP }, xy{ _xy }
 	{}
 	*/
+};
+
+//LootOptions for configurable loot behavior
+struct LootOptions {
+	bool allowStackablesAlreadyHeld = false;
+	bool allowCoins = false;
+	int coinMinAmount = 300;
+	int sleepOffset = 500;
+	int maxItemsToLoot = 0;  // 0 = unlimited (loot all), 1 = one item, N = up to N items
+	bool useLootAll = true;
+	bool lootAmmoSlot = false;  // auto-loot items matching equipped ammo slot (e.g., arrows)
+	bool useKeybindToOpen = false;
+	int keybindVK = 0;  // VK code for keybind to open loot window
+	bool lootAllWhenFull = false;  // use loot all when inventory full and there are stackables to loot
+	bool debug = false;
 };
 
 //for items, generally inventory
@@ -416,6 +460,33 @@ struct Bbar {
 	}
 };
 
+//Target buff/debuff with detailed info
+struct TargetBuff {
+	int id = 0;              // Varbit value (stack count, etc.)
+	int varbitId = 0;        // Varbit ID
+	int spriteId = 0;        // Sprite/icon ID (BuffID)
+	std::string name{};      // Buff name
+	bool isDebuff = false;   // true = debuff, false = buff
+
+	TargetBuff() = default;
+	TargetBuff(int _id, int _varbitId, int _spriteId, std::string _name, bool _isDebuff) :
+		id{ _id }, varbitId{ _varbitId }, spriteId{ _spriteId }, name{ _name }, isDebuff{ _isDebuff } {
+	}
+};
+
+struct Target_data {
+	std::string Target_Name{};//name
+	int Hit_percent = 0;//
+	int Cmb_lv = 0;//
+	int Hitpoints = 0;//
+	std::vector<TargetBuff> Buff_stack;//All buffs/debuffs
+
+	Target_data() = default;
+	Target_data(std::string _Target_Name, int _Hit_percent, int _Cmb_lv, int _Hitpoints, std::vector<TargetBuff> _Buff_stack) :
+		Target_Name{ _Target_Name }, Hit_percent{ _Hit_percent }, Cmb_lv{ _Cmb_lv }, Hitpoints{ _Hitpoints }, Buff_stack{ _Buff_stack } {
+	}
+};
+
 //for Abilities
 struct Abilitybar {
 	int slot = 0;//slot
@@ -494,33 +565,6 @@ struct ImGui_loop_info {
 	std::string unique_identifier{};//write or generate
 	bool resident = false;//permanent until removed
 	IG_answer* dat = nullptr;
-};
-
-//Target buff/debuff with detailed info
-struct TargetBuff {
-	int id = 0;              // Varbit value (stack count, etc.)
-	int varbitId = 0;        // Varbit ID
-	int spriteId = 0;        // Sprite/icon ID (BuffID)
-	std::string name{};      // Buff name
-	bool isDebuff = false;   // true = debuff, false = buff
-
-	TargetBuff() = default;
-	TargetBuff(int _id, int _varbitId, int _spriteId, std::string _name, bool _isDebuff) :
-		id{ _id }, varbitId{ _varbitId }, spriteId{ _spriteId }, name{ _name }, isDebuff{ _isDebuff } {
-	}
-};
-
-struct Target_data {
-	std::string Target_Name{};//name
-	int Hit_percent = 0;//
-	int Cmb_lv = 0;//
-	int Hitpoints = 0;//
-	std::vector<TargetBuff> Buff_stack;//All buffs/debuffs
-
-	Target_data() = default;
-	Target_data(std::string _Target_Name, int _Hit_percent, int _Cmb_lv, int _Hitpoints, std::vector<TargetBuff> _Buff_stack) :
-		Target_Name{ _Target_Name }, Hit_percent{ _Hit_percent }, Cmb_lv{ _Cmb_lv }, Hitpoints{ _Hitpoints }, Buff_stack{ _Buff_stack } {
-	}
 };
 
 struct PASSOBJ {
