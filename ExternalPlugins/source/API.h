@@ -627,6 +627,8 @@ namespace ME {
 
 	//windoz keyboard typing
 	LIBRARY_API void TypeOnkeyboard2(std::string asciii);
+	LIBRARY_API void TypeOnkeyboard3(std::string asciii);
+	LIBRARY_API bool KeyboardPress4(unsigned char c, int keymod = 0);
 
 	//for localplayer: waits few cycles and then reports did it find any animation.
 	LIBRARY_API bool CheckAnim(int Loops);
@@ -994,6 +996,9 @@ namespace ME {
 	//finds and reads varpbits. if params is -1 then it is ignored
 	LIBRARY_API VB VB_FindPSett(int id);
 
+	//finds and reads varcbits. if params is -1 then it is ignored
+	LIBRARY_API VB VC_FindPSett(int id);
+
 	//finds and reads varpbits.
 	LIBRARY_API VB VB_FindPSettinOrder(int id);
 
@@ -1300,6 +1305,9 @@ namespace ME {
 	//
 	LIBRARY_API std::vector<IInfo> ScanForInterfaceTest2Get(bool target_under, std::vector<InterfaceComp5> lv_ID);
 
+	//Cache-based interface lookup from the current host cache.
+	LIBRARY_API std::vector<IInfo> ScanForInterfaceTest2Get2(bool target_under, InterfaceComp5 lv_ID);
+
 	//gets game status. if in game 3, if lobby 2, if logged out 1, unknown 0, loading 4
 	LIBRARY_API int GetGameState2();
 
@@ -1363,28 +1371,6 @@ namespace ME {
 	LIBRARY_API FFPOINT FindObjTileName(std::vector<int> obj, int maxdistance);
 
 	//
-	LIBRARY_API void ReadChatMessages();
-
-	//
-	LIBRARY_API void ReadChatMessages_G();
-
-	//
-	LIBRARY_API void ReadChatMessages_Save(std::string file_name);
-
-	//
-	LIBRARY_API std::vector<std::string> GetChatMessage(int Line_index, int size);
-
-	//
-	LIBRARY_API std::vector<std::string> ChatMessageCompareExtra(std::string text, std::string text1_2, int size);
-
-	//
-	LIBRARY_API std::vector<std::string> ChatMessageCompare(std::string text, int size);
-
-	//
-	LIBRARY_API std::vector<std::string> ChatMessageCompare(std::string textcolor, std::string text, int size);
-
-	//
-	LIBRARY_API std::vector<std::string> ChatMessageCompare(std::string playername, std::string textcolor, std::string text, int size);
 	//
 	LIBRARY_API void Map_Walker1(FFPOINT tilexy, int distance);
 
@@ -1462,6 +1448,9 @@ namespace MEX {
 	// Get the current tick number.
 	LIBRARY_API int Get_tick();
 
+	// Get the current RS3 client logic cycle.
+	LIBRARY_API std::optional<std::uint32_t> GetClientCycle();
+
 	// Sleeps until a specified amount of ticks have passed.
 	LIBRARY_API void Sleep_tick(int count);
 
@@ -1516,12 +1505,6 @@ namespace MEX {
 	//Look from players. Compare model ids
 	LIBRARY_API bool FindModelCompare(std::string name, std::vector<uint64_t> model_ids);
 
-	//Read chat into vectors
-	LIBRARY_API std::vector<ChatTexts> ChatGetMessages();
-
-	//find latest message, any part of it will do
-	LIBRARY_API ChatTexts ChatFind(std::string text, int limit);
-
 	//to int
 	LIBRARY_API int AsciiToNumbers32(std::string ascii_num);
 
@@ -1530,9 +1513,6 @@ namespace MEX {
 
 	//vector of strings to vector of int numbers
 	LIBRARY_API std::vector<int> StringsToInts(std::vector<std::string> input);
-
-	//special for getting portable time from chat
-	LIBRARY_API int ChatPortableTime();
 
 	//tries to read, equipment must be open. Maybe make some other function for checking that 
 	LIBRARY_API std::vector<IInfo> ReadEquipment();
@@ -1909,7 +1889,9 @@ template int LIBRARY_API ME::Math_ValueEqualsIndex(int value, const std::vector<
 
 //check stored
 LIBRARY_API vector<EventData> GatherEvents_chat_check();
+LIBRARY_API uint64_t GatherEvents_chat_read(uint64_t lastSeq, vector<EventData>& out);
 LIBRARY_API vector<EventData> GatherEvents_xp_check();
 LIBRARY_API vector<EventData> GatherEvents_glisten_check();
+LIBRARY_API vector<SPLAT> GatherEvents_splat_check(bool clear = true);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

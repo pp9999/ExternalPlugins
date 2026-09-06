@@ -1,13 +1,20 @@
 #pragma once
 #include <cstdint>
 #include <string>
+#include <variant>
 #include <vector>
 #include <functional>
 #include <ctime>
 #include <imgui.h>
-#include <variant>
 #include <sstream>
 #include <optional>
+
+// Opaque RuneLite JNI handles. The plugin SDK does not make JNI calls, but
+// these pointer-sized fields are part of the host's AllObject layout.
+struct _jobject;
+struct _jclass;
+using jobject = _jobject*;
+using jclass = _jclass*;
 
 // Define a variant type for items, which can be either an int (item ID) or a string (item name)
 using ItemType = std::variant<int, std::string>;
@@ -78,32 +85,11 @@ struct ReturnText {
 	ReturnText(std::string _Name, int _Nr, int _listNr) : Name{ _Name }, Nr{ _Nr }, listNr{ _listNr } {}
 };
 
-//
-struct ChatTexts {
-	std::string name{};
-	std::string text{};
-	std::string text_extra1{};
-	std::string text_extra2{};
-	uint64_t mem_loc = 0;
-	uint64_t pc_time_stamp = 0;
-	size_t pos_found = 0;
-	uint64_t time_total = 0;
-};
-
 // player name info
 struct NameData {
 	std::string Name{};
 	std::string Password{};
 	std::string Pin{};
-};
-
-// for keyboard
-struct KeyboardKeys {
-	unsigned char virtual_keys = 0;
-	unsigned char scan_keys = 0;
-	bool extended = 0;
-	unsigned char unified_oem = 0;//now used unified key press
-	unsigned char small_char = 0;
 };
 
 // for coordinates
@@ -149,6 +135,12 @@ struct QWPOINT {
 	}
 };
 
+struct MoveSpeed {
+	char CurrentWalk = -1;
+	FFPOINT CurrentTile{};
+	std::vector<FFPOINT> Tiles{};
+};
+
 //def special struct for gates
 struct GateTileStruct {
 	std::string name{};//gate name
@@ -190,6 +182,8 @@ struct VB {
 	uint64_t addr = 0;
 	uint64_t indexaddr_orig = 0;
 	int id = 0;
+	bool valid = false;
+	bool found = false;
 
 	VB() = default;
 	VB(int _state, uint64_t _addr, uint64_t _indexaddr_orig, int _id, char array) :
@@ -203,6 +197,7 @@ struct VBreturn {
 	uint64_t SettingsAddrspot = 0;
 	int SettingsState = 0;
 	int SettingsId = -1;
+	bool SettingsValid = false;
 };
 
 //for dung
@@ -238,8 +233,8 @@ struct AllObject {
 	FFPOINT Tile_XYZ{};//norm tile x & y
 	WPOINT Pixel_XYZ{};//norm pixels
 	WPOINT Head_XYZ{};//canvas position above actor head (for icons)
-	uint64_t tileObject = 0;//must be global ref
-	uint64_t objClass = 0;//must be global ref
+	jobject tileObject = nullptr;//must be global ref
+	jclass objClass = nullptr;//must be global ref
 	FFPOINT Start_Tile_XYZ{};//mostly for projectiles, start
 	FFPOINT End_Tile_XYZ{};//mostly for projectiles, end
 	uint64_t Time = 0;
@@ -286,9 +281,14 @@ struct IInfo {
 	int itemid1 = 0;
 	uint64_t itemid1_size = 0;
 	int itemid2 = 0;
+	int slideSpriteId = 0;
+	int buffIconId = 0;
+	int abilityEnabledRaw = 0;
+	int selectedTabId = 0;
 	bool hov = false;
 	std::string textids{};
 	std::string textitem{};
+	std::string alternateText{};
 	uint64_t memloc = 0;
 	uint64_t memloctop = 0;
 	int index = 0;//how many levels deep
@@ -397,47 +397,17 @@ struct General_Container {
 struct InterfaceComp5test {
 	std::string Name{};
 	InterfaceComp5 IDdynamic{};
-	std::vector<InterfaceComp5> IDstatics{};
-	int x_offset = 0;
-	int y_offset = 0;
-	int x_adjust = 0;//instead of looking padding info
-	int y_adjust = 0;//instead of looking padding info
-};
-
-//
-struct IInfoArrs {
-	IInfo IS0;
-	std::vector<IInfo> IS1{};
-	std::vector<IInfo> IS2{};
-	std::vector<IInfo> IS3{};
-	std::vector<IInfo> IS4{};
-	std::vector<IInfo> IS5{};
-	std::vector<IInfo> IS6{};
-	std::vector<IInfo> IS7{};
-	std::vector<IInfo> IS8{};
-	std::vector<IInfo> IS9{};
-	std::vector<IInfo> IS10{};
-	std::vector<IInfo> IS11{};
-	std::vector<IInfo> IS12{};
-	std::vector<IInfo> IS13{};
-	std::vector<IInfo> IS14{};
-	std::vector<IInfo> IS15{};
 };
 
 //for chooseoption
 struct Choption {
-	std::string TextLines{};
-	int x = 0;
-	int y = 0;
-	int w = 0;
-	int h = 0;
-	int index0 = 0;
-	int index1 = 0;
-	int index2 = 0;
-	int itemid = 0;
-	int objectid = 0;
-	int stuff0 = 0;
-	int stuff1 = 0;
+	int Id = 0;
+	int OPr = 0;
+	int Index = 0;
+	std::string Action{};
+	std::string Name{};
+	std::vector<InterfaceComp5> Randomcomponents{};
+	QWPOINT Corners = {0,0,0,0};
 };
 
 //FindChooseOptionLive

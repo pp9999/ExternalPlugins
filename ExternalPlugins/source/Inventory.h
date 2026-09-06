@@ -34,6 +34,7 @@ struct Inventory {
     LIBRARY_API bool IsFull();
     LIBRARY_API int Invfreecount();
     LIBRARY_API bool IsEmpty();
+    LIBRARY_API bool HasFood();
     LIBRARY_API bool IsItemSelected();
     LIBRARY_API int InvItemcount(int item);
     LIBRARY_API bool InvItemFound(int item);
@@ -68,6 +69,8 @@ struct Inventory {
     LIBRARY_API bool UseItemOnItem(const ItemType& item1, const ItemType& item2);
     LIBRARY_API bool DoAction(const ItemType& item, int action, int offset);
 
+    LIBRARY_API bool DoAction_Drag_Repeat();
+
     // Inventory information
     LIBRARY_API int FreeSpaces();
     LIBRARY_API std::vector<InventoryItem> GetItem(const ItemType& item);
@@ -82,6 +85,7 @@ private:
     bool ContainsByName(const std::string& itemName);
     uint64_t GetItemAmountByID(int itemID);
     int GetItemAmountByName(const std::string& itemName);
+    int GetItemXpFromContainer(const inv_Container_struct& item);
     int GetItemXpByID(int itemID);
     int GetItemXpByName(const std::string& itemName);
     InventoryItem ConvertToInventoryItem(const inv_Container_struct& item);

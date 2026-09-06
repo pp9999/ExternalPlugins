@@ -153,8 +153,11 @@ extern "C" __declspec(dllexport) const ScriptFunction* GetScripts(size_t* count)
     return GetRegisteredScripts(count);
 }
 
-extern "C" __declspec(dllexport) void LoadDLL() {
-    // Host (MemoryError) calls LoadDLL() with no parameters.
+extern "C" __declspec(dllexport) void LoadDLL(HWND hostWindow) {
+    // MemoryError::PluginManager passes the host window during plugin load.
+    // The current plugin does not need to retain it, but the parameter keeps
+    // this export ABI-compatible with the host.
+    (void)hostWindow;
     // Keep this light-weight to avoid side effects on inject.
 }
 

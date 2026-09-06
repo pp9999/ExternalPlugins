@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <optional>
 #ifdef LIBRARY_EXPORTS
 #    define LIBRARY_API __declspec(dllexport)
 #else
@@ -19,4 +20,10 @@ struct Interact {
     //LIBRARY_API bool Item();
 
     LIBRARY_API void SetSleep(int p1, int p2, int p3);
+    static void SleepAfterAction();
+
+private:
+    static inline int wait = 500;
+    static inline int sleep = 550;
+    static inline int sleep2 = 600;
 };
