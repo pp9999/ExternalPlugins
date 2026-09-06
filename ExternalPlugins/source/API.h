@@ -788,15 +788,6 @@ namespace ME {
 	LIBRARY_API bool Container_Get_Check(int cont_id);
 
 	//
-	LIBRARY_API bool OpenEquipInterface2();
-
-	//
-	LIBRARY_API bool OpenInventoryInterface2();
-
-	//
-	LIBRARY_API void Get_shop();
-
-	//
 	LIBRARY_API int GetPray_();
 
 	//
@@ -1041,21 +1032,6 @@ namespace ME {
 	//
 	LIBRARY_API bool LootWindow_Loot(std::vector<int> Except_itemv);
 
-	//
-	LIBRARY_API bool SelectCOption_(std::string choice);
-
-	//
-	LIBRARY_API WPOINT SelectCOption2(std::string choice, std::string user);
-
-	//
-	LIBRARY_API bool SelectCOption2_(std::string choice, std::string user);
-
-	//
-	LIBRARY_API WPOINT SelectCOption(std::string choice);
-
-	//
-	LIBRARY_API bool SelectCOption_Click(std::string choice, bool move);
-
 	//string filter
 	LIBRARY_API std::string Filter(std::string to, std::string remove);
 
@@ -1076,12 +1052,6 @@ namespace ME {
 
 	//string filter, remove that color info, specialy made for getting player name
 	LIBRARY_API std::string String_Filter3(std::string to);
-
-	//
-	LIBRARY_API bool FindChooseOptionOpen();
-
-	//
-	LIBRARY_API bool FindChooseOptionOpenClose();
 
 	//
 	LIBRARY_API bool Math_Compare_AllObject_dist_smallest(AllObject SummAddress1, AllObject SummAddress2);
@@ -1186,15 +1156,6 @@ namespace ME {
 
 	//sorting function, by id
 	LIBRARY_API bool Math_Compare_VBreturn(VBreturn SummAddress1, VBreturn SummAddress2);
-
-	//for debubg
-	LIBRARY_API void FindChooseOptionLive();
-
-	//find it
-	LIBRARY_API void FindChooseOption();
-
-	//dno
-	LIBRARY_API bool SelectCOption_Direct(int index);
 
 	std::tuple<ImVec2, ImVec2, ImVec2, ImVec2, ImVec2, ImVec2, ImVec2, ImVec2> Calc3DBox(const FFPOINT& Pos);
 
