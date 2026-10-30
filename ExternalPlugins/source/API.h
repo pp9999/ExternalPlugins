@@ -25,6 +25,72 @@ using json = nlohmann::json;
 #include "Interact.h"
 #include "Inventory.h"
 #include <mutex>
+#include <Psapi.h>
+
+struct TickInfo {
+	int counter = 0;
+	int counter_prev = 0;
+	int timer_start = 0;
+};
+
+class ThreadSafeLogStream {
+public:
+	ThreadSafeLogStream() = default;
+	ThreadSafeLogStream(const ThreadSafeLogStream&) = delete;
+	ThreadSafeLogStream& operator=(const ThreadSafeLogStream&) = delete;
+
+	template <typename T>
+	ThreadSafeLogStream& operator<<(const T& value) {
+		if (thread_muted_) { return *this; }
+		std::lock_guard<std::mutex> lock(mutex_);
+		stream_ << value;
+		return *this;
+	}
+
+	ThreadSafeLogStream& operator<<(std::ostream& (*manip)(std::ostream&)) {
+		if (thread_muted_) { return *this; }
+		std::lock_guard<std::mutex> lock(mutex_);
+		stream_ << manip;
+		return *this;
+	}
+
+	ThreadSafeLogStream& operator<<(std::ios_base& (*manip)(std::ios_base&)) {
+		if (thread_muted_) { return *this; }
+		std::lock_guard<std::mutex> lock(mutex_);
+		stream_ << manip;
+		return *this;
+	}
+
+	// Suppress logging on the current thread only (other threads keep logging).
+	// Used by silent StarPath::CanReach probes so per-entity checks do not spam
+	// the console or the debug window.
+	static bool ThreadMuted() { return thread_muted_; }
+	static void SetThreadMuted(bool muted) { thread_muted_ = muted; }
+
+	std::string str() const {
+		std::lock_guard<std::mutex> lock(mutex_);
+		return stream_.str();
+	}
+
+	void clear() {
+		std::lock_guard<std::mutex> lock(mutex_);
+		stream_.clear();
+	}
+
+	// Atomically take the pending text and reset the stream.
+	std::string take() {
+		std::lock_guard<std::mutex> lock(mutex_);
+		std::string text = stream_.str();
+		std::stringstream empty;
+		stream_.swap(empty);
+		return text;
+	}
+
+private:
+	inline static thread_local bool thread_muted_ = false;
+	mutable std::mutex mutex_;
+	std::stringstream stream_;
+};
 
 //Extra exports
 //Main loop
@@ -33,8 +99,8 @@ LIBRARY_API bool LoopyLoop;
 LIBRARY_API bool Endall;
 //Text displayed in the ME window
 LIBRARY_API std::string ScripCuRunning0;
-LIBRARY_API std::string ScripCuRunning1;
-LIBRARY_API std::string ScripCuRunning2;
+inline std::string ScripCuRunning1; // Legacy script status; no longer exported by the host.
+inline std::string ScripCuRunning2; // Legacy script status; no longer exported by the host.
 //LIBRARY_API bool DrawLogs;
 LIBRARY_API bool DrawTrackedSkills;
 LIBRARY_API bool fake_mouse_do;//generate fake reports
@@ -79,7 +145,7 @@ public:
 	LIBRARY_API void Debugtext_clear();
 }inline DebugImGui{};
 //debug text for DebugImGui.Debugtext_addstream();
-LIBRARY_API std::stringstream console_text;
+LIBRARY_API ThreadSafeLogStream console_text;
 
 /// <summary>
 /// Should only be used for rendering ImGui
@@ -115,6 +181,13 @@ namespace OFF_ACT {
 	LIBRARY_API int Vs_player_examine_route;
 	LIBRARY_API int Special_walk_route;//Bladed dive teleport
 
+
+	LIBRARY_API int InteractNPC_useitem;
+	LIBRARY_API int Boxtrap_route;
+	LIBRARY_API int GeneralObject_route_examine;
+	LIBRARY_API int InteractNPC_route_examine;
+	LIBRARY_API int Grounditems_route_examine;
+
 };
 
 //detour related functions
@@ -128,21 +201,21 @@ namespace DO {
 	//In certain cases ability or selected item will be unselected too early
 	LIBRARY_API bool DoAction_DontResetSelection();
 	//Push action, move to a tile
-	LIBRARY_API bool DoAction_Tile(WPOINT normal_tile);
+	LIBRARY_API bool DoAction_Tile(FFPOINT normal_tile);
 	//Tile click
-	LIBRARY_API bool DoAction_TileF(FFPOINT normal_tile);
+
 	//Push action, do action on object, find by id
 	LIBRARY_API bool DoAction_Object(int action, int offset, std::vector<int> obj, int maxdistance);
 	//Use detour at DO::action to scoop them,added to Fake_action_call, specifify tile 
-	LIBRARY_API bool DoAction_Object(int action, int offset, std::vector<int> obj, int maxdistance, WPOINT tile);
+	LIBRARY_API bool DoAction_Object(int action, int offset, std::vector<int> obj, int maxdistance, FFPOINT tile);
 	//
 	LIBRARY_API bool DoAction_Object_valid(int action, int offset, std::vector<int> objects, int maxdistance, bool valid = false);
 	//
-	LIBRARY_API bool DoAction_Object_valid(int action, int offset, std::vector<int> objects, int maxdistance, WPOINT tile, bool valid = false);
+	LIBRARY_API bool DoAction_Object_valid(int action, int offset, std::vector<int> objects, int maxdistance, FFPOINT tile, bool valid = false);
 	//Use detour on the furthest object
 	LIBRARY_API bool DoAction_Object_furthest(int action, int offset, std::vector<int> obj, int maxdistance);
 	//Push action, do action on object, find by id, specifify tile and tile_range to look around
-	LIBRARY_API bool DoAction_Object_r(int action, int offset, std::vector<int> obj, int maxdistance, WPOINT tile, float tile_range, bool valid = false);
+	LIBRARY_API bool DoAction_Object_r(int action, int offset, std::vector<int> obj, int maxdistance, FFPOINT tile, float tile_range, bool valid = false);
 	//Push action, do action on object, matches up id with highlight
 	LIBRARY_API bool FindHl(int action, int offset, std::vector<int> obj, int maxdistance, std::vector<int> highlight);
 	//Highlight mark up tile. highlight is that sparkle id /mining 7164, arch 7307, localp_dist = howfar player could go/be
@@ -150,17 +223,17 @@ namespace DO {
 	//Push action, find by object name.
 	LIBRARY_API bool DoAction_Object_string(int action, int offset, std::vector<std::string> obj, int maxdistance, bool CheckInteractbool = false);
 	//Push action, do action on object, find by string. Look around tile
-	LIBRARY_API bool DoAction_Object_string(int action, int offset, std::vector<std::string> obj, int maxdistance, WPOINT tile, bool CheckInteractbool = false);
+	LIBRARY_API bool DoAction_Object_string(int action, int offset, std::vector<std::string> obj, int maxdistance, FFPOINT tile, bool CheckInteractbool = false);
 	//Push action, do action on object, find by string, object size in tiles
-	LIBRARY_API bool DoAction_Object_string_r(int action, int offset, std::vector<std::string> obj, int maxdistance, WPOINT tile, float tile_range, bool CheckInteractbool = false);
+	LIBRARY_API bool DoAction_Object_string_r(int action, int offset, std::vector<std::string> obj, int maxdistance, FFPOINT tile, float tile_range, bool CheckInteractbool = false);
 	//Push action, do action on object, directly sends command to do
 	LIBRARY_API bool DoAction_Object_Direct(int action, int offset, AllObject object);
 	//Push action, do action on NPC, find by id, optional tile
-	LIBRARY_API bool DoAction_NPC(int action, int offset, std::vector<int> obj, int maxdistance, std::optional<WPOINT> tile = std::nullopt, bool ignore_star = false, int health = 0);
+	LIBRARY_API bool DoAction_NPC(int action, int offset, std::vector<int> obj, int maxdistance, std::optional<FFPOINT> tile = std::nullopt, bool ignore_star = false, int health = 0);
 	//Push action, do action on NPC, find by string
 	LIBRARY_API bool DoAction_NPC_str(int action, int offset, std::vector<std::string> obj, int maxdistance, bool ignore_star = false, int health = 0);
 	//Push action, do action on NPC, find by id, filter by area
-	LIBRARY_API bool DoAction_NPC_In_Area(int action, int offset, std::vector<int> obj, int maxdistance, WPOINT bottom_left, WPOINT top_right, bool ignore_star = false, int health = 0);
+	LIBRARY_API bool DoAction_NPC_In_Area(int action, int offset, std::vector<int> obj, int maxdistance, FFPOINT bottom_left, FFPOINT top_right, bool ignore_star = false, int health = 0);
 	//Push action, do action on NPCs, directly sends command to do
 	LIBRARY_API bool DoAction_NPC__Direct(int action, int offset, AllObject object);
 	//Push action, do action on player, find by name, attack
@@ -178,7 +251,7 @@ namespace DO {
 	//Push action, filter
 	LIBRARY_API bool DoAction_G_Items(int action, std::vector<int> obj, int maxdistance);
 	//tries to get items, at tile
-	LIBRARY_API bool DoAction_G_Items(int action, std::vector<int> obj, int maxdistance, WPOINT atTile);
+	LIBRARY_API bool DoAction_G_Items(int action, std::vector<int> obj, int maxdistance, FFPOINT atTile);
 	//tries to get items, look around tile and radius
 	LIBRARY_API bool DoAction_G_Items_r(int action, std::vector<int> obj, int maxdistance, FFPOINT tile, float radius);
 	//tries to get items, look around tile and radius
@@ -188,7 +261,7 @@ namespace DO {
 	//tries to get items, does special action on them
 	LIBRARY_API bool DoAction_G_Items(int action, int action_route, std::vector<int> obj, int maxdistance);
 	//tries to get items, does special action on them, at tile
-	LIBRARY_API bool DoAction_G_Items(int action, int action_route, std::vector<int> obj, int maxdistance, WPOINT atTile);
+	LIBRARY_API bool DoAction_G_Items(int action, int action_route, std::vector<int> obj, int maxdistance, FFPOINT atTile);
 	//tries to get items, look around tile and radius, does special action on them
 	LIBRARY_API bool DoAction_G_Items_r(int action, int action_route, std::vector<int> obj, int maxdistance, FFPOINT tile, float radius);
 	//Push action, direct, very unhealty to use directly
@@ -196,7 +269,7 @@ namespace DO {
 	//Push action, send commands to window, no safety checks are made
 	LIBRARY_API bool DoAction_Interface(int command1, int command2, int command3, int interface1, int interface2, int interface3, int offset, int pixel_x = 0, int pixel_y = 0);
 	//Push LootWindow interaction
-	LIBRARY_API bool DoAction_Loot_w(std::vector<int> ids, int maxdistance = 20, FFPOINT tile = { 0,0,0 }, float radius = 20.f);
+	LIBRARY_API bool DoAction_Loot_w(std::vector<int> ids, int maxdistance = 20, FFPOINT tile = {0,0,0}, float radius = 20.f);
 	// Loot from window using lootwindow keyboard shortcut
 	LIBRARY_API bool DoAction_Loot_k(std::vector<int> ids, int maxdistance, int max_item_count, unsigned char keycode, int keymod);
 	//Loot window:loot all button
@@ -228,19 +301,19 @@ namespace DO {
 	//from struct Abilitybar to action
 	LIBRARY_API bool DoAction_Ability_Direct(Abilitybar Ab, int m_action, int offset);
 	//Special walk. Dive from interface ab -> then this, do not use this with other dive functions!
-	LIBRARY_API bool DoAction_SpecialWalk(WPOINT normal_tile);
+	LIBRARY_API bool DoAction_SpecialWalk(FFPOINT normal_tile);
 	//for Dive
-	LIBRARY_API bool DoAction_Dive_Tile(WPOINT normal_tile, int sleep = 0);
+	LIBRARY_API bool DoAction_Dive_Tile(FFPOINT normal_tile, int sleep = 0);
 	//for Bladed Dive
-	LIBRARY_API bool DoAction_BDive_Tile(WPOINT normal_tile, int sleep = 0);
+	LIBRARY_API bool DoAction_BDive_Tile(FFPOINT normal_tile, int sleep = 0);
 	//Check directions, give directions, surge
-	LIBRARY_API bool DoAction_Surge_Tile(WPOINT normal_tile, int errorrange);
+
 	//choose chat box option, Whole words/sentences only
 	LIBRARY_API bool Dialog_Option(std::string text);
 	//Continue dialog
 	LIBRARY_API bool Continue_Dialog();
 	//find random events, and click them
-	LIBRARY_API bool RandomEvents(int waitTime = 600, int sleepTime = 1200, bool pengs = false);
+	LIBRARY_API bool RandomEvents(bool pengs = false);
 	//click specific rand id
 	LIBRARY_API bool RandomEvent(int npcid);
 	//That heart button,to generate health from adreline
@@ -266,10 +339,10 @@ namespace DO {
 	LIBRARY_API bool DoAction_Button_FO(int Possible_order);
 	//divide long walks into steps, 
 	//WalkingBrake global to stop walking, waitloops = how long to wait between walking clicks
-	LIBRARY_API bool DoAction_WalkerW(WPOINT normal_tile, int waitloops = 50);
+
 	//divide long walks into steps, 
 	//WalkingBrake global to stop walking
-	LIBRARY_API bool DoAction_WalkerF(FFPOINT normal_tile, int waitloops = 50);
+
 	//teleport to lodestone
 	LIBRARY_API bool DoAction_Lode(int loc);
 	//use strings, part of teleport location will work
@@ -295,9 +368,37 @@ namespace DO {
 	//try to walk to the gate, then walk trough
 	LIBRARY_API bool Walk_gates(std::vector<GateTileStruct> gatetilesss, int walk_distance);
 
+
+	LIBRARY_API bool IsFurniturePlacementReady();
+	LIBRARY_API bool DoAction_PlaceFurniture(FFPOINT tile);
+	LIBRARY_API bool IsRoomPlacementReady();
+	LIBRARY_API bool DoAction_PlaceRoom(FFPOINT tile);
+	LIBRARY_API bool DoAction_InterfaceSelect(int interfaceId, int component, int child, int optionId);
+	LIBRARY_API bool DoAction_Drag(int from_interface, int from_component, int from_slot, int to_interface, int to_component, int to_slot);
+	LIBRARY_API bool DoAction_Loot_o(const std::vector<int>& ids, int maxdistance, FFPOINT tile, float radius);
+	LIBRARY_API bool DoAction_Loot_o(const std::vector<int>& ids, int maxdistance, FFPOINT tile, float radius, const ::LootOptions& opts);
+	LIBRARY_API bool DoAction_Dive_Tile2(FFPOINT normal_tile, int errorrange, int sleep = 0);
+	LIBRARY_API bool DoAction_BDive_Tile2(FFPOINT normal_tile, int errorrange, int sleep = 0);
+	LIBRARY_API bool IsTileFreeOfObjects(FFPOINT tile);
+	LIBRARY_API bool FindClosestFreeTile(FFPOINT tile, int errorrange, FFPOINT& out_tile);
+	LIBRARY_API bool DoAction_Surge_Tile2(FFPOINT normal_tile, int errorrange);
+	LIBRARY_API bool DoAction_Walker(FFPOINT normal_tile, int waitloops = 50);
+	LIBRARY_API bool StarPathReachable(FFPOINT goal, bool allow_map_links = true);
+	LIBRARY_API bool StarPathWalker(FFPOINT goal);
+
 };
 
 namespace ME {
+
+struct KeyHoldInfo {
+int vk;
+uint64_t ms_remaining; // 0 if no timeout
+uint32_t repeatCount;
+uint32_t initialDelayMs;
+uint32_t repeatRateMs;
+bool extended;
+};
+
 
 	//try determine if memory is in valid range
 	LIBRARY_API bool Mem_range(uint64_t Address);
@@ -363,7 +464,6 @@ namespace ME {
 	LIBRARY_API vector<FFPOINT> Math_FreeTiles(vector<FFPOINT> OccupiedTiles, int TileSize, int AreaRange, vector <FFPOINT> BlockedTiles = {}, bool DrawDebugTiles = true);
 
 	//check free tiles, order in distance from Tile
-	vector<FFPOINT> Math_FreeTilesTile(FFPOINT orig, vector<FFPOINT> OccupiedTiles, int TileSize, int AreaRange, vector <FFPOINT> BlockedTiles = {}, bool DrawDebugTiles = true);
 
 	//Sort AObjects array by distance from tile, return AllObject
 	LIBRARY_API vector<AllObject> Math_SortAODistFromA(FFPOINT Tile, vector<AllObject> AllMain);
@@ -393,7 +493,7 @@ namespace ME {
 	LIBRARY_API ImVec2 ReadObjectCoordinatesImVec2(uint64_t mem_location);
 
 	//Read All object to WPOINT pixels
-	LIBRARY_API WPOINT ReadObjectCoordinatesWPOINT(uint64_t mem_location);
+
 
 	//Read All object to FFPOINT pixels
 	LIBRARY_API FFPOINT ReadObjectCoordinatesFFPOINT(uint64_t mem_location);
@@ -411,25 +511,25 @@ namespace ME {
 	LIBRARY_API FFPOINT Math_TileToLocal(FFPOINT entity);
 
 	//Calculate future pixels or tiles based on angle
-	LIBRARY_API vector<WPOINT> Math_AnglePixels(WPOINT input, float angle, int steps);
+	LIBRARY_API vector<FFPOINT> Math_AnglePixels(FFPOINT input, float angle, int steps);
 
 	//check if pixels or tiles have crosssection somewhere
-	LIBRARY_API bool Math_PointsCrossEach(vector <WPOINT> ArrayOfPoints, WPOINT OnePoint, int inrangeof);
+	LIBRARY_API bool Math_PointsCrossEach(vector <FFPOINT> ArrayOfPoints, FFPOINT OnePoint, int inrangeof);
 
 	//raw tiles(world pixels) to SCREEN
 	LIBRARY_API FFPOINT Math_W2Sv2(FFPOINT entity);
 
 	//raw tiles(world pixels) to SCREEN, return WPOINT
-	LIBRARY_API WPOINT Math_W2Sv2W(FFPOINT entity);
+
 
 	//Calculation between 2 objects, rounded to int
-	LIBRARY_API int Math_DistanceRounded(WPOINT object1, WPOINT object2);
+	LIBRARY_API int Math_DistanceRounded(FFPOINT object1, FFPOINT object2);
 
 	//Calculation between 2 objects
-	LIBRARY_API float Math_DistanceW(WPOINT object1, WPOINT object2);
+
 
 	//Calculation between 2 objects
-	LIBRARY_API float Math_DistanceF(FFPOINT object1, FFPOINT object2);
+
 
 	//Maybe save some arrays
 	LIBRARY_API bool SaveFFPOINTs(std::string name, std::vector<FFPOINT> array_points);
@@ -438,42 +538,38 @@ namespace ME {
 	LIBRARY_API std::vector<FFPOINT> LoadFFPOINTs(std::string name);
 
 	//Mouse has to actually move to use this
-	LIBRARY_API WPOINT GetTilesUnderCurrentMouse();
+	LIBRARY_API FFPOINT GetTilesUnderCurrentMouse();
 
 	//Mouse has to actually move to use this, norm float
-	LIBRARY_API FFPOINT GetTilesUnderCurrentMouseF();
+
 
 	//normal tiles to pixels on screen, WPOINT in WPOINT out
-	LIBRARY_API WPOINT TilesToPixelsWW(WPOINT xy);
+
 
 	//normal tiles to pixels on screen, float in WPOINT out
-	LIBRARY_API WPOINT TilesToPixelsFW(FFPOINT xy);
+
 
 	//normal tiles to pixels on screen, float in float out
-	LIBRARY_API FFPOINT TilesToPixelsFF(FFPOINT xy);
+
 
 	//normal tiles to pixels on screen, WPOINT in float out
-	LIBRARY_API FFPOINT TilesToPixelsWF(WPOINT xy);
+
 
 	//No safety checks, due some very odd chars in chat and used with EAstl standard
-	std::string ReadChars2(uint64_t SummPointer, uint64_t readsize);
 
 	//read as string, constant size
 	LIBRARY_API std::string ReadChars(uint64_t SummPointer, int readsize = 250);
 
-	std::string ReadCharsNorm(uint64_t SummPointer);
 
 	//read as std::string, attempt to read short ones
 	LIBRARY_API std::string ReadCharsLimit(uint64_t SummPointer, int limit = 255);
 
 	//check
-	std::string ReadCharsLimitColor(uint64_t SummPointer);
 
 	//read as pointer, some pointers have specific build on interfaces, lets try that
 	LIBRARY_API std::string ReadCharsLimitPointer(uint64_t SummPointer, int limit = 255);
 
 	//EAstl somekind of EA standard
-	std::string ReadCharsEAstl(uint64_t SummPointer);
 
 	//sorting function
 	LIBRARY_API bool Math_comparebigger(ChOpt SummAddress1, ChOpt SummAddress2);
@@ -485,7 +581,7 @@ namespace ME {
 	LIBRARY_API std::vector<uint64_t> GatherIUM(uint64_t inputaddr);
 
 	//
-	LIBRARY_API bool ScreenFilter(WPOINT mxy);
+
 
 	//read as string, constant size, use pointer that points to strings
 	LIBRARY_API std::string ReadCharsPointer(uint64_t SummPointer);
@@ -518,16 +614,15 @@ namespace ME {
 	LIBRARY_API std::string GetINamebyDynamic(InterfaceComp5 ids);
 
 	//Gets Interface by dynamic, look for main box, highest to lower complexity
-	InterfaceComp5test GetInterfaceByDynamicClosest(InterfaceComp5 ids);
 
 	//Gets Interface by string id from I_Madness,
-	LIBRARY_API std::vector<InterfaceComp5> GetIbystringstatic(std::string text);
+
 
 	//Gets data. x, y, index, 0, memory
-	LIBRARY_API InterfaceComp5 GetIMadnessOP(InterfaceComp5 mad);
+
 
 	//Gets and adds data from 2 interfaces, return pixels, for fm
-	LIBRARY_API vector<WPOINT> InterfacesCombineFullFM(InterfaceComp5 mad);
+
 
 	//compares text in dialog, if not found returns 0, else returns number to press
 	LIBRARY_API char Dialog_Option(std::string text);
@@ -563,34 +658,34 @@ namespace ME {
 	LIBRARY_API float Dist_FLP(FFPOINT tile);
 
 	//Tile distance from localplayer
-	LIBRARY_API float Dist_FLPW(WPOINT tile);
+
 
 	//
 	LIBRARY_API bool FindGItemBool_(std::vector<int> item);
 
 	//
-	LIBRARY_API bool FindGItem_AllBut2(std::vector<int> Except_item, int maxdistance, int accuracy, WPOINT tilespot, int maxdistance2, std::vector<int> items_to_eat);
+	LIBRARY_API bool FindGItem_AllBut2(std::vector<int> Except_item, int maxdistance, int accuracy, FFPOINT tilespot, int maxdistance2, std::vector<int> items_to_eat);
 
 	//Try all possible locations of text
-	LIBRARY_API std::string InterfaceGetALLText(uint64_t base);
+
 
 	//
-	LIBRARY_API bool FindNPCss(std::vector<int> npc, int maxdistance, int accuracy, int lifepoint, WPOINT tilespot, int maxdistance2, int action, std::string sidetext);
+	LIBRARY_API bool FindNPCss(std::vector<int> npc, int maxdistance, int accuracy, int lifepoint, FFPOINT tilespot, int maxdistance2, int action, std::string sidetext);
 
 	//
-	LIBRARY_API bool FindNPCssMulti(std::vector<int> npc, int maxdistance, int accuracy, int lifepoints, WPOINT tilespot, int maxdistance2, int action, std::vector<std::string> sidetext);
+	LIBRARY_API bool FindNPCssMulti(std::vector<int> npc, int maxdistance, int accuracy, int lifepoints, FFPOINT tilespot, int maxdistance2, int action, std::vector<std::string> sidetext);
 
 	//
-	LIBRARY_API bool FindNPCssSTRRem(std::string NPC_name, int maxdistance, int accuracy, int lifepoints, WPOINT tilespot, int maxdistance2, int action, std::string sidetext);
+	LIBRARY_API bool FindNPCssSTRRem(std::string NPC_name, int maxdistance, int accuracy, int lifepoints, FFPOINT tilespot, int maxdistance2, int action, std::string sidetext);
 
 	//
-	LIBRARY_API bool FindNPCssSTR(std::string NPC_name, int maxdistance, int accuracy, int lifepoints, WPOINT tilespot, int maxdistance2, int action, std::string sidetext);
+	LIBRARY_API bool FindNPCssSTR(std::string NPC_name, int maxdistance, int accuracy, int lifepoints, FFPOINT tilespot, int maxdistance2, int action, std::string sidetext);
 
 	//simple npc click
 	LIBRARY_API bool FindNPCssSTR_FA(std::string NPC_name, int maxdistance, std::string sidetext);
 
 	//
-	LIBRARY_API bool FindNPCssSTRs(std::vector<std::string> NPC_names, int maxdistance, int accuracy, int lifepoints, WPOINT tilespot, int maxdistance2, int action, std::string sidetext);
+	LIBRARY_API bool FindNPCssSTRs(std::vector<std::string> NPC_names, int maxdistance, int accuracy, int lifepoints, FFPOINT tilespot, int maxdistance2, int action, std::string sidetext);
 
 	//
 	LIBRARY_API int ReadPlayerAnim();
@@ -664,7 +759,7 @@ namespace ME {
 	LIBRARY_API AllObject GetAllObjArrayFirst(std::vector<int> obj, int maxdistance, vector<int> types);
 
 	//look for specific objects at tile, return data, at tile
-	LIBRARY_API AllObject GetAllObjArrayFirstTile(std::vector<int> obj, int maxdistance, vector<int> types, WPOINT tile);
+	LIBRARY_API AllObject GetAllObjArrayFirstTile(std::vector<int> obj, int maxdistance, vector<int> types, FFPOINT tile);
 
 	//look for specific objects, return all data, check if action text is there
 	LIBRARY_API std::vector<AllObject> GetAllObjArrayInteract(std::vector<int> obj, int maxdistance, vector< int> types);
@@ -676,26 +771,26 @@ namespace ME {
 	LIBRARY_API std::vector<AllObject> GetAllObjArrayInteract_str(std::vector<std::string> obj, int maxdistance, vector< int> types);
 
 	//
-	LIBRARY_API std::vector<AllObject> GetAllObjArray(std::vector<int> obj, int maxdistance, vector< int> types, WPOINT tile);
+	LIBRARY_API std::vector<AllObject> GetAllObjArray(std::vector<int> obj, int maxdistance, vector< int> types, FFPOINT tile);
 
 	//check tile for any disruptive object, returns false if nothing is found
-	LIBRARY_API bool CheckTileforObjects(WPOINT tile);
+	LIBRARY_API bool CheckTileforObjects(FFPOINT tile);
 
 	// Check specific tile for specific object, returns false if nothing is found
 	//	Useful for checking for things like stumps while woodcutting
-	LIBRARY_API bool CheckTileforObjects(WPOINT tile, int object, float thresh = 1.5);
+	LIBRARY_API bool CheckTileforObjects(FFPOINT tile, int object, float thresh = 1.5);
 
 	//check specific tile for specific item, returns false if nothing is found
-	LIBRARY_API bool CheckTileforItems(WPOINT tile, int item);
+	LIBRARY_API bool CheckTileforItems(FFPOINT tile, int item);
 
 	//
-	LIBRARY_API bool FindObjTile(std::vector<int> obj, int maxdistance, int accuracy, WPOINT objtile, bool usemap, int action, std::string sidetext);
+	LIBRARY_API bool FindObjTile(std::vector<int> obj, int maxdistance, int accuracy, FFPOINT objtile, bool usemap, int action, std::string sidetext);
 
 	//
 	LIBRARY_API bool FindObjCheck_(std::vector<int> obj, int maxdistance, int accuracy, bool usemap, int action, std::string sidetext);
 
 	//
-	LIBRARY_API bool FindObjCheck_(std::vector<int> obj, int maxdistance, int accuracy, bool usemap, int action, std::string sidetext, WPOINT tile);
+	LIBRARY_API bool FindObjCheck_(std::vector<int> obj, int maxdistance, int accuracy, bool usemap, int action, std::string sidetext, FFPOINT tile);
 
 	//
 	LIBRARY_API float Hypot(float dx, float dy);
@@ -731,37 +826,32 @@ namespace ME {
 	LIBRARY_API int CRC32CheckSum(void* Data, int Size, int InitialValue);
 
 	//
-	LIBRARY_API std::string FindSideText();
+
 
 	//
-	LIBRARY_API bool SideTextEq(std::string text);
+
 
 	//
-	LIBRARY_API bool SideTextEq(std::vector<std::string> text);
+
 
 	//
-	std::vector<AllObject> ReadAllObjectsArrayOSRS();
 
 	//active obj 0, npc 1, player 2, grounditems 3, pro 5, decor 12
-	LIBRARY_API std::vector<AllObject> ReadAllObjectsArray(vector< int> types = {}, vector< int> ids = { -1 }, vector< std::string> name_strings = {});
+	LIBRARY_API std::vector<AllObject> ReadAllObjectsArray(vector< int> types = {}, vector< int> ids = { -1 }, vector< std::string> name_strings = {}, int startpathreach = -1);
 
 	//Reads inventory content and stores it in: InvArr
 	LIBRARY_API std::vector<IInfo> ReadInvArrays33();
 
 	//
-	vector<std::string> ReadFriendList();
 
 	//
-	vector<std::string> ReadIgnoreList();
 
 	//
-	vector<std::string> ReadFriendChatList();
 
 	//Read that table that has all levels, in pairs of 29 so 58 in total
 	LIBRARY_API vector<int> GetSkillsTable();
 
 	//first original, +1 boosted
-	int GetSkillsTableSkill(int nr);
 
 	//Reads cont
 	LIBRARY_API std::vector<General_Container> GetContainerSettings(int targetID = -1);
@@ -839,7 +929,7 @@ namespace ME {
 	LIBRARY_API float GetAdrenalineFromInterface();
 
 	//
-	LIBRARY_API bool Compare2874Status(int status, bool debug = false);
+	LIBRARY_API bool Compare2874Status(int status, bool dbg = false);
 
 	//
 	LIBRARY_API bool CheckBankVarp();
@@ -896,7 +986,7 @@ namespace ME {
 	LIBRARY_API bool PInAreaF(FFPOINT norm_tile, int range);
 
 	//normal tile, range in tiles
-	LIBRARY_API bool PInAreaW(WPOINT norm_tile, int range);
+
 
 	//
 	LIBRARY_API bool PInArea2(int xstart, int xend, int ystart, int yend);
@@ -915,10 +1005,10 @@ namespace ME {
 	LIBRARY_API bool KeyboardUp(int codes);
 
 	//use keyboard
-	LIBRARY_API bool KeyboardPress3(unsigned char codes, int sleep, int rand);
+	LIBRARY_API bool KeyboardPress3(unsigned char codes, int keymod = 0);
 
 	//use keyboard, keymod is shift or alt
-	LIBRARY_API bool KeyboardPress3(unsigned char codes, int keymod = 0);
+	LIBRARY_API bool KeyboardPress3(unsigned char codes, int sleep, int rand, bool function_keys = false);
 
 	//
 	LIBRARY_API bool KeyboardPress33(unsigned char codes, int keymod, int sleep, int rand);
@@ -955,7 +1045,7 @@ namespace ME {
 	refresh_data - update item ids
 	refresh_text - attempt to read text
 	*/
-	LIBRARY_API IInfo GetInterfaceDataIInfo(IInfo* database, bool refresh_data, bool refresh_text);
+
 
 	/*
 	data_base - info block start
@@ -963,17 +1053,17 @@ namespace ME {
 	refresh_data - update item ids
 	refresh_text - attempt to read text
 	*/
-	LIBRARY_API IInfo GetInterfaceDataMem(uint64_t database, bool refresh_pixels, bool refresh_text);
+
 
 	//find, check, get data, for IInfo
 	//refresh_data - xy and item int data
 	//refresh_text - item text
-	LIBRARY_API IInfo Get_Check_Interface(IInfo* current_data, std::vector<InterfaceComp5> search_components, bool refresh_data = false, bool refresh_text = false);
+
 
 	//find, check, for IInfo, keep tabs on 1 interface and return interfaces under it
-	LIBRARY_API std::vector<IInfo> Get_Check_Interface_Under(IInfo* current_data, std::vector<InterfaceComp5> search_components, bool refresh_data = false, bool refresh_text = false);
 
-	LIBRARY_API IInfo Get_Check_Interfacer(IInfo* current_data, std::vector<InterfaceComp5> search_components, bool refresh_data = false, bool refresh_text = false);
+
+
 
 	//
 	LIBRARY_API FFPOINT ToMapFFPOINT(FFPOINT ItemCoord, bool map_limit = false);
@@ -985,7 +1075,7 @@ namespace ME {
 	LIBRARY_API bool ClickMapTile_2(POINT ItemCoord2);
 
 	//finds and reads varpbits. if params is -1 then it is ignored
-	LIBRARY_API VB VB_FindPSett(int id);
+
 
 	//finds and reads varcbits. if params is -1 then it is ignored
 	LIBRARY_API VB VC_FindPSett(int id);
@@ -1003,16 +1093,16 @@ namespace ME {
 	LIBRARY_API int VB_FindPSett3int(int id, int spot_index);
 
 	//
-	LIBRARY_API WPOINT VB_FindPSett3wpoint(int id, int spot_index1, int spot_index2);
+
 
 
 	//check if variable is between
 	LIBRARY_API bool Math_VarBetween(int start, int end, int checked_var);
 
-	LIBRARY_API std::vector<IInfo> MaterialStorage();
+
 
 	//
-	LIBRARY_API std::vector<IInfo> TradeWindow(std::string which);
+
 
 	//
 	LIBRARY_API bool LootWindowOpen_2();
@@ -1021,10 +1111,8 @@ namespace ME {
 	LIBRARY_API std::vector<IInfo> LootWindow_GetData();
 
 	//get LootWindow data, uses containers
-	std::vector<IInfo> LootWindow_GetData_container();
 
 	//amount of items in 
-	int LootWindow_GetData_container_am();
 
 	//
 	LIBRARY_API int LootWindow_space_needed(std::vector<int> Except_item, bool Inventory_stacks);
@@ -1128,7 +1216,6 @@ namespace ME {
 	LIBRARY_API int Math_AppendBytes24rev(unsigned char* val, int start);
 
 	//2x2 bytes reverse
-	int Math_AppendBytes1616r(unsigned char* val, int start);
 
 	//glue bytes together, into 32bit
 	LIBRARY_API int Math_AppendBytes32(unsigned char* val, int start);
@@ -1157,27 +1244,25 @@ namespace ME {
 	//sorting function, by id
 	LIBRARY_API bool Math_Compare_VBreturn(VBreturn SummAddress1, VBreturn SummAddress2);
 
-	std::tuple<ImVec2, ImVec2, ImVec2, ImVec2, ImVec2, ImVec2, ImVec2, ImVec2> Calc3DBox(const FFPOINT& Pos);
 
-	void Draw3DBox(const FFPOINT& Pos, ImColor color, int Thickness, ImDrawList* pDrawListBack);
 
 	//
 	LIBRARY_API bool ReadNPCInFocus_0();
 
 	//
-	LIBRARY_API bool ReadNPCInFocus(int index, bool debug);
+	LIBRARY_API bool ReadNPCInFocus(int index, bool dbg);
 
 	//
-	LIBRARY_API bool GetCheckNPCInFocus(int index, int NPC_id, bool debug);
+	LIBRARY_API bool GetCheckNPCInFocus(int index, int NPC_id, bool dbg);
 
 	//read allobj, 3d screen to 2d pixels, Client sees
-	LIBRARY_API WPOINT W2ScreenNat(uint64_t spot);
+	LIBRARY_API FFPOINT W2ScreenNat(uint64_t spot);
 
 	//3d coords to screen. Client
-	LIBRARY_API WPOINT W2ScreenNat(FFPOINT entity);
+	LIBRARY_API FFPOINT W2ScreenNat(FFPOINT entity);
 
 	//3d coords to screen. returns float point
-	LIBRARY_API FFPOINT W2ScreenNat_F(FFPOINT entity);
+
 
 	//npc uptext watch
 	LIBRARY_API bool WatchText3(std::string text, int action, int loops);
@@ -1258,10 +1343,10 @@ namespace ME {
 	LIBRARY_API int Local_PlayerInterActingWith_id(int loop);
 
 	// Get interface by whole chain of id steps, accurate and more faster
-	LIBRARY_API IInfo GetInterfaceByIds(std::vector<InterfaceComp5> target, bool I_text = false);
+
 
 	//Get interface by whole chain of id steps, accurate and more faster, gather interfaces (like invboxes) info under this interface
-	LIBRARY_API std::vector<IInfo> GetInterfaceByIdsUnder(std::vector<InterfaceComp5> target, int offset = 0, bool I_text = false);
+
 
 	//
 	LIBRARY_API std::vector<IInfo> ScanForInterfaceTest2Get(bool target_under, std::vector<InterfaceComp5> lv_ID);
@@ -1291,24 +1376,26 @@ namespace ME {
 	LIBRARY_API bool GetRun2();
 
 	//rounded down and int
-	LIBRARY_API WPOINT PlayerCoord();
+	LIBRARY_API FFPOINT PlayerCoord();
 
-	LIBRARY_API WPOINT PlayerRegion();
+	LIBRARY_API FFPOINT PlayerRegion();
 
 	LIBRARY_API bool InInstancedArea();
 
 	//outputs array of points from a to b
 	LIBRARY_API std::vector<WPOINT> Math_Bresenham_line(int x1, int y1, int x2, int y2);
+	LIBRARY_API std::vector<FFPOINT> Math_Bresenham_line(FFPOINT xy1, FFPOINT xy2);
+
 
 	//outputs array of points from a to b
-	LIBRARY_API std::vector<WPOINT> Math_Bresenham_lineW(WPOINT xy1, WPOINT xy2);
+
 
 	//outputs array of points from a to b
-	LIBRARY_API std::vector<WPOINT> Math_Bresenham_lineF(FFPOINT xy1, FFPOINT xy2);
+
 
 	//input raw tiles to destination, output pixels to minimap
 	//take 1 click foward to destination
-	LIBRARY_API WPOINT Bresenham_step(FFPOINT tilexy);
+	LIBRARY_API FFPOINT Bresenham_step(FFPOINT tilexy);
 
 	//Highlight mark up tile. highlight is that sparkle id /mining 7164, arch 7307, localp_dist = howfar player could go/be
 	LIBRARY_API bool FindHLvsLocalPlayer(std::vector<int> objIds, int maxdistance, int accuracy, bool usemap, int action, std::string sidetext, std::vector<int> hlIds, float localp_dist = 2.f);
@@ -1336,7 +1423,7 @@ namespace ME {
 	LIBRARY_API void Map_Walker1(FFPOINT tilexy, int distance);
 
 	//
-	LIBRARY_API void Map_Walker1NT(WPOINT tilexy2, int distance);
+	LIBRARY_API void Map_Walker1NT(FFPOINT tilexy2, int distance);
 
 	//
 	LIBRARY_API void Map_Walker2(FFPOINT tilexy, int distance);
@@ -1356,13 +1443,22 @@ namespace ME {
 	//read exepacked pointer, move exactly to the right byte
 	LIBRARY_API uint64_t EXEPackedPointer(std::string instruct, uint64_t from_instruction_start, bool retonlyvalue = false);
 
+
+	LIBRARY_API float Math_Distance(FFPOINT object1, FFPOINT object2);
+	LIBRARY_API FFPOINT TilesToPixels(FFPOINT xy);
+	LIBRARY_API int VB_SettingsState(uint64_t addr);
+	LIBRARY_API VB VP_FindPSett(int id);
+	LIBRARY_API int VP_FindPSettBit(int id);
+	LIBRARY_API int VC_FindPSettBit(int id);
+	LIBRARY_API FFPOINT VB_FindPSett3(int id, int spot_index1, int spot_index2);
+	LIBRARY_API bool Interface_IsOpen(int id1, int id2, int id3);
+
 };
 
 //General functions. Extra
 namespace MEX {
 
 	//world nr
-	int GetWorldNR();
 
 	//check
 	LIBRARY_API bool IsAuraResetAvailable();
@@ -1410,7 +1506,7 @@ namespace MEX {
 	LIBRARY_API int Get_tick();
 
 	// Get the current RS3 client logic cycle.
-	LIBRARY_API std::optional<std::uint32_t> GetClientCycle();
+	LIBRARY_API unsigned int GetClientCycle();
 
 	// Sleeps until a specified amount of ticks have passed.
 	LIBRARY_API void Sleep_tick(int count);
@@ -1434,7 +1530,7 @@ namespace MEX {
 	LIBRARY_API float calculatePlayerOrientation();
 
 	//Is player facing tile direction
-	LIBRARY_API bool IsPlayerInDirection(WPOINT Tile, int howfar, int errorrange);
+	LIBRARY_API bool IsPlayerInDirection(FFPOINT Tile, int howfar, int errorrange);
 
 	//any entitity, needs Allobject MemE
 	LIBRARY_API float calculateOrientation(uint64_t mem_addr);
@@ -1443,7 +1539,7 @@ namespace MEX {
 	LIBRARY_API void RandomEvents();
 
 	// Highlights the list of tiles passed ingame
-	LIBRARY_API void MarkTiles(std::vector<FFPOINT>, uint64_t fortime = 0, unsigned int color = 0, float thick = 0, bool filled = 0, bool square = 0, WPOINT pixelshape = { 0,0,0 }, WPOINT pixellocation = { 0,0,0 });
+	LIBRARY_API void MarkTiles(std::vector<FFPOINT>, uint64_t fortime = 0, unsigned int color = 0, float thick = 0, bool filled = 0, bool square = 0, FFPOINT pixelshape = { 0,0,0 }, FFPOINT pixellocation = { 0,0,0 });
 
 	LIBRARY_API void ClearMarkTiles();
 
@@ -1453,12 +1549,12 @@ namespace MEX {
 	//check if familiar is present
 	LIBRARY_API bool CheckFamiliar();
 
-	LIBRARY_API WPOINT GetProjectileDestination(AllObject projectile);
+	LIBRARY_API FFPOINT GetProjectileDestination(AllObject projectile);
 
-	LIBRARY_API WPOINT GetProjectileDestination(uint64_t mem_addr);
+	LIBRARY_API FFPOINT GetProjectileDestination(uint64_t mem_addr);
 
 	//
-	LIBRARY_API std::vector<uint64_t> GetModel_ids(uint64_t entity_base, bool debug);
+	LIBRARY_API std::vector<uint64_t> GetModel_ids(uint64_t entity_base, bool dbg);
 
 	//Compare model ids
 	LIBRARY_API bool ModelCompare(uint64_t entity_base, std::vector<uint64_t> model_ids);
@@ -1508,7 +1604,7 @@ namespace MEX {
 	LIBRARY_API bool Find_NAMEdata_match(std::vector<NameData> in, std::string compare_against);
 
 	//
-	LIBRARY_API AllObject GetAllObj_dist(int obj, int distance, int type, WPOINT adjust_tile);
+	LIBRARY_API AllObject GetAllObj_dist(int obj, int distance, int type, FFPOINT adjust_tile);
 
 	LIBRARY_API std::unordered_map<int, int> GetExchangePrice(const std::vector<int> itemIds);
 
@@ -1519,7 +1615,7 @@ namespace MEX {
 	LIBRARY_API bool BankGetVisItemsPrint();
 
 	//
-	LIBRARY_API WPOINT BankGetItem(int item);
+	LIBRARY_API FFPOINT BankGetItem(int item);
 
 	//
 	LIBRARY_API bool BankClickItem(int id, int mouse);
@@ -1531,7 +1627,6 @@ namespace MEX {
 	// Finds objects by name
 	LIBRARY_API std::vector<AllObject> FindObject_str(std::vector<std::string> obj, int maxdistance);
 	//
-	size_t writeFunction(void* ptr, size_t size, size_t nmemb, std::string* data);
 	//
 	LIBRARY_API std::vector<uint64_t> BankGetItemStack(std::vector<int> item);
 
@@ -1542,16 +1637,16 @@ namespace MEX {
 	LIBRARY_API std::vector<Bbar> Buffbar_GetAllIDs(bool print_all_out);
 
 	//
-	LIBRARY_API Bbar Buffbar_GetIDstatus(int id, bool debug);
+	LIBRARY_API Bbar Buffbar_GetIDstatus(int id, bool dbg);
 
 	//
 	LIBRARY_API std::vector<Bbar> DeBuffbar_GetAllIDs(bool print_all_out);
 
 	//check debuff status based id
-	LIBRARY_API Bbar DeBuffbar_GetIDstatus(int id, bool debug);
+	LIBRARY_API Bbar DeBuffbar_GetIDstatus(int id, bool dbg);
 
 	//Get detailed target buff/debuff info with names from varbit mapping
-	LIBRARY_API std::vector<TargetBuff> ReadTargetBuffsDetailed(bool debug = false);
+	LIBRARY_API std::vector<TargetBuff> ReadTargetBuffsDetailed(bool dbg = false);
 
 	//Check if target has specific buff/debuff by varbit ID or sprite/buff ID
 	LIBRARY_API bool TargetHasBuff(int id);
@@ -1593,7 +1688,7 @@ namespace MEX {
 	LIBRARY_API Abilitybar GetAB_ids(std::vector<int> ability_ids);
 
 	//
-	LIBRARY_API WPOINT BankGetLimits();
+	LIBRARY_API FFPOINT BankGetLimits();
 
 	//
 	LIBRARY_API bool BankAllItems();
@@ -1605,7 +1700,7 @@ namespace MEX {
 	LIBRARY_API bool BankAllItem_InvExceptstrM(std::vector<std::string> Except_item);
 
 	//
-	LIBRARY_API WPOINT BankGetItem_Inv(int item);
+	LIBRARY_API FFPOINT BankGetItem_Inv(int item);
 
 	//
 	LIBRARY_API bool BankClickItem_Inv(int id, int mouse);
@@ -1631,7 +1726,6 @@ namespace MEX {
 	LIBRARY_API std::vector <NameData> ScriptDialogWindow_input(std::string boxtext, bool password, int arrtype, std::string filename);
 
 	//square = 0 square, 1 crircle, 2 line
-	void MarkTiles2(std::vector<FFPOINT> tiles, FFPOINT tiles2, uint64_t fortime, unsigned int color, float thick, bool filled, int square, WPOINT pixelshape, WPOINT pixellocation, WPOINT pixellocation2, std::string attext);
 
 	//kinda extended vbs for some reason, get value
 	LIBRARY_API int GetExtendedVB(VB set);
@@ -1711,7 +1805,7 @@ namespace MEX {
 	LIBRARY_API bool WaitUntilMovingandAnimandCombatEnds(int howmanyticks = 0, int checks = 0);
 
 	//
-	LIBRARY_API bool WalkUntilClose(WPOINT walktile, int stopdistance);
+	LIBRARY_API bool WalkUntilClose(FFPOINT walktile, int stopdistance);
 
 	//
 	LIBRARY_API bool Smithing_interface_open();
@@ -1722,6 +1816,16 @@ namespace MEX {
 	LIBRARY_API bool LogDrop(int itemId, uint64_t quantity);
 
 	LIBRARY_API std::string GetMemoryErrorPath();
+
+	LIBRARY_API FFPOINT GetTrueTile(uint64_t Entity_start = 0);
+	LIBRARY_API float GetTrueOrientation(uint64_t Entity_start = 0);
+	LIBRARY_API FFPOINT GetLocalPlayerTrueTile();
+	LIBRARY_API float GetLocalPlayerTrueOrientation();
+	LIBRARY_API vector<AllObject> GetAllWalkTiles(int radiusOverride = -1);
+	LIBRARY_API void InvalidateWalkTileCache();
+	LIBRARY_API vector<AllObject> GetCombinedBlockerTiles(float wallMinHeight, int radiusOverride = -1);
+	LIBRARY_API std::vector<MapLink>& MapLinks();
+
 };
 
 //Dear ImGui wrappers
@@ -1729,9 +1833,7 @@ namespace IG {
 	inline ImColor default_col = ImColor(0, 255, 128);
 
 	//removes specific, should not to be used another thread
-	void ImGui_clear_1(std::string ident);
 
-	void ImGui_clear_1(int slot);
 
 	//removes all, should not to be used another thread
 	LIBRARY_API void ImGui_clear_all(bool remove_perm = false);
@@ -1853,6 +1955,28 @@ LIBRARY_API vector<EventData> GatherEvents_chat_check();
 LIBRARY_API uint64_t GatherEvents_chat_read(uint64_t lastSeq, vector<EventData>& out);
 LIBRARY_API vector<EventData> GatherEvents_xp_check();
 LIBRARY_API vector<EventData> GatherEvents_glisten_check();
-LIBRARY_API vector<SPLAT> GatherEvents_splat_check(bool clear = true);
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+LIBRARY_API HANDLE GameHandle;
+LIBRARY_API MODULEINFO GameModule;
+LIBRARY_API std::string g_cachePath;
+LIBRARY_API TickInfo tick_info;
+LIBRARY_API std::string ME_version;
+LIBRARY_API bool FM_MirrorLowHook;
+LIBRARY_API std::string MD5hash;
+LIBRARY_API std::string RSExeFile;
+LIBRARY_API std::string RSDllFile;
+LIBRARY_API std::string RSExeFilePath;
+LIBRARY_API std::string RSDllFilePath;
+LIBRARY_API uint64_t RSExeStart;
+LIBRARY_API uint64_t RSExeSize;
+LIBRARY_API uint64_t RSExeEnd;
+LIBRARY_API HINSTANCE hInstance;
+LIBRARY_API bool HideRSWindow;
+LIBRARY_API bool DisableRSWindow;
+LIBRARY_API bool ExternalDLLRunning;
+LIBRARY_API std::vector<FFPOINT> highlightTiles;
+LIBRARY_API uint64_t GatherEvents_xp_read(uint64_t lastSeq, vector<EventData>& out);
+LIBRARY_API uint64_t GatherEvents_glisten_read(uint64_t lastSeq, vector<EventData>& out);

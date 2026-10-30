@@ -76,7 +76,7 @@ static AllObject Playerfilter(vector <string> Players) {
 		if (ME::InArea2(xstart, xend, static_cast<int>(AllMain[i].Tile_XYZ.x), ystart, yend, static_cast<int>(AllMain[i].Tile_XYZ.y))) {//player is in certain area
 			if (AllMain[i].Name.compare(LocalPlayerName) == 0) { continue; }//ignore localplayer
 			if (quickcompare(Players, AllMain[i].Name)) {
-				if (ME::Math_DistanceF(Localpl_FF, AllMain[i].Tile_XYZ) < 20.f) {//player is within attacking distance
+				if (ME::Math_Distance(Localpl_FF, AllMain[i].Tile_XYZ) < 20.f) {//player is within attacking distance
 					bool inmulti = false;
 					if (ME::PInArea2(xstart, xend, multistart_y, multiend_y)) {//check our player
 						if (ME::InArea2(xstart, xend, static_cast<int>(AllMain[i].Tile_XYZ.x), ystart, yend, static_cast<int>(AllMain[i].Tile_XYZ.y))) {//check other player
@@ -111,7 +111,7 @@ static AllObject Playerfilter(vector <string> Players) {
 			sort(far_players_list.begin(), far_players_list.end(), ME::Math_Compare_AllObject_dist_smallest);
 			//instead start walking towards our target
 			DebugImGui.Debugtext_add("Walk to: " + far_players_list.front().Name);
-			thread Walkto(DO::DoAction_WalkerF, far_players_list.front().Tile_XYZ, 50);
+			thread Walkto(DO::DoAction_Walker, far_players_list.front().Tile_XYZ, 50);
 			Walkto.detach();
 			//do 1 step and break
 			Sleep(600);
